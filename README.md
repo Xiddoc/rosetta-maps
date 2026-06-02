@@ -61,9 +61,10 @@ APK is ever uploaded**). In short: add/extend the signatures, generate the
 
 ## Status
 
-**Scaffolding.** The layout, the canonical-schema validation CI, the
-filename/`version_code` convention check, the JSON Schema editor aid, and a
-worked `com.example.app` example are in place. See
+**Scaffolding.** The layout, the canonical JSON Schema (owned here) and the
+self-contained validation CI that checks every map against it, the
+filename/`version_code` convention check, and a worked `com.example.app`
+example are in place. See
 [CONTRIBUTING.md](CONTRIBUTING.md) for the planned validation tiers
 (signed attestations, an optional trusted runner, device telemetry) — none
 of which host APKs in public CI.
@@ -71,10 +72,14 @@ of which host APKs in public CI.
 ## Related repos
 
 - **[rosetta-frida](https://github.com/Xiddoc/rosetta-frida)** — the Frida
-  adapter; canonical home of the map schema, the validator these maps are
-  checked against, and RFC 0001.
+  adapter and home of RFC 0001. A **client** of the map schema: its Zod
+  validator tracks this repo's canonical `schema/rosetta-map.schema.json`.
 - **[rosetta-xposed](https://github.com/Xiddoc/rosetta-xposed)** — the
-  Xposed/LSPosed/LSPatch adapter; consumes these same maps.
+  Xposed/LSPosed/LSPatch adapter; another **client** that consumes these
+  same maps.
+
+This repo owns the **canonical map schema** (`schema/`); the adapters above
+consume it.
 
 ## License
 

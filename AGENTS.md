@@ -27,7 +27,7 @@ automation is PR-gated validation.
 rosetta-maps/
 ├── maps/<app>/<version_code>.json     ← generated, published, consumed
 ├── signatures/<app>/signatures.yaml   ← source of truth (sigmatcher dialect)
-├── schema/rosetta-map.schema.json     ← editor aid (mirrors the canonical validator)
+├── schema/rosetta-map.schema.json     ← CANONICAL schema (this repo owns it)
 └── templates/                         ← copy these to start a contribution
 ```
 
@@ -37,11 +37,14 @@ rosetta-maps/
    version_code)`.** The filename IS the `version_code` (the authoritative
    O(1) selection key, RFC 0001 Decision 3). `validate.yml` enforces both
    the schema and the filename↔`version_code` match.
-2. **Reuse the canonical validator, never fork it.** CI checks maps with
-   the rosetta-frida library's own Zod validator (`rosetta validate`, run
-   from a transient checkout). `schema/rosetta-map.schema.json` is an
-   editor aid that *mirrors* it — if the schema bumps in rosetta-frida,
-   update that file too, but the library remains the source of truth.
+2. **This repo owns the canonical schema; CI validates against it.**
+   `schema/rosetta-map.schema.json` is the single, language-neutral source
+   of truth for the `schema_version: 2` format — the format belongs with
+   the data, and the data lives here. CI validates every map against this
+   file directly (ajv, no cross-repo checkout). The rosetta-frida (TS/Zod)
+   and rosetta-xposed (Kotlin) adapters are **clients** that track this
+   schema. Changing the format means bumping this file first, then the
+   adapters — never a fork or a mirror in the other direction.
 3. **Never host or upload APKs in CI.** APK-host ToS forbid it and it's a
    copyright liability. Public CI does structural checks only (Decision 4
    tier 1). Correctness-against-the-real-app belongs off public CI
@@ -70,12 +73,13 @@ rosetta-maps/
 - No build system, package manifest, or runtime code — this repo is data.
 - No new signature format / unified IR (see Hard rule 4).
 - No APK fetching, mirroring, or uploading anywhere in this repo or its CI.
-- Don't restate the map schema/format here; cross-link the rosetta-frida
-  docs so there is a single source of truth.
+- The canonical schema lives in `schema/rosetta-map.schema.json` (this
+  repo owns it). Don't duplicate the field-by-field format in prose
+  elsewhere; point at the schema so there is a single source of truth.
 
 ## Related repos
 
-- **`rosetta-frida`** — the Frida adapter; canonical schema, validator,
-  and RFC 0001.
-- **`rosetta-xposed`** — the Xposed/LSPosed/LSPatch adapter; consumes these
-  same maps.
+- **`rosetta-frida`** — the Frida adapter and home of RFC 0001; a client
+  of this repo's canonical schema (its Zod validator tracks it).
+- **`rosetta-xposed`** — the Xposed/LSPosed/LSPatch adapter; another client
+  that consumes these same maps.
