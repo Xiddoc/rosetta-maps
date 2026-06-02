@@ -41,7 +41,9 @@ rosetta-maps/
    `schema/rosetta-map.schema.json` is the single, language-neutral source
    of truth for the `schema_version: 2` format — the format belongs with
    the data, and the data lives here. CI validates every map against this
-   file directly (ajv, no cross-repo checkout). The rosetta-frida (TS/Zod)
+   file directly with a language-neutral JSON Schema checker
+   (check-jsonschema — no JS toolchain, no cross-repo checkout). The
+   rosetta-frida (TS/Zod)
    and rosetta-xposed (Kotlin) adapters are **clients** that track this
    schema. Changing the format means bumping this file first, then the
    adapters — never a fork or a mirror in the other direction.

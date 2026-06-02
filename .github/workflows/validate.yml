@@ -19,10 +19,17 @@ jobs:
             - name: Check out this maps repo
               uses: actions/checkout@v4
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
+            - name: Set up Python
+              uses: actions/setup-python@v5
               with:
-                  node-version: '24'
+                  python-version: '3.12'
+
+            # This repo is data, not a JS library, so its CI carries no JS
+            # toolchain: validation runs through a language-neutral JSON Schema
+            # checker (check-jsonschema, built on the `jsonschema` library)
+            # rather than a Node/ajv stack. Nothing here implies a runtime.
+            - name: Install check-jsonschema
+              run: pipx install check-jsonschema
 
             # RFC 0001 Decision 4, tier 1: structural validation against the
             # canonical map schema. This repo OWNS that schema
@@ -40,11 +47,9 @@ jobs:
                       echo "::error::no maps found under maps/"
                       exit 1
                   fi
-                  npx --yes ajv-cli@5 validate \
-                      --strict=false \
-                      --all-errors \
-                      -s schema/rosetta-map.schema.json \
-                      -d "maps/**/*.json"
+                  check-jsonschema \
+                      --schemafile schema/rosetta-map.schema.json \
+                      "${mapfiles[@]}"
                   echo "validated ${#mapfiles[@]} map(s) against the canonical schema"
 
             - name: Enforce the maps/<app>/<version_code>.json layout
@@ -55,7 +60,7 @@ jobs:
                   fail=0
                   for f in maps/**/*.json; do
                       base="$(basename "$f" .json)"
-                      vc="$(node -e "process.stdout.write(String(require('./'+process.argv[1]).version_code))" "$f")"
+                      vc="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version_code'])" "$f")"
                       if [ "$base" != "$vc" ]; then
                           echo "::error file=$f::filename '$base' != map version_code '$vc' (expected maps/<app>/<version_code>.json)"
                           fail=1
