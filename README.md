@@ -61,9 +61,9 @@ APK is ever uploaded**). In short: add/extend the signatures, generate the
 
 ## Status
 
-**Scaffolding.** The layout, the canonical-schema validation CI, the
-filename/`version_code` convention check, the JSON Schema editor aid, and a
-worked `com.example.app` example are in place. See
+**Scaffolding.** The layout, the JSON-Schema validation CI (self-contained
+`ajv` against `schema/rosetta-map.schema.json`), the filename/`version_code`
+convention check, and a worked `com.example.app` example are in place. See
 [CONTRIBUTING.md](CONTRIBUTING.md) for the planned validation tiers
 (signed attestations, an optional trusted runner, device telemetry) — none
 of which host APKs in public CI.

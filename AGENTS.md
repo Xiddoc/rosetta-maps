@@ -37,11 +37,13 @@ rosetta-maps/
    version_code)`.** The filename IS the `version_code` (the authoritative
    O(1) selection key, RFC 0001 Decision 3). `validate.yml` enforces both
    the schema and the filename↔`version_code` match.
-2. **Reuse the canonical validator, never fork it.** CI checks maps with
-   the rosetta-frida library's own Zod validator (`rosetta validate`, run
-   from a transient checkout). `schema/rosetta-map.schema.json` is an
-   editor aid that *mirrors* it — if the schema bumps in rosetta-frida,
-   update that file too, but the library remains the source of truth.
+2. **Validate against the in-repo JSON Schema; keep it a faithful mirror.**
+   CI is self-contained (`ajv` against `schema/rosetta-map.schema.json`) — a
+   pure *data* repo shouldn't reach into the library repo at CI time. That
+   schema **mirrors** rosetta-frida's canonical Zod validator, which remains
+   the schema's source of truth: if it bumps there, update
+   `schema/rosetta-map.schema.json` to match (and `const: 2` keeps the
+   schema version pinned). It serves double duty as the editor aid.
 3. **Never host or upload APKs in CI.** APK-host ToS forbid it and it's a
    copyright liability. Public CI does structural checks only (Decision 4
    tier 1). Correctness-against-the-real-app belongs off public CI

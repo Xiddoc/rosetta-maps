@@ -1,13 +1,15 @@
 # schema/
 
 `rosetta-map.schema.json` is a JSON Schema (draft-07) describing the
-`schema_version: 2` map format. It exists for **editor autocompletion and a
-fast local first-pass** only.
+`schema_version: 2` map format. It serves double duty: **editor
+autocompletion** and **this repo's CI gate** (`validate.yml` runs `ajv`
+against it, so the data repo validates itself without reaching into the
+library repo).
 
-The **authoritative** validator is the rosetta-frida library's Zod schema
-(`src/validate/schema.ts`), which CI runs via `rosetta validate`. This file
-mirrors it; when the schema bumps in rosetta-frida, update this file to
-match — but the library, not this file, is the source of truth.
+The **schema source of truth** is the rosetta-frida library's Zod schema
+(`src/validate/schema.ts`). This file *mirrors* it; when the schema bumps in
+rosetta-frida, update this file to match — the library, not this file,
+defines the format.
 
 ## Editor setup (optional)
 
