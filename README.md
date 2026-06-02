@@ -7,7 +7,7 @@
 > [rosetta-xposed](https://github.com/Xiddoc/rosetta-xposed) user hooking
 > that version gets them for free.
 
-[![Validate](https://github.com/Xiddoc/rosetta-maps/actions/workflows/validate.yml/badge.svg)](https://github.com/Xiddoc/rosetta-maps/actions/workflows/validate.yml)
+[![Validate](https://github.com/Xiddoc/rosetta-maps/actions/workflows/validate.yml/badge.svg?branch=master)](https://github.com/Xiddoc/rosetta-maps/actions/workflows/validate.yml?query=branch%3Amaster)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Status](https://img.shields.io/badge/status-scaffolding-orange)](#status)
 
