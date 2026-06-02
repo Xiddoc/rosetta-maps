@@ -1,0 +1,59 @@
+site_name: rosetta-maps
+site_description: The community knowledge base of Android obfuscation maps — a CVE-database for obfuscated app internals.
+site_url: https://Xiddoc.github.io/rosetta-maps/
+repo_name: Xiddoc/rosetta-maps
+repo_url: https://github.com/Xiddoc/rosetta-maps
+edit_uri: edit/master/docs/
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Contributing: contributing.md
+  - Reference:
+      - Repository layout: reference/layout.md
+      - Trust model & validation: reference/trust-model.md
+      - Map schema: reference/schema.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+
+plugins:
+  - search
