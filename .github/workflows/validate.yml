@@ -19,42 +19,38 @@ jobs:
             - name: Check out this maps repo
               uses: actions/checkout@v4
 
-            # Tier 1 of the RFC 0001 Decision 4 validation ladder reuses the
-            # library's canonical Zod validator rather than duplicating it.
-            # The CLI runs from source via tsx, so no build/publish is needed.
-            - name: Check out the rosetta-frida validator
-              uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v5
               with:
-                  repository: Xiddoc/rosetta-frida
-                  ref: master
-                  path: .rosetta-frida
+                  python-version: '3.12'
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: '24'
-                  cache: npm
-                  cache-dependency-path: .rosetta-frida/package-lock.json
+            # This repo is data, not a JS library, so its CI carries no JS
+            # toolchain: validation runs through a language-neutral JSON Schema
+            # checker (check-jsonschema, built on the `jsonschema` library)
+            # rather than a Node/ajv stack. Nothing here implies a runtime.
+            - name: Install check-jsonschema
+              run: pipx install check-jsonschema
 
-            - name: Install validator dependencies
-              working-directory: .rosetta-frida
-              run: npm ci
-
+            # RFC 0001 Decision 4, tier 1: structural validation against the
+            # canonical map schema. This repo OWNS that schema
+            # (schema/rosetta-map.schema.json) — it is the language-neutral
+            # source of truth for the `schema_version: 2` format, and the
+            # rosetta-frida (TS) and rosetta-xposed (Kotlin) adapters are
+            # CLIENTS that track it. So CI validates maps against its own
+            # schema: self-contained, no cross-repo checkout, and no
+            # drift-prone mirror to keep in sync.
             - name: Validate every map against the canonical schema
               run: |
                   shopt -s globstar nullglob
-                  found=0
-                  for f in maps/**/*.json; do
-                      echo "::group::$f"
-                      ( cd .rosetta-frida && npm run --silent cli -- validate "$GITHUB_WORKSPACE/$f" )
-                      echo "::endgroup::"
-                      found=$((found + 1))
-                  done
-                  if [ "$found" = "0" ]; then
+                  mapfiles=(maps/**/*.json)
+                  if [ "${#mapfiles[@]}" = "0" ]; then
                       echo "::error::no maps found under maps/"
                       exit 1
                   fi
-                  echo "validated $found map(s)"
+                  check-jsonschema \
+                      --schemafile schema/rosetta-map.schema.json \
+                      "${mapfiles[@]}"
+                  echo "validated ${#mapfiles[@]} map(s) against the canonical schema"
 
             - name: Enforce the maps/<app>/<version_code>.json layout
               # version_code is the authoritative O(1) selection key (RFC 0001
@@ -64,7 +60,7 @@ jobs:
                   fail=0
                   for f in maps/**/*.json; do
                       base="$(basename "$f" .json)"
-                      vc="$(node -e "process.stdout.write(String(require('./'+process.argv[1]).version_code))" "$f")"
+                      vc="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version_code'])" "$f")"
                       if [ "$base" != "$vc" ]; then
                           echo "::error file=$f::filename '$base' != map version_code '$vc' (expected maps/<app>/<version_code>.json)"
                           fail=1

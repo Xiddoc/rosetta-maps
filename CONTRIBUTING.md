@@ -15,7 +15,7 @@ Decision 4, in one line:
 | `signatures/<app>/signatures.yaml` | sigmatcher rules | **source of truth** — reproducible, FOSS-correct |
 | `maps/<app>/<version_code>.json` | resolved map | **published artifact** — consumed by Frida & Xposed |
 | `templates/` | starting points | copy these |
-| `schema/rosetta-map.schema.json` | JSON Schema | editor aid (mirrors the canonical validator) |
+| `schema/rosetta-map.schema.json` | JSON Schema | **canonical schema** — owned here; CI validates against it |
 
 A map's filename **is** its `version_code` — the authoritative O(1)
 selection key (RFC 0001 Decision 3). `maps/com.example.app/30405.json`
@@ -33,11 +33,13 @@ holds the map whose `"version_code": 30405`. CI enforces this.
    signatures + the APK — e.g. with the sigmatcher adapter and
    `rosetta convert` from the rosetta-frida toolchain — and write it to
    `maps/<app>/<version_code>.json`. If you're hand-authoring, start from
-   `templates/map.template.json` and validate locally:
+   `templates/map.template.json` and validate locally against the canonical
+   schema this repo owns:
 
    ```sh
-   # from a checkout of rosetta-frida:
-   npm run cli -- validate /path/to/rosetta-maps/maps/<app>/<version_code>.json
+   npx ajv-cli@5 validate --strict=false \
+       -s schema/rosetta-map.schema.json \
+       -d maps/<app>/<version_code>.json
    ```
 
 3. **Record provenance** on the map. Use the existing schema fields rather
@@ -57,8 +59,9 @@ holds the map whose `"version_code": 30405`. CI enforces this.
 
 CI runs **structural validation only** — RFC 0001 Decision 4, tier 1:
 
-- valid against the canonical schema (the same Zod validator the
-  rosetta-frida library uses — not a fork);
+- valid against the canonical schema this repo owns
+  (`schema/rosetta-map.schema.json`), checked with `ajv` — no cross-repo
+  checkout, no mirror to drift;
 - every `version_code` is present and **matches the filename**;
 - JSON descriptors parse and the file is well-formed.
 

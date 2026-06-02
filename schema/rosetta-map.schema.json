@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "https://github.com/Xiddoc/rosetta-maps/schema/rosetta-map.schema.json",
     "title": "Rosetta map (schema_version 2)",
-    "description": "Editor-side mirror of rosetta-frida's canonical Zod validator (src/validate/schema.ts). The AUTHORITATIVE gate in CI is `rosetta validate` from the rosetta-frida library; this file exists for editor autocompletion and a fast first-pass. Keep it in sync when the schema bumps.",
+    "description": "Canonical, language-neutral schema for the `schema_version: 2` map format. This repo (rosetta-maps) OWNS this schema: it is the single source of truth for the format that the maps here are stored in, and the rosetta-frida (TS/Zod) and rosetta-xposed (Kotlin) adapters are clients that must track it. CI validates every map against this file; editors can point at it for autocompletion. Changing the format means bumping this schema first, then updating the client adapters.",
     "type": "object",
     "required": ["schema_version", "app", "version", "version_code", "classes"],
     "properties": {

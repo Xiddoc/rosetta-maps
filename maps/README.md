@@ -17,11 +17,9 @@ maps/<app>/<version_code>.json
 
 ## Format
 
-Strict JSON, `schema_version: 2`. The full schema, field semantics, and
-authoring guidance live in the rosetta-frida docs
-([map format](https://github.com/Xiddoc/rosetta-frida/blob/master/docs/maps/format.md)).
-`../schema/rosetta-map.schema.json` is an editor aid that mirrors the
-canonical validator.
+Strict JSON, `schema_version: 2`. The canonical schema, field semantics, and
+authoring guidance live in `../schema/rosetta-map.schema.json` (owned here) and
+its [docs page](https://Xiddoc.github.io/rosetta-maps/reference/schema/).
 
 ## Provenance
 
