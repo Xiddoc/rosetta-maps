@@ -1,0 +1,71 @@
+# Example sigmatcher signatures for com.example.app — the SOURCE OF TRUTH
+# from which maps/com.example.app/<version_code>.json is generated
+# (RFC 0001 Decision 4). This is the offline / host dialect: human-readable
+# regex-over-smali, multi-version, FOSS-correct (a map is reproducible from
+# these signatures + the APK, which is what makes it verifiable).
+#
+# The on-device / runtime dialect (DexKit queries) is a separate, parallel
+# form harvested one-time into this format; see RFC 0001 Decision 5. Do not
+# invent a third "unified" signature format here.
+#
+# Anchoring strategy: pin each class on the most rotation-stable evidence
+# available — AIDL descriptors (never rotated), stable string literals, and
+# stable framework superclass refs — so the same signatures resolve across
+# adjacent point releases even as obfuscated names rotate.
+
+# ─── Non-rotating AIDL contract ──────────────────────────────────────
+# The .Stub nested class embeds its binder descriptor string verbatim;
+# that string is the stable cross-version anchor.
+- name: 'IRemoteService$Stub'
+  package: 'com.example.app'
+  signatures:
+      - signature: '"com\.example\.app\.IRemoteService"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'requestTicket'
+        signatures:
+            - signature: '\(Landroid/os/Bundle;L[a-z]+;\)V'
+              type: regex
+              count: 1-2
+
+- name: 'IServiceCallback'
+  package: 'com.example.app'
+  signatures:
+      - signature: '"com\.example\.app\.IServiceCallback"'
+        type: regex
+        count: 1
+
+# ─── Rotating Java class — anchored on a stable string literal ───────
+- name: 'RemoteServiceClient'
+  package: 'com.example.app'
+  signatures:
+      - signature: 'sessionId'
+        type: regex
+        count: 1
+  fields:
+      - name: 'sessionId'
+        signatures:
+            - signature: 'sessionId'
+              type: regex
+              count: 1
+  methods:
+      - name: 'requestTicket'
+        signatures:
+            - signature: 'requestTicket\(Landroid/os/Bundle;\)'
+              type: regex
+              count: 1
+
+# ─── Constants holder — identified by an endpoint string literal ─────
+- name: 'Config'
+  package: 'com.example.app'
+  signatures:
+      - signature: '"https://.*\.example/api"'
+        type: regex
+        count: 1
+  fields:
+      - name: 'ENDPOINT_URL'
+        signatures:
+            - signature: '"https://.*\.example/api"'
+              type: regex
+              count: 1

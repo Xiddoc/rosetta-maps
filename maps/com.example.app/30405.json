@@ -1,0 +1,426 @@
+{
+    "schema_version": 2,
+    "app": "com.example.app",
+    "version": "3.4.5",
+    "version_code": 30405,
+    "captured_at": "2026-05-13",
+    "signer_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "frida_min_version": "16.0.0",
+    "frida_max_version": "17.99.99",
+    "sources": [
+        {
+            "tool": "sigmatcher",
+            "config": "signatures/example.json",
+            "classes": 10,
+            "confidence": "high"
+        },
+        {
+            "tool": "hand-authored",
+            "classes": 5,
+            "notes": "verified via Frida runtime trace on emulator"
+        }
+    ],
+    "classes": {
+        "com.example.app.IRemoteService$Stub": {
+            "obfuscated": "aaaa",
+            "extends": "android.os.Binder",
+            "kind": "aidl_stub",
+            "dex": "classes6.dex",
+            "aidl_descriptor": "com.example.app.IRemoteService",
+            "anchors": [
+                "com.example.app.IRemoteService",
+                "Transaction failed"
+            ],
+            "source": "sigmatcher",
+            "confidence": "high",
+            "methods": {
+                "requestTicket": [
+                    {
+                        "obfuscated": "c",
+                        "signature": "(Landroid/os/Bundle;Lbbbb;)V",
+                        "aidl_txn": 2
+                    },
+                    {
+                        "obfuscated": "d",
+                        "signature": "(Landroid/os/Bundle;Ljava/lang/String;Lbbbb;)V",
+                        "aidl_txn": 4
+                    }
+                ],
+                "requestPrompt": {
+                    "obfuscated": "f",
+                    "signature": "(Landroid/os/Bundle;Lcccc;)V",
+                    "aidl_txn": 3
+                },
+                "onTransact": {
+                    "obfuscated": "onTransact",
+                    "signature": "(ILandroid/os/Parcel;Landroid/os/Parcel;I)Z"
+                }
+            },
+            "fields": {
+                "DESCRIPTOR": {
+                    "obfuscated": "DESCRIPTOR",
+                    "type": "Ljava/lang/String;",
+                    "static": true
+                }
+            }
+        },
+        "com.example.app.IServiceCallback": {
+            "obfuscated": "bbbb",
+            "kind": "aidl_callback",
+            "aidl_descriptor": "com.example.app.IServiceCallback",
+            "source": "sigmatcher",
+            "methods": {
+                "onResult": {
+                    "obfuscated": "a",
+                    "signature": "(Landroid/os/Bundle;)V",
+                    "aidl_txn": 1
+                },
+                "onError": {
+                    "obfuscated": "b",
+                    "signature": "(ILjava/lang/String;)V",
+                    "aidl_txn": 2
+                }
+            }
+        },
+        "com.example.app.IDialogCallback": {
+            "obfuscated": "cccc",
+            "kind": "aidl_callback",
+            "aidl_descriptor": "com.example.app.IDialogCallback",
+            "source": "sigmatcher",
+            "methods": {
+                "onDismiss": {
+                    "obfuscated": "a",
+                    "signature": "(I)V",
+                    "aidl_txn": 1
+                }
+            }
+        },
+        "com.example.app.RemoteServiceClient": {
+            "obfuscated": "dddd",
+            "extends": "com.example.app.AbstractServiceClient",
+            "kind": "class",
+            "source": "sigmatcher",
+            "methods": {
+                "requestTicket": {
+                    "obfuscated": "c",
+                    "signature": "(Landroid/os/Bundle;)Leeee;"
+                },
+                "requestPrompt": {
+                    "obfuscated": "e",
+                    "signature": "(Landroid/os/Bundle;)Leeee;"
+                }
+            },
+            "fields": {
+                "sessionId": {
+                    "obfuscated": "a",
+                    "type": "Ljava/lang/String;"
+                },
+                "flags": {
+                    "obfuscated": "b",
+                    "type": "I"
+                }
+            }
+        },
+        "com.example.app.AbstractServiceClient": {
+            "obfuscated": "ffff",
+            "extends": "java.lang.Object",
+            "kind": "class",
+            "source": "sigmatcher",
+            "methods": {
+                "connect": {
+                    "obfuscated": "a",
+                    "signature": "()V"
+                },
+                "disconnect": {
+                    "obfuscated": "b",
+                    "signature": "()V"
+                }
+            },
+            "fields": {
+                "INSTANCE_COUNT": {
+                    "obfuscated": "a",
+                    "type": "I",
+                    "static": true
+                },
+                "context": {
+                    "obfuscated": "b",
+                    "type": "Landroid/content/Context;"
+                }
+            }
+        },
+        "com.example.app.ResultPromise": {
+            "obfuscated": "eeee",
+            "kind": "class",
+            "source": "sigmatcher",
+            "methods": {
+                "then": {
+                    "obfuscated": "c",
+                    "signature": "(Lgggg;)Leeee;"
+                },
+                "catchError": {
+                    "obfuscated": "d",
+                    "signature": "(Lgggg;)Leeee;"
+                },
+                "isComplete": {
+                    "obfuscated": "e",
+                    "signature": "()Z"
+                }
+            },
+            "fields": {
+                "result": {
+                    "obfuscated": "a",
+                    "type": "Ljava/lang/Object;"
+                },
+                "completed": {
+                    "obfuscated": "b",
+                    "type": "Z"
+                }
+            }
+        },
+        "com.example.app.PromiseCallback": {
+            "obfuscated": "gggg",
+            "kind": "interface",
+            "source": "sigmatcher",
+            "methods": {
+                "apply": {
+                    "obfuscated": "a",
+                    "signature": "(Ljava/lang/Object;)Ljava/lang/Object;"
+                }
+            }
+        },
+        "com.example.app.BlobCache": {
+            "obfuscated": "hhhh",
+            "kind": "class",
+            "source": "hand-authored",
+            "anchors": [
+                "BlobCache:evict"
+            ],
+            "methods": {
+                "get": {
+                    "obfuscated": "c",
+                    "signature": "(Ljava/lang/String;)Ljava/lang/Object;"
+                },
+                "put": [
+                    {
+                        "obfuscated": "d",
+                        "signature": "(Ljava/lang/String;Ljava/lang/Object;)V"
+                    },
+                    {
+                        "obfuscated": "e",
+                        "signature": "(Ljava/lang/String;Ljava/lang/Object;J)V"
+                    }
+                ],
+                "evict": {
+                    "obfuscated": "f",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "clear": {
+                    "obfuscated": "g",
+                    "signature": "()V"
+                }
+            },
+            "fields": {
+                "buffer": {
+                    "obfuscated": "a",
+                    "type": "Ljava/util/HashMap;"
+                },
+                "MAX_SIZE": {
+                    "obfuscated": "b",
+                    "type": "I",
+                    "static": true
+                }
+            }
+        },
+        "com.example.app.Ticket": {
+            "obfuscated": "iiii",
+            "kind": "class",
+            "source": "sigmatcher",
+            "methods": {
+                "<init>": [
+                    {
+                        "obfuscated": "<init>",
+                        "signature": "(Ljava/lang/String;)V",
+                        "is_constructor": true
+                    },
+                    {
+                        "obfuscated": "<init>",
+                        "signature": "(Ljava/lang/String;J)V",
+                        "is_constructor": true
+                    }
+                ],
+                "fromBytes": {
+                    "obfuscated": "a",
+                    "signature": "([B)Liiii;",
+                    "static": true
+                },
+                "getValue": {
+                    "obfuscated": "b",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getExpiry": {
+                    "obfuscated": "c",
+                    "signature": "()J"
+                }
+            },
+            "fields": {
+                "value": {
+                    "obfuscated": "a",
+                    "type": "Ljava/lang/String;"
+                },
+                "expiryMillis": {
+                    "obfuscated": "b",
+                    "type": "J"
+                }
+            }
+        },
+        "com.example.app.ErrorCode": {
+            "obfuscated": "jjjj",
+            "kind": "enum",
+            "source": "sigmatcher",
+            "methods": {
+                "values": {
+                    "obfuscated": "values",
+                    "signature": "()[Ljjjj;",
+                    "static": true
+                },
+                "valueOf": {
+                    "obfuscated": "valueOf",
+                    "signature": "(Ljava/lang/String;)Ljjjj;",
+                    "static": true
+                },
+                "getCode": {
+                    "obfuscated": "a",
+                    "signature": "()I"
+                }
+            },
+            "fields": {
+                "SUCCESS": {
+                    "obfuscated": "a",
+                    "type": "Ljjjj;",
+                    "static": true
+                },
+                "TIMEOUT": {
+                    "obfuscated": "b",
+                    "type": "Ljjjj;",
+                    "static": true
+                },
+                "AUTH_FAILED": {
+                    "obfuscated": "c",
+                    "type": "Ljjjj;",
+                    "static": true
+                }
+            }
+        },
+        "com.example.app.Ticket$Companion": {
+            "obfuscated": "kkkk",
+            "extends": "java.lang.Object",
+            "kind": "synthetic",
+            "source": "sigmatcher",
+            "methods": {
+                "create": {
+                    "obfuscated": "a",
+                    "signature": "(Ljava/lang/String;)Liiii;"
+                }
+            }
+        },
+        "com.example.app.AbstractServiceClient$1": {
+            "obfuscated": "llll",
+            "kind": "anonymous",
+            "extends": "java.lang.Object",
+            "source": "hand-authored",
+            "methods": {
+                "run": {
+                    "obfuscated": "run",
+                    "signature": "()V"
+                }
+            },
+            "fields": {
+                "outer": {
+                    "obfuscated": "a",
+                    "type": "Lffff;"
+                }
+            }
+        },
+        "com.example.app.RequestCodec": {
+            "obfuscated": "mmmm",
+            "kind": "class",
+            "source": "hand-authored",
+            "methods": {
+                "encode": {
+                    "obfuscated": "a",
+                    "signature": "(Landroid/os/Bundle;)[B"
+                },
+                "decode": {
+                    "obfuscated": "b",
+                    "signature": "([B)Landroid/os/Bundle;"
+                }
+            }
+        },
+        "com.example.app.Config": {
+            "obfuscated": "nnnn",
+            "kind": "class",
+            "source": "hand-authored",
+            "fields": {
+                "ENABLE_TRACING": {
+                    "obfuscated": "a",
+                    "type": "Z",
+                    "static": true
+                },
+                "MAX_RETRIES": {
+                    "obfuscated": "b",
+                    "type": "I",
+                    "static": true
+                },
+                "TIMEOUT_MILLIS": {
+                    "obfuscated": "c",
+                    "type": "J",
+                    "static": true
+                },
+                "ENDPOINT_URL": {
+                    "obfuscated": "d",
+                    "type": "Ljava/lang/String;",
+                    "static": true
+                }
+            }
+        },
+        "com.example.app.SessionManager": {
+            "obfuscated": "oooo",
+            "extends": "java.lang.Object",
+            "kind": "class",
+            "source": "hand-authored",
+            "anchors": [
+                "SessionManager initialized"
+            ],
+            "methods": {
+                "startSession": {
+                    "obfuscated": "a",
+                    "signature": "(Landroid/content/Context;)Liiii;"
+                },
+                "endSession": {
+                    "obfuscated": "b",
+                    "signature": "(Liiii;)V"
+                },
+                "getActive": {
+                    "obfuscated": "c",
+                    "signature": "()Loooo;",
+                    "static": true
+                }
+            },
+            "fields": {
+                "client": {
+                    "obfuscated": "a",
+                    "type": "Ldddd;"
+                },
+                "cache": {
+                    "obfuscated": "b",
+                    "type": "Lhhhh;"
+                },
+                "INSTANCE": {
+                    "obfuscated": "c",
+                    "type": "Loooo;",
+                    "static": true
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,15 @@
+# Node (the validator is pulled in transiently by CI)
+node_modules/
+.rosetta-frida/
+
+# Editor + OS
+.claude/
+.workspace
+.DS_Store
+.idea/
+.vscode/
+
+# Python helper scratch
+__pycache__/
+*.py[cod]
+.venv/

@@ -1,0 +1,73 @@
+name: Validate maps
+
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+
+# Cancel superseded runs on the same ref.
+concurrency:
+    group: validate-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    validate:
+        name: schema + convention checks (no APK)
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out this maps repo
+              uses: actions/checkout@v4
+
+            # Tier 1 of the RFC 0001 Decision 4 validation ladder reuses the
+            # library's canonical Zod validator rather than duplicating it.
+            # The CLI runs from source via tsx, so no build/publish is needed.
+            - name: Check out the rosetta-frida validator
+              uses: actions/checkout@v4
+              with:
+                  repository: Xiddoc/rosetta-frida
+                  ref: master
+                  path: .rosetta-frida
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '24'
+                  cache: npm
+                  cache-dependency-path: .rosetta-frida/package-lock.json
+
+            - name: Install validator dependencies
+              working-directory: .rosetta-frida
+              run: npm ci
+
+            - name: Validate every map against the canonical schema
+              run: |
+                  shopt -s globstar nullglob
+                  found=0
+                  for f in maps/**/*.json; do
+                      echo "::group::$f"
+                      ( cd .rosetta-frida && npm run --silent cli -- validate "$GITHUB_WORKSPACE/$f" )
+                      echo "::endgroup::"
+                      found=$((found + 1))
+                  done
+                  if [ "$found" = "0" ]; then
+                      echo "::error::no maps found under maps/"
+                      exit 1
+                  fi
+                  echo "validated $found map(s)"
+
+            - name: Enforce the maps/<app>/<version_code>.json layout
+              # version_code is the authoritative O(1) selection key (RFC 0001
+              # Decision 3), so it IS the filename. Catch mislabeled files.
+              run: |
+                  shopt -s globstar nullglob
+                  fail=0
+                  for f in maps/**/*.json; do
+                      base="$(basename "$f" .json)"
+                      vc="$(node -e "process.stdout.write(String(require('./'+process.argv[1]).version_code))" "$f")"
+                      if [ "$base" != "$vc" ]; then
+                          echo "::error file=$f::filename '$base' != map version_code '$vc' (expected maps/<app>/<version_code>.json)"
+                          fail=1
+                      fi
+                  done
+                  exit $fail

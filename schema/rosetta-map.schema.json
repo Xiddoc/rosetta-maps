@@ -1,0 +1,101 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://github.com/Xiddoc/rosetta-maps/schema/rosetta-map.schema.json",
+    "title": "Rosetta map (schema_version 2)",
+    "description": "Editor-side mirror of rosetta-frida's canonical Zod validator (src/validate/schema.ts). The AUTHORITATIVE gate in CI is `rosetta validate` from the rosetta-frida library; this file exists for editor autocompletion and a fast first-pass. Keep it in sync when the schema bumps.",
+    "type": "object",
+    "required": ["schema_version", "app", "version", "version_code", "classes"],
+    "properties": {
+        "schema_version": { "const": 2 },
+        "app": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "version_code": { "type": "integer", "minimum": 0 },
+        "captured_at": { "type": "string" },
+        "signer_sha256": { "type": "string" },
+        "frida_min_version": { "type": "string" },
+        "frida_max_version": { "type": "string" },
+        "sources": { "type": "array", "items": { "$ref": "#/definitions/mapSource" } },
+        "classes": {
+            "type": "object",
+            "additionalProperties": { "$ref": "#/definitions/classEntry" }
+        }
+    },
+    "definitions": {
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "classKind": {
+            "enum": [
+                "class",
+                "interface",
+                "enum",
+                "aidl_stub",
+                "aidl_callback",
+                "synthetic",
+                "anonymous"
+            ]
+        },
+        "mapSource": {
+            "type": "object",
+            "required": ["tool"],
+            "properties": {
+                "tool": { "type": "string", "minLength": 1 },
+                "config": { "type": "string" },
+                "classes": { "type": "integer" },
+                "notes": { "type": "string" },
+                "confidence": { "$ref": "#/definitions/confidence" }
+            }
+        },
+        "methodEntry": {
+            "type": "object",
+            "required": ["obfuscated", "signature"],
+            "properties": {
+                "obfuscated": { "type": "string", "minLength": 1 },
+                "signature": { "type": "string", "minLength": 1 },
+                "aidl_txn": { "type": "integer" },
+                "static": { "type": "boolean" },
+                "synthetic": { "type": "boolean" },
+                "is_constructor": { "type": "boolean" }
+            }
+        },
+        "methodMapValue": {
+            "oneOf": [
+                { "$ref": "#/definitions/methodEntry" },
+                {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "$ref": "#/definitions/methodEntry" }
+                }
+            ]
+        },
+        "fieldEntry": {
+            "type": "object",
+            "required": ["obfuscated", "type"],
+            "properties": {
+                "obfuscated": { "type": "string", "minLength": 1 },
+                "type": { "type": "string", "minLength": 1 },
+                "static": { "type": "boolean" }
+            }
+        },
+        "classEntry": {
+            "type": "object",
+            "required": ["obfuscated"],
+            "properties": {
+                "obfuscated": { "type": "string", "minLength": 1 },
+                "extends": { "type": "string" },
+                "kind": { "$ref": "#/definitions/classKind" },
+                "dex": { "type": "string" },
+                "aidl_descriptor": { "type": "string" },
+                "anchors": { "type": "array", "items": { "type": "string" } },
+                "methods": {
+                    "type": "object",
+                    "additionalProperties": { "$ref": "#/definitions/methodMapValue" }
+                },
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": { "$ref": "#/definitions/fieldEntry" }
+                },
+                "source": { "type": "string" },
+                "confidence": { "$ref": "#/definitions/confidence" }
+            }
+        }
+    }
+}

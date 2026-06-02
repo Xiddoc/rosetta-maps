@@ -1,0 +1,31 @@
+# Signature template (sigmatcher / offline dialect).
+#
+# One file per app under signatures/<app>/signatures.yaml. Signatures are
+# multi-version on purpose: anchor on rotation-stable evidence so the same
+# rules resolve across point releases.
+#
+# Each top-level entry identifies ONE class; nested `methods` / `fields`
+# refine members within a matched class. Prefer, in order:
+#   1. AIDL descriptor strings (never rotated)
+#   2. stable `static final String` literals reached by live code
+#   3. stable framework superclass / interface refs
+#   4. cross-class anchors (a resolved class's descriptor referenced elsewhere)
+
+- name: 'RealClassName'
+  package: 'com.example.yourapp'
+  signatures:
+      - signature: '"a stable string literal in this class"'
+        type: regex
+        count: 1
+  fields:
+      - name: 'realFieldName'
+        signatures:
+            - signature: 'realFieldName'
+              type: regex
+              count: 1
+  methods:
+      - name: 'realMethodName'
+        signatures:
+            - signature: 'realMethodName\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1

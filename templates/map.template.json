@@ -1,0 +1,40 @@
+{
+    "schema_version": 2,
+    "app": "com.example.yourapp",
+    "version": "1.2.3",
+    "version_code": 10203,
+    "captured_at": "2026-01-01",
+    "signer_sha256": "fill-with-lowercase-hex-sha256-of-the-signing-cert-or-omit",
+    "sources": [
+        {
+            "tool": "sigmatcher",
+            "config": "signatures/com.example.yourapp/signatures.yaml",
+            "classes": 1,
+            "confidence": "high"
+        }
+    ],
+    "classes": {
+        "com.example.yourapp.RealClassName": {
+            "obfuscated": "a",
+            "kind": "class",
+            "source": "sigmatcher",
+            "anchors": ["a stable string literal in this class"],
+            "methods": {
+                "realMethodName": {
+                    "obfuscated": "b",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "overloadedMethod": [
+                    { "obfuscated": "c", "signature": "()V" },
+                    { "obfuscated": "c", "signature": "(I)V" }
+                ]
+            },
+            "fields": {
+                "realFieldName": {
+                    "obfuscated": "a",
+                    "type": "Ljava/lang/String;"
+                }
+            }
+        }
+    }
+}
