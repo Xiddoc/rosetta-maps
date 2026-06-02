@@ -36,11 +36,8 @@ holds the map whose `"version_code": 30405`. CI enforces this.
    `templates/map.template.json` and validate locally:
 
    ```sh
-   # self-contained — exactly what CI runs (no rosetta-frida checkout needed):
-   npx ajv-cli@5 validate --strict=false \
-       -s schema/rosetta-map.schema.json -d "maps/<app>/<version_code>.json"
-   # (optional cross-check, if you have a rosetta-frida checkout:
-   #  npm run cli -- validate /path/to/maps/<app>/<version_code>.json)
+   # from a checkout of rosetta-frida:
+   npm run cli -- validate /path/to/rosetta-maps/maps/<app>/<version_code>.json
    ```
 
 3. **Record provenance** on the map. Use the existing schema fields rather
@@ -60,9 +57,8 @@ holds the map whose `"version_code": 30405`. CI enforces this.
 
 CI runs **structural validation only** — RFC 0001 Decision 4, tier 1:
 
-- valid against `schema/rosetta-map.schema.json` (checked with `ajv`) —
-  the in-repo JSON Schema that mirrors rosetta-frida's canonical Zod
-  validator, so the data repo's gate stays self-contained;
+- valid against the canonical schema (the same Zod validator the
+  rosetta-frida library uses — not a fork);
 - every `version_code` is present and **matches the filename**;
 - JSON descriptors parse and the file is well-formed.
 
