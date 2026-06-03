@@ -18,8 +18,8 @@ rosetta-frida and rosetta-xposed adapters.
 
 - `<app>` — the Android package name (e.g. `com.example.app`).
 - `<version_code>` — the `PackageInfo.versionCode` (or low 32 bits of
-  `longVersionCode`). This is the **authoritative O(1) selection key** (RFC 0001
-  Decision 3), so it **is** the filename; CI rejects any file whose name does not
+  `longVersionCode`). This is the **authoritative O(1) selection key**,
+  so it **is** the filename; CI rejects any file whose name does not
   equal the map's `version_code`.
 
 Maps are strict JSON, `schema_version: 2`. Field semantics live with the
@@ -53,7 +53,7 @@ obfuscated names rotate. In rough order of robustness:
 
 sigmatcher YAML (here, offline/readable) and DexKit queries (on-device, runtime)
 are the only two signature dialects — split by *execution context*, not by app or
-framework (RFC 0001 Decision 5). DexKit fingerprints are harvested **one-time**
+framework. DexKit fingerprints are harvested **one-time**
 into this sigmatcher form. Do not propose a new "unified" signature IR — the
 convergence point is the resolved **map**, not the signature.
 

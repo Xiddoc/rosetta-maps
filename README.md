@@ -45,7 +45,7 @@ Full docs are at **[Xiddoc.github.io/rosetta-maps](https://Xiddoc.github.io/rose
 ## Related repos
 
 - **[rosetta-frida](https://github.com/Xiddoc/rosetta-frida)** — the Frida adapter
-  and home of RFC 0001. The first-class **client** of the map schema.
+  and first-class **client** of the map schema.
 - **[rosetta-xposed](https://github.com/Xiddoc/rosetta-xposed)** — the
   Xposed/LSPosed/LSPatch adapter; another **client** that consumes these maps.
 

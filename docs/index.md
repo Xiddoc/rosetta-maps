@@ -51,7 +51,7 @@ in the [contribution guide](contributing.md).
 ## Related repositories
 
 - **[rosetta-frida](https://github.com/Xiddoc/rosetta-frida)** — the Frida adapter
-  and home of RFC 0001. The first-class client of the map schema; its validator
+  and first-class client of the map schema; its validator
   tracks this repo's canonical `schema/rosetta-map.schema.json`.
 - **[rosetta-xposed](https://github.com/Xiddoc/rosetta-xposed)** — the
   Xposed/LSPosed/LSPatch adapter; another client that consumes these same maps.
