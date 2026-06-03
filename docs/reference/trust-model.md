@@ -1,9 +1,9 @@
 # Trust model & validation
 
-rosetta-maps follows a CVE-database-style trust model, in one line:
+rosetta-maps follows a layered, provenance-based trust model, in one line:
 
-> **Like a CVE database — attest with provenance, CI checks well-formedness, the
-> device confirms correctness, reputation accrues over time.**
+> **Attest with provenance, CI checks well-formedness, the device confirms
+> correctness, reputation accrues over time.**
 
 A contributed map is *verifiable* rather than merely trusted because it is
 reproducible from its signatures + the APK. Trust is a gradient that accrues over
