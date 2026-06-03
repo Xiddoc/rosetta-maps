@@ -1,7 +1,7 @@
 # 🗿 rosetta-maps
 
 > The community knowledge base of Android **obfuscation maps** — a
-> CVE-database for obfuscated app internals.
+> database for obfuscated app internals.
 
 [![Validate](https://github.com/Xiddoc/rosetta-maps/actions/workflows/validate.yml/badge.svg?branch=master)](https://github.com/Xiddoc/rosetta-maps/actions/workflows/validate.yml?query=branch%3Amaster)
 [![Docs](https://github.com/Xiddoc/rosetta-maps/actions/workflows/pages.yml/badge.svg?branch=master)](https://Xiddoc.github.io/rosetta-maps/)
