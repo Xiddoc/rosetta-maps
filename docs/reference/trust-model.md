@@ -1,11 +1,9 @@
 # Trust model & validation
 
-rosetta-maps follows the trust model from
-[RFC 0001](https://github.com/Xiddoc/rosetta-frida/blob/master/docs/rfcs/0001-unified-cross-framework-signatures.md)
-Decision 4, in one line:
+rosetta-maps follows a layered, provenance-based trust model, in one line:
 
-> **Like a CVE database — attest with provenance, CI checks well-formedness, the
-> device confirms correctness, reputation accrues over time.**
+> **Attest with provenance, CI checks well-formedness, the device confirms
+> correctness, reputation accrues over time.**
 
 A contributed map is *verifiable* rather than merely trusted because it is
 reproducible from its signatures + the APK. Trust is a gradient that accrues over
@@ -13,7 +11,7 @@ time, not a binary stamp.
 
 ## What CI checks
 
-Public CI runs **structural validation only** (RFC 0001 Decision 4, tier 1):
+Public CI runs **structural validation only** (the first tier of the trust ladder):
 
 - every map is valid against the canonical schema this repo owns
   (`schema/rosetta-map.schema.json`) — CI validates each map against that schema

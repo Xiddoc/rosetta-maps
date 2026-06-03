@@ -1,12 +1,10 @@
 # Contributing to rosetta-maps
 
 Thank you for helping build the shared obfuscation knowledge base. This
-repo follows the trust model from
-[RFC 0001](https://github.com/Xiddoc/rosetta-frida/blob/master/docs/rfcs/0001-unified-cross-framework-signatures.md)
-Decision 4, in one line:
+repo follows a layered, provenance-based trust model, in one line:
 
-> **Like a CVE DB — attest with provenance, CI checks well-formedness, the
-> device confirms correctness, reputation accrues over time.**
+> **Attest with provenance, CI checks well-formedness, the device confirms
+> correctness, reputation accrues over time.**
 
 ## What goes where
 
@@ -18,7 +16,7 @@ Decision 4, in one line:
 | `schema/rosetta-map.schema.json` | JSON Schema | **canonical schema** — owned here; CI validates against it |
 
 A map's filename **is** its `version_code` — the authoritative O(1)
-selection key (RFC 0001 Decision 3). `maps/com.example.app/30405.json`
+selection key. `maps/com.example.app/30405.json`
 holds the map whose `"version_code": 30405`. CI enforces this.
 
 ## Submitting a contribution
@@ -57,7 +55,7 @@ holds the map whose `"version_code": 30405`. CI enforces this.
 
 ## What CI checks (and what it deliberately does not)
 
-CI runs **structural validation only** — RFC 0001 Decision 4, tier 1:
+CI runs **structural validation only** — the first tier of the trust ladder:
 
 - valid against the canonical schema this repo owns
   (`schema/rosetta-map.schema.json`), checked with `ajv` — no cross-repo
@@ -81,8 +79,8 @@ against the real app is established *off* public CI:
 
 ## Signatures are the source; don't invent a third format
 
-We use exactly two signature dialects, split by execution context (RFC 0001
-Decision 5): **sigmatcher YAML** (offline/host, lives here) and **DexKit
+We use exactly two signature dialects, split by execution context:
+**sigmatcher YAML** (offline/host, lives here) and **DexKit
 queries** (on-device/runtime, harvested one-time into sigmatcher form). Do
 not propose a new "unified" signature IR — the convergence point is the
 resolved **map**, not the signature.

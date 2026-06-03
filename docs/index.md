@@ -1,6 +1,6 @@
 # rosetta-maps
 
-**The community knowledge base of Android obfuscation maps — a CVE-database for obfuscated app internals.**
+**The community knowledge base of Android obfuscation maps — a shared, searchable database of obfuscated app internals.**
 
 rosetta-maps is a shared, PR-gated repository of per-app, per-version
 obfuscation maps: the `real → obfuscated` names for an app version. Contribute a
@@ -41,7 +41,7 @@ in the [contribution guide](contributing.md).
   What lives where: `maps/`, `signatures/`, `schema/`, `templates/`.
 
 - :material-shield-check: **[Trust model & validation](reference/trust-model.md)**
-  The CVE-database trust ladder and what CI does (and deliberately does not).
+  The trust ladder and what CI does (and deliberately does not).
 
 - :material-code-json: **[Map schema](reference/schema.md)**
   The canonical, language-neutral schema this repo owns.
@@ -51,7 +51,7 @@ in the [contribution guide](contributing.md).
 ## Related repositories
 
 - **[rosetta-frida](https://github.com/Xiddoc/rosetta-frida)** — the Frida adapter
-  and home of RFC 0001. The first-class client of the map schema; its validator
+  and first-class client of the map schema; its validator
   tracks this repo's canonical `schema/rosetta-map.schema.json`.
 - **[rosetta-xposed](https://github.com/Xiddoc/rosetta-xposed)** — the
   Xposed/LSPosed/LSPatch adapter; another client that consumes these same maps.

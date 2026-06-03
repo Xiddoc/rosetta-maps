@@ -3,8 +3,7 @@
 The **source of truth**. sigmatcher rules (the offline / host dialect:
 regex-over-smali) that identify a class/method across versions. A map under
 `../maps/` is *reproducible* from these signatures + the APK — which is what
-makes a contributed map verifiable rather than just trusted (RFC 0001
-Decision 4).
+makes a contributed map verifiable rather than just trusted.
 
 ## Layout
 
@@ -27,6 +26,6 @@ sigmatcher YAML (here, offline/readable) and DexKit queries (on-device,
 runtime) are the only two dialects — split by *execution context*, not by
 app or framework. DexKit fingerprints are harvested **one-time** into this
 sigmatcher form; the convergence point is the resolved map, not a unified
-signature IR (RFC 0001 Decision 5).
+signature IR.
 
 Start from `../templates/signatures.template.yaml`.
