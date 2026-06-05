@@ -4,7 +4,6 @@
     "version": "1.2.3",
     "version_code": 10203,
     "captured_at": "2026-01-01",
-    "signer_sha256": "fill-with-lowercase-hex-sha256-of-the-signing-cert-or-omit",
     "sources": [
         {
             "tool": "sigmatcher",

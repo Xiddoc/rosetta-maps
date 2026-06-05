@@ -50,5 +50,25 @@ Record provenance on the map itself rather than in free text:
   `confidence`, `notes`).
 - per-class `source` and `confidence`.
 - `signer_sha256` — the lowercase-hex SHA-256 of the signing certificate, if you
-  read it. This pins publisher authenticity and detects repacks.
+  read it. This pins publisher authenticity and detects repacks. **Format-checked:**
+  it must match `^[0-9a-f]{64}$` (exactly 64 lowercase hex chars). Omit the key
+  entirely if you don't have it — don't leave a placeholder.
 - `captured_at` — the date you captured the map.
+
+## Input bounds and key safety
+
+The schema imposes defensive caps so a malformed or hostile map can't blow up a
+client. These exact limits are mirrored by the rosetta-frida (Zod) and
+rosetta-xposed clients and must stay in lockstep:
+
+- **Sizes:** `classes` ≤ 50000 entries; per-class `methods` and `fields` ≤ 5000
+  each; a method-overload array is 1–200 entries; `anchors` ≤ 1000; `sources` ≤
+  100.
+- **String lengths:** obfuscated / short names ≤ 512; `signature` ≤ 4096; `app`
+  and `version` ≤ 256; other free-text strings ≤ 4096.
+- **Identifier shapes:** `app` must match
+  `^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$` (a dotted Java package id);
+  `version_code` is an integer ≥ 0; `signer_sha256` matches `^[0-9a-f]{64}$`.
+- **Reserved-key rejection:** the `classes`, `methods`, and `fields` objects
+  reject the keys `__proto__`, `constructor`, and `prototype` (prototype-pollution
+  guard for JS clients).
