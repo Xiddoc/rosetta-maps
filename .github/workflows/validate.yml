@@ -121,10 +121,19 @@ jobs:
             # `obfuscated` dropped) and CI would stay green. These curated
             # samples pin both directions: every map under schema/samples/valid/
             # MUST pass and every map under schema/samples/invalid/ MUST be
-            # rejected (each violates exactly one enforced constraint). The
-            # rosetta-frida (Zod) and rosetta-xposed (Kotlin) client validators
-            # assert the same verdicts in their conformance suites, so the three
-            # hand-maintained copies of the format can't drift apart unnoticed.
+            # rejected (each violates exactly one enforced constraint).
+            #
+            # Cross-client coverage is PARTIAL, not total: the rosetta-frida
+            # (Zod) and rosetta-xposed (Kotlin) client validators independently
+            # assert ONLY the constraints that appear in their shared
+            # conformance `validation.json` fixture — currently the `minLength:1`
+            # non-empty `obfuscated` rule (class/method/field) and the
+            # `schema_version` hard-gate (a `schema_version: 1` map is rejected).
+            # Those constraints are pinned in all three hand-maintained copies of
+            # the format and can't drift apart unnoticed. The REMAINING invalid
+            # samples here (e.g. `bad-app-pattern`, `method-missing-signature`,
+            # `missing-version-code`) are pinned ONLY by this maps-CI step today;
+            # widening the shared fixture to cover them is tracked follow-up.
             - name: Schema accepts valid samples and rejects invalid samples
               run: |
                   set -euo pipefail
