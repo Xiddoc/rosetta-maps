@@ -11,10 +11,25 @@ concurrency:
     group: validate-${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
+# Least privilege: this job only reads the checked-out tree. No write
+# scopes are needed for structural validation, so grant none beyond read.
+permissions:
+    contents: read
+
 jobs:
     validate:
         name: schema + convention checks (no APK)
         runs-on: ubuntu-latest
+        # A pathological/adversarial map (deeply nested, huge, or one that
+        # drives the schema checker into pathological work) must not be able
+        # to pin a runner for the 360-minute default ceiling. Bound the whole
+        # job; per-step `timeout` guards bound the validator itself below.
+        timeout-minutes: 10
+        env:
+            # DoS/abuse guards (security audit H3). Tune here, in one place.
+            MAX_MAP_BYTES: '1048576' # 1 MiB per file
+            MAX_MAP_FILES: '2000' # files considered per run
+            VALIDATE_TIMEOUT: '60' # wall-clock seconds for check-jsonschema
         steps:
             - name: Check out this maps repo
               uses: actions/checkout@v4
@@ -28,8 +43,54 @@ jobs:
             # toolchain: validation runs through a language-neutral JSON Schema
             # checker (check-jsonschema, built on the `jsonschema` library)
             # rather than a Node/ajv stack. Nothing here implies a runtime.
+            # Pinned to an exact version so a CI run is reproducible and a new
+            # upstream release can't silently change validation behaviour.
             - name: Install check-jsonschema
-              run: pipx install check-jsonschema
+              run: pipx install 'check-jsonschema==0.37.2'
+
+            # DoS/abuse pre-flight (security audit H3). Runs BEFORE the schema
+            # checker, which loads each document fully into memory: reject
+            # symlinks, oversize files, and thousands-of-files PRs up front so
+            # an adversarial contribution can't exhaust runner memory/time.
+            - name: Enforce size, count, and symlink caps
+              run: |
+                  set -euo pipefail
+                  shopt -s globstar nullglob
+
+                  mapfiles=(maps/**/*.json)
+                  n="${#mapfiles[@]}"
+                  if [ "$n" = "0" ]; then
+                      echo "::error::no maps found under maps/"
+                      exit 1
+                  fi
+
+                  if [ "$n" -gt "$MAX_MAP_FILES" ]; then
+                      echo "::error::$n map files exceeds the per-run cap of $MAX_MAP_FILES"
+                      exit 1
+                  fi
+
+                  # Reject symlinks anywhere under maps/ before reading any
+                  # file (defends against symlink-to-/dev/zero or out-of-tree
+                  # reads).
+                  symlinks="$(find maps -type l)"
+                  if [ -n "$symlinks" ]; then
+                      echo "::error::symlinks are not allowed under maps/:"
+                      echo "$symlinks"
+                      exit 1
+                  fi
+
+                  fail=0
+                  for f in "${mapfiles[@]}"; do
+                      bytes="$(wc -c < "$f")"
+                      if [ "$bytes" -gt "$MAX_MAP_BYTES" ]; then
+                          echo "::error file=$f::$bytes bytes exceeds the per-file cap of $MAX_MAP_BYTES bytes"
+                          fail=1
+                      fi
+                  done
+                  if [ "$fail" != "0" ]; then
+                      exit 1
+                  fi
+                  echo "size/count/symlink caps OK for $n map(s)"
 
             # RFC 0001 Decision 4, tier 1: structural validation against the
             # canonical map schema. This repo OWNS that schema
@@ -38,16 +99,18 @@ jobs:
             # rosetta-frida (TS) and rosetta-xposed (Kotlin) adapters are
             # CLIENTS that track it. So CI validates maps against its own
             # schema: self-contained, no cross-repo checkout, and no
-            # drift-prone mirror to keep in sync.
+            # drift-prone mirror to keep in sync. The validator runs under a
+            # wall-clock guard so a pathological doc can't hang the step.
             - name: Validate every map against the canonical schema
               run: |
+                  set -euo pipefail
                   shopt -s globstar nullglob
                   mapfiles=(maps/**/*.json)
                   if [ "${#mapfiles[@]}" = "0" ]; then
                       echo "::error::no maps found under maps/"
                       exit 1
                   fi
-                  check-jsonschema \
+                  timeout "$VALIDATE_TIMEOUT" check-jsonschema \
                       --schemafile schema/rosetta-map.schema.json \
                       "${mapfiles[@]}"
                   echo "validated ${#mapfiles[@]} map(s) against the canonical schema"
@@ -55,15 +118,57 @@ jobs:
             - name: Enforce the maps/<app>/<version_code>.json layout
               # version_code is the authoritative O(1) selection key (RFC 0001
               # Decision 3), so it IS the filename. Catch mislabeled files.
+              # A SINGLE python pass over every map (instead of forking one
+              # interpreter per file) also asserts version_code matches
+              # ^[0-9]+$ and that each resolved path stays under maps/.
               run: |
+                  set -euo pipefail
                   shopt -s globstar nullglob
-                  fail=0
-                  for f in maps/**/*.json; do
-                      base="$(basename "$f" .json)"
-                      vc="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version_code'])" "$f")"
-                      if [ "$base" != "$vc" ]; then
-                          echo "::error file=$f::filename '$base' != map version_code '$vc' (expected maps/<app>/<version_code>.json)"
-                          fail=1
-                      fi
-                  done
-                  exit $fail
+                  mapfiles=(maps/**/*.json)
+                  if [ "${#mapfiles[@]}" = "0" ]; then
+                      echo "::error::no maps found under maps/"
+                      exit 1
+                  fi
+                  python3 - "${mapfiles[@]}" <<'PY'
+                  import json
+                  import os
+                  import re
+                  import sys
+
+                  VC_RE = re.compile(r"^[0-9]+$")
+                  fail = 0
+                  maps_root = os.path.realpath("maps")
+
+                  for f in sys.argv[1:]:
+                      # Path containment: the resolved path must stay under maps/.
+                      real = os.path.realpath(f)
+                      if not (real == maps_root or real.startswith(maps_root + os.sep)):
+                          print(f"::error file={f}::resolves outside maps/ ({real})")
+                          fail = 1
+                          continue
+                      base = os.path.splitext(os.path.basename(f))[0]
+                      try:
+                          with open(f, encoding="utf-8") as fh:
+                              doc = json.load(fh)
+                      except (OSError, ValueError) as exc:
+                          print(f"::error file={f}::could not parse JSON: {exc}")
+                          fail = 1
+                          continue
+                      vc = doc.get("version_code")
+                      vc_str = str(vc)
+                      # Must be a JSON integer AND spell out as ^[0-9]+$ (no
+                      # signs, no floats, no bools — bool is an int subclass).
+                      if isinstance(vc, bool) or not isinstance(vc, int) or not VC_RE.match(vc_str):
+                          print(f"::error file={f}::version_code '{vc}' is not a non-negative integer")
+                          fail = 1
+                          continue
+                      if base != vc_str:
+                          print(
+                              f"::error file={f}::filename '{base}' != map version_code "
+                              f"'{vc_str}' (expected maps/<app>/<version_code>.json)"
+                          )
+                          fail = 1
+
+                  sys.exit(fail)
+                  PY
+                  echo "layout + version_code conventions OK"
