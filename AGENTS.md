@@ -56,6 +56,27 @@ rosetta-maps/
    invent a unified signature IR; the convergence point is the *map*
    (RFC 0001 Decision 5).
 
+## Testing mandate
+
+**Everything that can be tested must be tested; keep CI green; add cases
+with every change.** This repo is data + CI, so "tests" are the PR-gated
+validation checks in `.github/workflows/validate.yml`, not a unit-test
+suite — but the discipline is the same as the rosetta-frida / rosetta-xposed
+clients:
+
+- Every change to the canonical schema (`schema/rosetta-map.schema.json`)
+  must keep `validate.yml` green AND add/extend the accept/reject samples
+  under `schema/samples/` that pin the affected constraint in BOTH
+  directions (a `valid/` sample for anything newly allowed, an `invalid/`
+  sample for anything newly forbidden). A constraint with no sample
+  exercising it can loosen silently — that is the drift the samples exist
+  to catch.
+- A schema change is not done until the client adapters (frida Zod,
+  xposed Kotlin) and, where applicable, the shared conformance
+  `validation.json` fixture are updated to match — the three copies of the
+  `schema_version: 2` format must move together (Hard rule 2).
+- Never weaken or skip a CI check to make a PR pass; fix the data.
+
 ## When picking up work here
 
 1. **Read RFC 0001 Decisions 3–5** in `rosetta-frida` first — they define
