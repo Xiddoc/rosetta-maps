@@ -35,9 +35,9 @@ holds the map whose `"version_code": 30405`. CI enforces this.
    schema this repo owns:
 
    ```sh
-   npx ajv-cli@5 validate --strict=false \
-       -s schema/rosetta-map.schema.json \
-       -d maps/<app>/<version_code>.json
+   pipx run check-jsonschema==0.37.2 \
+       --schemafile schema/rosetta-map.schema.json \
+       maps/<app>/<version_code>.json
    ```
 
 3. **Record provenance** on the map. Use the existing schema fields rather
@@ -58,10 +58,19 @@ holds the map whose `"version_code": 30405`. CI enforces this.
 CI runs **structural validation only** — the first tier of the trust ladder:
 
 - valid against the canonical schema this repo owns
-  (`schema/rosetta-map.schema.json`), checked with `ajv` — no cross-repo
-  checkout, no mirror to drift;
-- every `version_code` is present and **matches the filename**;
+  (`schema/rosetta-map.schema.json`), checked with `check-jsonschema` — no
+  cross-repo checkout, no mirror to drift;
+- every `version_code` is present, is a non-negative integer (`^[0-9]+$`),
+  and **matches the filename**;
 - JSON descriptors parse and the file is well-formed.
+
+To keep CI cheap and abuse-resistant, the workflow also enforces resource
+caps *before* it loads any document into the schema checker: each
+`maps/**/*.json` must be **at most 1 MiB**, a single run validates **at most
+2000 map files**, and **symlinks under `maps/` are rejected**. These limits
+are generous for real maps; if a legitimate map ever needs more, raise the
+`MAX_MAP_BYTES` / `MAX_MAP_FILES` values in `.github/workflows/validate.yml`
+rather than working around the check.
 
 CI **never uploads or hosts an APK.** APK-host terms of service forbid
 automated access, and hosting copyrighted APKs is a liability. Correctness
