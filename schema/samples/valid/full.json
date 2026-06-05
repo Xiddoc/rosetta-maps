@@ -1,0 +1,30 @@
+{
+    "schema_version": 2,
+    "app": "com.example.app",
+    "version": "3.4.5",
+    "version_code": 30405,
+    "captured_at": "2026-05-11",
+    "signer_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "sources": [{ "tool": "sigmatcher", "classes": 1, "confidence": "high" }],
+    "classes": {
+        "com.example.app.service.IRemoteService$Stub": {
+            "obfuscated": "aaaa",
+            "extends": "zzzz",
+            "kind": "aidl_stub",
+            "dex": "classes6.dex",
+            "methods": {
+                "requestTicket": [
+                    {
+                        "obfuscated": "c",
+                        "signature": "(Landroid/os/Bundle;Lbbbb;)V",
+                        "aidl_txn": 2,
+                        "static": false
+                    }
+                ]
+            },
+            "fields": {
+                "sessionId": { "obfuscated": "a", "type": "Ljava/lang/String;" }
+            }
+        }
+    }
+}

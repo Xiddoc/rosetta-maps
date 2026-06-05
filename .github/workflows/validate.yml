@@ -115,6 +115,49 @@ jobs:
                       "${mapfiles[@]}"
                   echo "validated ${#mapfiles[@]} map(s) against the canonical schema"
 
+            # Schema-DRIFT guard. The published maps above prove the schema
+            # ACCEPTS good maps, but nothing proved it still REJECTS bad ones —
+            # so a constraint could silently loosen (e.g. `minLength: 1` on
+            # `obfuscated` dropped) and CI would stay green. These curated
+            # samples pin both directions: every map under schema/samples/valid/
+            # MUST pass and every map under schema/samples/invalid/ MUST be
+            # rejected (each violates exactly one enforced constraint). The
+            # rosetta-frida (Zod) and rosetta-xposed (Kotlin) client validators
+            # assert the same verdicts in their conformance suites, so the three
+            # hand-maintained copies of the format can't drift apart unnoticed.
+            - name: Schema accepts valid samples and rejects invalid samples
+              run: |
+                  set -euo pipefail
+                  shopt -s globstar nullglob
+                  schema=schema/rosetta-map.schema.json
+
+                  valid=(schema/samples/valid/*.json)
+                  invalid=(schema/samples/invalid/*.json)
+                  if [ "${#valid[@]}" = "0" ] || [ "${#invalid[@]}" = "0" ]; then
+                      echo "::error::expected samples under schema/samples/{valid,invalid}/"
+                      exit 1
+                  fi
+
+                  # Every valid sample MUST validate.
+                  timeout "$VALIDATE_TIMEOUT" check-jsonschema \
+                      --schemafile "$schema" "${valid[@]}"
+                  echo "all ${#valid[@]} valid sample(s) accepted"
+
+                  # Every invalid sample MUST be rejected (one at a time, so a
+                  # single accidentally-valid sample is pinpointed).
+                  fail=0
+                  for f in "${invalid[@]}"; do
+                      if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
+                          --schemafile "$schema" "$f" >/dev/null 2>&1; then
+                          echo "::error file=$f::schema ACCEPTED an invalid sample (a constraint may have loosened)"
+                          fail=1
+                      fi
+                  done
+                  if [ "$fail" != "0" ]; then
+                      exit 1
+                  fi
+                  echo "all ${#invalid[@]} invalid sample(s) correctly rejected"
+
             - name: Enforce the maps/<app>/<version_code>.json layout
               # version_code is the authoritative O(1) selection key (RFC 0001
               # Decision 3), so it IS the filename. Catch mislabeled files.
