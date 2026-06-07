@@ -62,7 +62,18 @@ CI runs **structural validation only** — the first tier of the trust ladder:
   cross-repo checkout, no mirror to drift;
 - every `version_code` is present, is a non-negative integer (`^[0-9]+$`),
   and **matches the filename**;
-- JSON descriptors parse and the file is well-formed.
+- JSON descriptors parse and the file is well-formed;
+- every `signatures/<app>/signatures.yaml` (and the
+  `templates/signatures.template.yaml`) passes the sigmatcher-dialect
+  structural lint (`scripts/lint_signatures.py`) — required top-level keys
+  and known rule/member/signature shapes. It reads only the committed YAML
+  (no APK). Run it locally before opening a PR:
+
+  ```sh
+  python3 scripts/lint_signatures.py --self-test
+  python3 scripts/lint_signatures.py \
+      signatures/<app>/signatures.yaml templates/signatures.template.yaml
+  ```
 
 To keep CI cheap and abuse-resistant, the workflow also enforces resource
 caps *before* it loads any document into the schema checker: each

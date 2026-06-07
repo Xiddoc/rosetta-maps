@@ -1,10 +1,18 @@
 name: Validate maps
 
 on:
+    # PR-gated validation is the point of this workflow, so it runs on every
+    # pull_request targeting the default branch (which covers contributions
+    # from any source/feature branch). `push` is limited to the default branch
+    # to avoid double-running on PR head pushes. `workflow_dispatch` allows a
+    # manual run on any ref. NOTE (L11): if this repo's default branch is ever
+    # renamed from `master` (e.g. to `main`), update the branch filters below —
+    # they are the one place the default-branch name is hard-coded.
     push:
         branches: [master]
     pull_request:
         branches: [master]
+    workflow_dispatch:
 
 # Cancel superseded runs on the same ref.
 concurrency:
@@ -47,6 +55,17 @@ jobs:
             # upstream release can't silently change validation behaviour.
             - name: Install check-jsonschema
               run: pipx install 'check-jsonschema==0.37.2'
+
+            # The signatures linter (below) is pure-Python + PyYAML — same
+            # language-neutral, no-JS-toolchain style as the schema checker.
+            # Pinned so a CI run stays reproducible. We deliberately split the
+            # two installs: check-jsonschema is a standalone CLI, so `pipx`
+            # gives it an isolated venv; PyYAML is imported BY the interpreter
+            # that runs `python3 scripts/lint_signatures.py`, so it must land in
+            # that exact interpreter — `python3 -m pip` guarantees it goes into
+            # whatever `python3` resolves to here, rather than some other pip.
+            - name: Install PyYAML (for the signatures linter)
+              run: python3 -m pip install 'PyYAML==6.0.1'
 
             # DoS/abuse pre-flight (security audit H3). Runs BEFORE the schema
             # checker, which loads each document fully into memory: reject
@@ -224,3 +243,73 @@ jobs:
                   sys.exit(fail)
                   PY
                   echo "layout + version_code conventions OK"
+
+            # RFC 0001 Decision 4, tier-1 STRUCTURAL semantics. The schema above
+            # validates shape; this validator checks relationships the schema
+            # can't express: that every method `signature` is a well-formed JVM
+            # descriptor, that every app-internal obfuscated type a descriptor
+            # references resolves to a class the SAME map defines, that no two
+            # overloads in a class collide on (obfuscated-name, descriptor), and
+            # that the `app` field equals the parent directory under maps/. It is
+            # pure-Python (stdlib only) and reads ONLY the committed JSON — no APK
+            # (Hard rule 3). It ships a built-in self-test (accept/reject
+            # fixtures pinning each of the four checks in both directions) so the
+            # validator itself can't silently rot; we run that first, then check
+            # the real maps.
+            - name: Tier-1 map semantics (descriptors, refs, overloads, app-dir)
+              run: |
+                  set -euo pipefail
+                  shopt -s globstar nullglob
+
+                  # The self-test is bounded data (built-in fixtures, no I/O over
+                  # the repo), but wrap it in the same VALIDATE_TIMEOUT as the
+                  # real run for consistency — one guard, one knob.
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/validate_map_semantics.py --self-test
+
+                  mapfiles=(maps/**/*.json)
+                  if [ "${#mapfiles[@]}" = "0" ]; then
+                      echo "::error::no maps found under maps/"
+                      exit 1
+                  fi
+                  # Reuse the shared VALIDATE_TIMEOUT here even at MAX_MAP_FILES
+                  # scale: this validator is pure-Python stdlib doing a single
+                  # linear pass per map (parse each descriptor once, set lookups
+                  # for refs) — O(total bytes), no quadratic blowup and no
+                  # network/subprocess — so its worst case is far cheaper than
+                  # check-jsonschema's, which the same 60 s budget already covers
+                  # for the full MAX_MAP_FILES * MAX_MAP_BYTES corpus. A separate
+                  # var would be redundant; tune VALIDATE_TIMEOUT in one place.
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/validate_map_semantics.py "${mapfiles[@]}"
+                  echo "tier-1 semantics OK for ${#mapfiles[@]} map(s)"
+
+            # signatures/ is the SOURCE OF TRUTH (AGENTS.md) from which maps are
+            # reproduced, so it must be validated too — historically only
+            # maps/**/*.json was. This step lints every signatures.yaml for the
+            # minimal sigmatcher-dialect structure (required top-level keys,
+            # known rule/member/signature shapes). It reads ONLY the committed
+            # YAML — no APK is fetched or read — so Hard rule 3 (no APK in CI)
+            # is preserved. The linter ships a built-in self-test (accept/reject
+            # fixtures) so the linter itself can't silently rot; we run that
+            # first, then lint the real files.
+            - name: Lint signatures (sigmatcher dialect) + linter self-test
+              run: |
+                  set -euo pipefail
+                  shopt -s globstar nullglob
+
+                  python3 scripts/lint_signatures.py --self-test
+
+                  # Check the app signatures separately from the template. The
+                  # template (templates/signatures.template.yaml) is ALWAYS on
+                  # disk, so a combined glob can never be empty — which made the
+                  # old zero-file guard dead code. Split them: notice (don't
+                  # fail) when no app signatures are committed yet, then lint the
+                  # app sigs together WITH the template, which must always lint.
+                  appsigs=(signatures/**/signatures.yaml)
+                  if [ "${#appsigs[@]}" = "0" ]; then
+                      echo "::notice::no app signatures committed under signatures/ yet (linting the template only)"
+                  fi
+                  sigfiles=("${appsigs[@]}" templates/signatures.template.yaml)
+                  python3 scripts/lint_signatures.py "${sigfiles[@]}"
+                  echo "linted ${#sigfiles[@]} signature file(s)"

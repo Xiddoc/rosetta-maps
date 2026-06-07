@@ -51,9 +51,23 @@ Record provenance on the map itself rather than in free text:
 - per-class `source` and `confidence`.
 - `signer_sha256` — the lowercase-hex SHA-256 of the signing certificate, if you
   read it. This pins publisher authenticity and detects repacks. **Format-checked:**
-  it must match `^[0-9a-f]{64}$` (exactly 64 lowercase hex chars). Omit the key
-  entirely if you don't have it — don't leave a placeholder.
+  it must match `^[0-9a-f]{64}$` — exactly 64 lowercase hex chars, **no colon
+  separators** (the canonical on-disk form is `abcd…`, not the `AB:CD:…`
+  certificate-fingerprint spelling some tools print). Clients enforce it
+  **fail-closed**, so omit the key entirely if you don't have it — don't leave a
+  placeholder, which would always `SignerMismatch`.
 - `captured_at` — the date you captured the map.
+- `client_hints` — an optional sub-object for **advisory**, client-specific hints
+  that the core resolver ignores (`frida_min_version`, `frida_max_version`). They
+  live under `client_hints` rather than at the top level so the top-level
+  identity keys stay clean and the hints read as non-authoritative. `client_hints`
+  is itself **closed** (`additionalProperties: false`): adding a new hint key is a
+  deliberate schema change (bump this schema, then the client adapters), not a
+  silent extension — an unrecognised key is rejected rather than ignored.
+
+The top-level object, `sources[]` entries, and every class / method / field
+entry are **closed** (`additionalProperties: false`): an unknown or misspelled
+key (e.g. `extneds`, `signer_sh256`) is rejected rather than silently dropped.
 
 ## Input bounds and key safety
 
@@ -67,8 +81,12 @@ rosetta-xposed clients and must stay in lockstep:
 - **String lengths:** obfuscated / short names ≤ 512; `signature` ≤ 4096; `app`
   and `version` ≤ 256; other free-text strings ≤ 4096.
 - **Identifier shapes:** `app` must match
-  `^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$` (a dotted Java package id);
-  `version_code` is an integer ≥ 0; `signer_sha256` matches `^[0-9a-f]{64}$`.
+  `^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$` (a dotted Java package
+  id — every segment must start with a letter, so `com.2example` is rejected);
+  `version_code` is an integer ≥ 0; `version` must be non-blank — the
+  guarantee comes from two complementary constraints: `minLength: 1` rejects
+  the empty string `""` and the `\S` pattern rejects an all-whitespace label
+  like `"   "`; `signer_sha256` matches `^[0-9a-f]{64}$`.
 - **Reserved-key rejection:** the `classes`, `methods`, and `fields` objects
   reject the keys `__proto__`, `constructor`, and `prototype` (prototype-pollution
   guard for JS clients).

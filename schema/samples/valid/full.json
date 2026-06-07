@@ -5,6 +5,10 @@
     "version_code": 30405,
     "captured_at": "2026-05-11",
     "signer_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "client_hints": {
+        "frida_min_version": "16.0.0",
+        "frida_max_version": "17.99.99"
+    },
     "sources": [{ "tool": "sigmatcher", "classes": 1, "confidence": "high" }],
     "classes": {
         "com.example.app.service.IRemoteService$Stub": {
