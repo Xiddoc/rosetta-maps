@@ -20,8 +20,13 @@ through:
       paired with the 2^32 `valid/version-code-wide.json` accept
     - bad `app` pattern (`bad-app-pattern`)
     - empty `version` → `minLength: 1` (`empty-version`)
+    - whitespace-only `version` → the `\S` pattern (`whitespace-version`),
+      tightening `version` beyond mere non-emptiness
     - malformed (uppercase-hex) `signer_sha256` → `pattern: ^[0-9a-f]{64}$`
       (`bad-signer-sha256`), paired with the `valid/signer-sha256.json` accept
+    - colon-separated `signer_sha256` → same `pattern` rejects the
+      `AB:CD:…` certificate-fingerprint form (`signer-sha256-colons`); the
+      canonical on-disk form is lowercase, NO colons, exactly 64 hex chars
     - a reserved `classes` key → `propertyNames` rejects `__proto__` /
       `constructor` / `prototype` (`reserved-class-key`)
     - a method missing its required `signature` (`method-missing-signature`)
@@ -29,6 +34,14 @@ through:
       symmetric twin of `method-missing-signature`
     - a bad `kind` enum value → `classKind` enum (`bad-class-kind`)
     - a bad `confidence` enum value → `confidence` enum (`bad-confidence`)
+    - an unknown / typo'd top-level key → `additionalProperties: false`
+      (`unknown-top-level-key`, a `signer_sh256` typo)
+    - an unknown / typo'd class-entry key → `additionalProperties: false`
+      on `classEntry` (`unknown-class-key`, an `extneds` typo)
+    - the `frida_*` hints at the top level → they now live ONLY under
+      `client_hints`, so a top-level `frida_min_version` is rejected by
+      `additionalProperties: false` (`frida-version-top-level`), paired
+      with the `valid/client-hints.json` accept
 
   If a future schema edit silently loosens a constraint, the corresponding
   sample starts being accepted and the `validate.yml` "Schema accepts valid /
