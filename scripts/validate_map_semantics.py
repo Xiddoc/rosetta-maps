@@ -19,15 +19,30 @@ Checks, per `maps/**/*.json`:
                               method descriptor `(<params>)<ret>`; each type is
                               a valid JVM type (V, primitives ZBSCIJFD,
                               L<binary/name>;, arrays `[`).
-  2. referenced-types       — every object type `L...;` in a descriptor that
-                              looks APP-INTERNAL (i.e. NOT a framework type and
-                              shaped like this map's own obfuscation namespace)
-                              must resolve to some class entry in the SAME map
-                              (by `obfuscated` name or by real key).
+  2. referenced-types       — every object type `L...;` referenced by a method
+                              descriptor OR a `field.type` that looks
+                              APP-INTERNAL (i.e. NOT a framework type and shaped
+                              like this map's own obfuscation namespace) must
+                              resolve to some class entry in the SAME map (by
+                              `obfuscated` name or by real key).
   3. overload-distinctness  — within one class, no two method entries collide
                               on the same (obfuscated-name, descriptor) pair.
   4. app-dir match          — the map's `app` equals its parent directory name
                               under `maps/` (maps/<app>/<version_code>.json).
+
+CONSERVATIVE BOUND on check 2 (read before assuming it is exhaustive): a
+referenced object type is flagged as a dangling app-internal reference ONLY
+when it "looks like" one of THIS map's own rotated tokens — a single-segment
+name (no `/`) whose characters all fall inside the map's obfuscated-name
+alphabet and whose length is within the map's longest obfuscated name. A
+referenced type whose characters fall OUTSIDE that alphabet, or whose name is
+multi-segment (a real package path), is NOT flagged even if absent — and if a
+map defines no single-segment obfuscated names at all, the alphabet cannot be
+derived and check 2 is SKIPPED entirely for that map (a `::warning` is emitted
+so the skip is visible, not silent). This is deliberate: it avoids false
+positives on framework/library types and on short third-party-obfuscated names
+the map legitimately references without defining, at the cost of not catching
+every conceivable dangling reference.
 
 Usage:
     validate_map_semantics.py FILE [FILE ...]   # check each map
@@ -79,8 +94,12 @@ def _parse_field_type(desc: str, i: int) -> int:
         # A binary class name is one-or-more identifier segments joined by '/'.
         # Be permissive about the identifier charset (obfuscators emit unusual
         # but legal names) but forbid the structural mistakes a typo'd
-        # descriptor makes: empty segments, stray ';' or '[' or '(' inside.
-        for bad in (";", "[", "(", ")"):
+        # descriptor makes: empty segments, stray ';' / '[' / '(' / ')' inside,
+        # and the two characters that signal a *source* name leaked into a
+        # *binary* descriptor — a '.' (binary names join segments with '/', not
+        # '.', so `Lfoo.bar.Baz;` is malformed) or whitespace (no JVM binary
+        # name segment contains a space).
+        for bad in (";", "[", "(", ")", ".", " ", "\t", "\n", "\r"):
             if bad in name:
                 raise ValueError(f"object type name contains illegal {bad!r}: {name!r}")
         if name.startswith("/") or name.endswith("/") or "//" in name:
@@ -184,6 +203,16 @@ def _obfuscation_namespace(class_entries: dict) -> tuple[set[str], int]:
     class names; max_len is the longest such name. Used to decide whether a
     referenced single-segment type "looks like" one of this map's own renamed
     classes (and therefore must resolve).
+
+    NOTE — multi-segment obfuscated names are SKIPPED on purpose: only
+    single-segment `obfuscated` values (no '/' and no '.') contribute to the
+    alphabet. An obfuscator that emits package-qualified obfuscated names (e.g.
+    `a/b/c`) therefore yields no alphabet, which DISABLES check 2 for that map
+    (the namespace can't be derived). That is a deliberate conservative choice —
+    we'd rather skip the check than guess at a multi-segment alphabet and
+    false-positive — but it is a SILENT no-op unless the caller surfaces it.
+    `check_map` emits a `::warning` when the returned alphabet is empty so a
+    contributor sees that check 2 was SKIPPED, not passed.
     """
     alphabet: set[str] = set()
     max_len = 0
@@ -221,6 +250,20 @@ def _iter_method_entries(methods: dict):
             yield mkey, value
 
 
+def _unresolved_type_error(context: str, binary: str) -> str:
+    """Build the actionable error for a dangling app-internal type reference."""
+    return (
+        f"{context} references app-internal type 'L{binary};' that no class "
+        f"entry in this map resolves — add a class entry for 'L{binary};' "
+        f"(a stub entry with that `obfuscated` name, or its real key, is "
+        f"enough) so the reference resolves. NOTE: a short, single-segment "
+        f"third-party-obfuscated name can also trip this if it happens to fall "
+        f"inside this map's obfuscation alphabet; if 'L{binary};' is genuinely "
+        f"external, the map must still carry a (stub) entry for it to satisfy "
+        f"this check."
+    )
+
+
 def check_map(doc: object, path: str) -> list[str]:
     """Return a list of human-readable errors (empty == valid) for one map."""
     errors: list[str] = []
@@ -233,16 +276,25 @@ def check_map(doc: object, path: str) -> list[str]:
         return errors
 
     # --- check 4: app-dir match ---
+    # The schema requires `app` to be a present string, but this tier-1 check
+    # must not silently skip when it is missing or the wrong type: a map with no
+    # usable `app` field can never satisfy the maps/<app>/<version_code>.json
+    # contract, so flag it explicitly rather than passing it through.
     app = doc.get("app")
     parent = os.path.basename(os.path.dirname(os.path.realpath(path)))
-    if isinstance(app, str) and parent and app != parent:
+    if "app" not in doc or not isinstance(app, str):
+        errors.append(
+            f"map has no usable string 'app' field (got {app!r}); expected "
+            f"maps/<app>/<version_code>.json with app == '{parent}'"
+        )
+    elif parent and app != parent:
         errors.append(
             f"app field '{app}' != parent directory '{parent}' "
             f"(expected maps/<app>/<version_code>.json with app == <app>)"
         )
 
     # Resolvable obfuscated-type set: every class's `obfuscated` short name and
-    # its real key (so a descriptor may reference either spelling).
+    # its real key (so a descriptor or field type may reference either spelling).
     resolvable: set[str] = set()
     for ckey, entry in classes.items():
         resolvable.add(ckey)
@@ -252,10 +304,45 @@ def check_map(doc: object, path: str) -> list[str]:
                 resolvable.add(obf)
 
     alphabet, max_len = _obfuscation_namespace(classes)
+    if not alphabet:
+        # check 2 can't run: no single-segment obfuscated names to derive the
+        # map's alphabet from. Surface the SKIP so it isn't a silent no-op
+        # (see _obfuscation_namespace). A `::warning` is non-fatal in CI.
+        print(
+            f"::warning file={path}::referenced-types check (tier-1 check 2) "
+            f"SKIPPED — could not derive this map's obfuscation namespace "
+            f"(no single-segment 'obfuscated' class names); dangling "
+            f"app-internal type references are NOT validated for this map",
+            file=sys.stderr,
+        )
+
+    def _check_ref(context: str, jvm_type: str) -> None:
+        """check 2: a referenced app-internal object type must resolve."""
+        binary = _object_binary_name(jvm_type)
+        if binary is None:
+            return
+        if _is_framework_type(binary):
+            return
+        if not _looks_app_internal(binary, alphabet, max_len):
+            return
+        if binary not in resolvable:
+            errors.append(_unresolved_type_error(context, binary))
 
     for ckey, entry in classes.items():
         if not isinstance(entry, dict):
             continue
+
+        # --- check 2 (field types): every field.type that looks app-internal
+        # must resolve, just like a referenced type in a method descriptor. ---
+        fields = entry.get("fields")
+        if isinstance(fields, dict):
+            for fkey, fentry in fields.items():
+                if not isinstance(fentry, dict):
+                    continue
+                ftype = fentry.get("type")
+                if isinstance(ftype, str):
+                    _check_ref(f"class '{ckey}' field '{fkey}': type '{ftype}'", ftype)
+
         methods = entry.get("methods")
         if not isinstance(methods, dict):
             continue
@@ -267,15 +354,12 @@ def check_map(doc: object, path: str) -> list[str]:
             sig = mentry.get("signature")
             if not isinstance(obf, str) or not isinstance(sig, str):
                 continue
-            key = (obf, sig)
-            if key in seen:
-                errors.append(
-                    f"class '{ckey}': duplicate method overload — obfuscated "
-                    f"'{obf}' with descriptor '{sig}' appears more than once"
-                )
-            seen.add(key)
 
             # --- check 1: descriptor parses ---
+            # Parse BEFORE recording the collision key so a malformed descriptor
+            # is reported once (here) and the duplicate-detection `continue`
+            # below never double-reports the same parse error for a colliding
+            # entry.
             try:
                 params, ret = parse_method_descriptor(sig)
             except ValueError as exc:
@@ -285,21 +369,20 @@ def check_map(doc: object, path: str) -> list[str]:
                 )
                 continue
 
+            key = (obf, sig)
+            if key in seen:
+                errors.append(
+                    f"class '{ckey}': duplicate method overload — obfuscated "
+                    f"'{obf}' with descriptor '{sig}' appears more than once"
+                )
+                # Already counted this (obf, sig); its types were validated on
+                # the first occurrence, so skip re-checking refs for the dup.
+                continue
+            seen.add(key)
+
             # --- check 2: referenced app-internal types resolve ---
             for jvm_type in params + [ret]:
-                binary = _object_binary_name(jvm_type)
-                if binary is None:
-                    continue
-                if _is_framework_type(binary):
-                    continue
-                if not _looks_app_internal(binary, alphabet, max_len):
-                    continue
-                if binary not in resolvable:
-                    errors.append(
-                        f"class '{ckey}' method '{mkey}': descriptor '{sig}' "
-                        f"references app-internal type 'L{binary};' that no "
-                        f"class entry in this map resolves"
-                    )
+                _check_ref(f"class '{ckey}' method '{mkey}': descriptor '{sig}'", jvm_type)
 
     return errors
 
@@ -336,6 +419,17 @@ _VALID_MAP = {
                     {"obfuscated": "c", "signature": "(I)V"},
                     {"obfuscated": "c", "signature": "(J)V"},
                 ],
+                # Array forms — pin that these parse and that app-internal
+                # element types inside arrays still resolve. `abab` IS defined
+                # below, so `()[Labab;` and `([B)Labab;` must both pass.
+                "asBytes": {"obfuscated": "d", "signature": "()[B"},
+                "asArray": {"obfuscated": "e", "signature": "()[Labab;"},
+                "fromBytes": {"obfuscated": "f", "signature": "([B)Labab;"},
+            },
+            # A field whose type is an app-internal obfuscated class that the
+            # map DOES define (bbbb) — pins that resolvable field types pass.
+            "fields": {
+                "bar": {"obfuscated": "z", "type": "Lbbbb;"},
             },
         },
         "com.example.app.Bar": {
@@ -344,21 +438,33 @@ _VALID_MAP = {
                 "x": {"obfuscated": "a", "signature": "(Lcom/example/app/RealThing;)V"},
             },
         },
+        # Defined so the array-element reference `Labab;` above resolves.
+        "com.example.app.Abab": {"obfuscated": "abab", "methods": {}},
     },
 }
 
 # A map that references an app-internal type by its REAL key (not obfuscated),
-# which must also resolve.
+# which must ALSO resolve. To honestly exercise the real-key path, the referenced
+# token (`cccc`) is the REAL KEY of a class whose `obfuscated` short name is
+# something DIFFERENT and distinct (`q`). The reference is single-segment and
+# drawn from the map's alphabet, so the app-internal heuristic fires; it does NOT
+# appear anywhere in the obfuscated-name set, so it can resolve ONLY via the
+# real-key half of `resolvable`. Deleting `resolvable.add(ckey)` in check_map
+# (the real-key resolution line) would make this fixture wrongly fail.
 _VALID_REALKEY_REF = {
     "schema_version": 2,
     "app": "com.example.app",
     "version": "1.0",
     "version_code": 1,
     "classes": {
-        "ab": {"obfuscated": "ab", "methods": {}},
-        "cd": {
-            "obfuscated": "cd",
-            "methods": {"m": {"obfuscated": "a", "signature": "()Lab;"}},
+        # Real key `cccc` (single-segment) obfuscated to a DIFFERENT name
+        # `cccd` — the reference `Lcccc;` is in-alphabet ({c,d}) and within
+        # max_len (4), so the heuristic fires, but `cccc` is NOT an obfuscated
+        # name, so it can only resolve through the real-key set.
+        "cccc": {"obfuscated": "cccd", "methods": {}},
+        "dddc": {
+            "obfuscated": "dddc",
+            "methods": {"m": {"obfuscated": "a", "signature": "()Lcccc;"}},
         },
     },
 }
@@ -384,13 +490,32 @@ def _invalid_fixtures() -> dict:
     f1c["classes"]["com.example.app.Foo"]["methods"]["make"]["signature"] = "()Q"
     fixtures["malformed descriptor (bad type char)"] = f1c
 
+    # check 1: dotted binary name — a SOURCE name leaked into a binary
+    # descriptor. `Lfoo.bar.Baz;` must be rejected (binary names join with '/').
+    f1d = copy.deepcopy(_VALID_MAP)
+    f1d["classes"]["com.example.app.Foo"]["methods"]["doIt"]["signature"] = "(Lfoo.bar.Baz;)V"
+    fixtures["malformed descriptor (dotted binary name)"] = f1d
+
+    # check 1: space inside a binary name — no JVM name segment has whitespace.
+    f1e = copy.deepcopy(_VALID_MAP)
+    f1e["classes"]["com.example.app.Foo"]["methods"]["doIt"]["signature"] = "(L ;)V"
+    fixtures["malformed descriptor (space in binary name)"] = f1e
+
     # check 2: unresolved app-internal type. It must be drawn from THIS map's
-    # obfuscation alphabet ({a,b} here) and within its length so the heuristic
-    # recognises it as app-internal — 'abab' looks obfuscated but no class
-    # defines it.
+    # obfuscation alphabet ({a,b}, from class-level obfuscated names) and within
+    # its length so the heuristic recognises it as app-internal — 'abba' looks
+    # obfuscated but no class defines it. (Note 'abab' IS defined in _VALID_MAP,
+    # so it can't be reused here.)
     f2 = copy.deepcopy(_VALID_MAP)
-    f2["classes"]["com.example.app.Foo"]["methods"]["make"]["signature"] = "()Labab;"
+    f2["classes"]["com.example.app.Foo"]["methods"]["make"]["signature"] = "()Labba;"
     fixtures["unresolved app-internal type"] = f2
+
+    # check 2 (field types): dangling field-type reference. `baba` is in the
+    # map's alphabet ({a,b}) and within max_len (looks app-internal) but no
+    # class defines it — so a field typed `Lbaba;` must be flagged.
+    f2b = copy.deepcopy(_VALID_MAP)
+    f2b["classes"]["com.example.app.Foo"]["fields"]["bar"]["type"] = "Lbaba;"
+    fixtures["unresolved app-internal field type"] = f2b
 
     # check 3: overload collision — same obfuscated+descriptor twice.
     f3 = copy.deepcopy(_VALID_MAP)
@@ -405,6 +530,42 @@ def _invalid_fixtures() -> dict:
     f4 = copy.deepcopy(_VALID_MAP)
     f4["app"] = "com.other.pkg"
     fixtures["app != parent dir"] = f4
+
+    # check 4: missing `app` field — must be flagged, not silently skipped.
+    f4b = copy.deepcopy(_VALID_MAP)
+    del f4b["app"]
+    fixtures["missing app field"] = f4b
+
+    # check 4: non-string `app` field — same defensive flag.
+    f4c = copy.deepcopy(_VALID_MAP)
+    f4c["app"] = 123
+    fixtures["non-string app field"] = f4c
+
+    return fixtures
+
+
+def _exact_count_fixtures() -> dict:
+    """Invalid fixtures pinning an EXACT error count (not just non-empty).
+
+    Used for cases where the COUNT is the regression we're guarding (e.g. a
+    malformed descriptor shared by two colliding entries must not double-report
+    the parse error).
+    """
+    import copy
+
+    fixtures: dict = {}
+
+    # check 1+3 interaction: two method entries that collide AND share a
+    # malformed descriptor. The malformed descriptor must be reported once per
+    # entry (2 total) and the collision path must NOT add a third error by
+    # re-reporting the parse failure or a spurious overload error for an entry
+    # that never parsed. Expect exactly 2 errors (one parse error per entry).
+    fmd = copy.deepcopy(_VALID_MAP)
+    fmd["classes"]["com.example.app.Foo"]["methods"]["over"] = [
+        {"obfuscated": "c", "signature": "(I"},
+        {"obfuscated": "c", "signature": "(I"},
+    ]
+    fixtures["malformed duplicate descriptor (exactly 2 errors)"] = (fmd, 2)
 
     return fixtures
 
@@ -428,6 +589,19 @@ def _self_test() -> int:
             print(f"SELF-TEST FAIL: invalid fixture accepted: {label}", file=sys.stderr)
         else:
             print(f"self-test: invalid fixture rejected ({label})")
+
+    # Exact-error-count fixtures: the COUNT is the regression guard.
+    for label, (doc, want) in _exact_count_fixtures().items():
+        synth_path = os.path.join("maps", "com.example.app", f"{doc['version_code']}.json")
+        got = len(check_map(doc, synth_path))
+        if got != want:
+            failures += 1
+            print(
+                f"SELF-TEST FAIL: {label}: expected {want} error(s), got {got}",
+                file=sys.stderr,
+            )
+        else:
+            print(f"self-test: exact-count fixture pinned ({label}: {got} error(s))")
 
     if failures:
         print(f"self-test: {failures} failure(s)", file=sys.stderr)
