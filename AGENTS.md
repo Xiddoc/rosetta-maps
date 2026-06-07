@@ -76,6 +76,13 @@ clients:
   `validation.json` fixture are updated to match — the three copies of the
   `schema_version: 2` format must move together (Hard rule 2).
 - Never weaken or skip a CI check to make a PR pass; fix the data.
+- For SEMANTIC (non-schema) constraints — relationships the JSON Schema
+  cannot express — a CI check that carries its own in-script `--self-test`
+  (accept + reject fixtures pinning each constraint in BOTH directions, the
+  way `scripts/validate_map_semantics.py` and `scripts/lint_signatures.py`
+  do) satisfies the "pin in both directions" mandate, and is the accepted
+  alternative to `schema/samples/`. The `schema/samples/{valid,invalid}/`
+  pairs remain the mechanism for SCHEMA constraints.
 
 ## When picking up work here
 
@@ -101,8 +108,8 @@ clients:
   elsewhere; point at the schema so there is a single source of truth.
 - No **self-referential map hash field.** A map's own-bytes integrity is
   bound from OUTSIDE the artifact (a detached `<version_code>.json.sha256`
-  sidecar verified at build time by `rosetta pull`), never via a hash
-  field inside the map — that would be self-referential AND break the
+  sidecar verified at build time by `rosetta pull` (planned)), never via a
+  hash field inside the map — that would be self-referential AND break the
   strict `additionalProperties: false` clients. See
   `docs/reference/integrity.md` (maps#13 M14).
 
