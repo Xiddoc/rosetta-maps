@@ -25,10 +25,35 @@ through:
     - a reserved `classes` key → `propertyNames` rejects `__proto__` /
       `constructor` / `prototype` (`reserved-class-key`)
     - a method missing its required `signature` (`method-missing-signature`)
+    - a field missing its required `type` (`field-missing-type`) — the
+      symmetric twin of `method-missing-signature`
+    - a bad `kind` enum value → `classKind` enum (`bad-class-kind`)
+    - a bad `confidence` enum value → `confidence` enum (`bad-confidence`)
 
   If a future schema edit silently loosens a constraint, the corresponding
   sample starts being accepted and the `validate.yml` "Schema accepts valid /
   rejects invalid samples" step fails.
+
+### Constraints intentionally NOT pinned by a per-constraint sample
+
+Some enforced constraints are deliberately **not** given their own
+`invalid/` sample here, because doing so would require an unreasonably
+bulky fixture and the constraint is already pinned by the client
+validators' `bounds.json` parity fixture (carried byte-identical in
+rosetta-frida `tests/conformance/fixtures/bounds.json` and rosetta-xposed
+`core/src/test/resources/conformance/bounds.json`). Pinning them there
+keeps the maps samples tiny while still guarding against drift:
+
+- **`maxLength` caps** on string fields (`app` 256, `version` 256,
+  `obfuscated` 512, `signature`/`type`/`notes`/etc. 4096) — a reject
+  sample would need a multi-kilobyte string literal.
+- **Cardinality caps** — `classes.maxProperties` (50000),
+  `methods`/`fields.maxProperties` (5000), `anchors.maxItems` (1000),
+  `sources.maxItems` (100), overload-array `maxItems` (200) — a reject
+  sample would need to enumerate tens of thousands of entries.
+
+These are scoped out of the maps samples on purpose; the `bounds.json`
+parity fixture is the place to extend if a cap changes.
 
 The `check-jsonschema` step in `.github/workflows/validate.yml` enforces
 both directions. The rosetta-frida (Zod) and rosetta-xposed (Kotlin)
