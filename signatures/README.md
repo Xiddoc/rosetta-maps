@@ -29,3 +29,17 @@ sigmatcher form; the convergence point is the resolved map, not a unified
 signature IR.
 
 Start from `../templates/signatures.template.yaml`.
+
+## Validation
+
+CI lints every `signatures/<app>/signatures.yaml` for the minimal
+sigmatcher-dialect structure (required top-level keys; known rule, member,
+and signature shapes) via `scripts/lint_signatures.py` — the source-of-truth
+counterpart to the schema check that guards `../maps/`. It reads only the
+committed YAML (never an APK), so it preserves the no-APK CI invariant. Run
+it locally before opening a PR:
+
+```bash
+python3 scripts/lint_signatures.py signatures/<app>/signatures.yaml
+python3 scripts/lint_signatures.py --self-test   # exercise the linter itself
+```

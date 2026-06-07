@@ -1,10 +1,18 @@
 name: Validate maps
 
 on:
+    # PR-gated validation is the point of this workflow, so it runs on every
+    # pull_request targeting the default branch (which covers contributions
+    # from any source/feature branch). `push` is limited to the default branch
+    # to avoid double-running on PR head pushes. `workflow_dispatch` allows a
+    # manual run on any ref. NOTE (L11): if this repo's default branch is ever
+    # renamed from `master` (e.g. to `main`), update the branch filters below —
+    # they are the one place the default-branch name is hard-coded.
     push:
         branches: [master]
     pull_request:
         branches: [master]
+    workflow_dispatch:
 
 # Cancel superseded runs on the same ref.
 concurrency:
@@ -47,6 +55,12 @@ jobs:
             # upstream release can't silently change validation behaviour.
             - name: Install check-jsonschema
               run: pipx install 'check-jsonschema==0.37.2'
+
+            # The signatures linter (below) is pure-Python + PyYAML — same
+            # language-neutral, no-JS-toolchain style as the schema checker.
+            # Pinned so a CI run stays reproducible.
+            - name: Install PyYAML (for the signatures linter)
+              run: pip install 'PyYAML==6.0.1'
 
             # DoS/abuse pre-flight (security audit H3). Runs BEFORE the schema
             # checker, which loads each document fully into memory: reject
@@ -224,3 +238,27 @@ jobs:
                   sys.exit(fail)
                   PY
                   echo "layout + version_code conventions OK"
+
+            # signatures/ is the SOURCE OF TRUTH (AGENTS.md) from which maps are
+            # reproduced, so it must be validated too — historically only
+            # maps/**/*.json was. This step lints every signatures.yaml for the
+            # minimal sigmatcher-dialect structure (required top-level keys,
+            # known rule/member/signature shapes). It reads ONLY the committed
+            # YAML — no APK is fetched or read — so Hard rule 3 (no APK in CI)
+            # is preserved. The linter ships a built-in self-test (accept/reject
+            # fixtures) so the linter itself can't silently rot; we run that
+            # first, then lint the real files.
+            - name: Lint signatures (sigmatcher dialect) + linter self-test
+              run: |
+                  set -euo pipefail
+                  shopt -s globstar nullglob
+
+                  python3 scripts/lint_signatures.py --self-test
+
+                  sigfiles=(signatures/**/signatures.yaml templates/signatures.template.yaml)
+                  if [ "${#sigfiles[@]}" = "0" ]; then
+                      echo "::error::no signatures files found under signatures/"
+                      exit 1
+                  fi
+                  python3 scripts/lint_signatures.py "${sigfiles[@]}"
+                  echo "linted ${#sigfiles[@]} signature file(s)"
