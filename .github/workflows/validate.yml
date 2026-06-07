@@ -244,6 +244,34 @@ jobs:
                   PY
                   echo "layout + version_code conventions OK"
 
+            # RFC 0001 Decision 4, tier-1 STRUCTURAL semantics. The schema above
+            # validates shape; this validator checks relationships the schema
+            # can't express: that every method `signature` is a well-formed JVM
+            # descriptor, that every app-internal obfuscated type a descriptor
+            # references resolves to a class the SAME map defines, that no two
+            # overloads in a class collide on (obfuscated-name, descriptor), and
+            # that the `app` field equals the parent directory under maps/. It is
+            # pure-Python (stdlib only) and reads ONLY the committed JSON — no APK
+            # (Hard rule 3). It ships a built-in self-test (accept/reject
+            # fixtures pinning each of the four checks in both directions) so the
+            # validator itself can't silently rot; we run that first, then check
+            # the real maps.
+            - name: Tier-1 map semantics (descriptors, refs, overloads, app-dir)
+              run: |
+                  set -euo pipefail
+                  shopt -s globstar nullglob
+
+                  python3 scripts/validate_map_semantics.py --self-test
+
+                  mapfiles=(maps/**/*.json)
+                  if [ "${#mapfiles[@]}" = "0" ]; then
+                      echo "::error::no maps found under maps/"
+                      exit 1
+                  fi
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/validate_map_semantics.py "${mapfiles[@]}"
+                  echo "tier-1 semantics OK for ${#mapfiles[@]} map(s)"
+
             # signatures/ is the SOURCE OF TRUTH (AGENTS.md) from which maps are
             # reproduced, so it must be validated too — historically only
             # maps/**/*.json was. This step lints every signatures.yaml for the
