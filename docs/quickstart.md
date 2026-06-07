@@ -30,8 +30,7 @@ then, vendor the file you need.
 
 ## Finding your version_code
 
-`<version_code>` is the `PackageInfo.versionCode` (or the low 32 bits of
-`longVersionCode`). If a map for your exact version is missing, that is the cue to
+`<version_code>` is the full Android `longVersionCode` (`(versionCodeMajor << 32) | versionCode`), never masked. If a map for your exact version is missing, that is the cue to
 [contribute one](contributing.md): extend the signatures, regenerate, and open a
 PR.
 

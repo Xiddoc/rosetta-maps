@@ -10,8 +10,7 @@ maps/<app>/<version_code>.json
 ```
 
 - `<app>` — the Android package name (e.g. `com.example.app`).
-- `<version_code>` — the `PackageInfo.versionCode` (or low 32 bits of
-  `longVersionCode`). This is the **authoritative O(1) selection key**,
+- `<version_code>` — the full Android `longVersionCode` (`(versionCodeMajor << 32) | versionCode`), never masked. This is the **authoritative O(1) selection key**,
   so it is the filename; CI rejects a file whose
   name doesn't equal the map's `version_code`.
 

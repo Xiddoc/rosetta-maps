@@ -14,7 +14,7 @@
             "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z0-9_]+)+$"
         },
         "version": { "type": "string", "minLength": 1, "maxLength": 256 },
-        "version_code": { "type": "integer", "minimum": 0, "maximum": 2147483647 },
+        "version_code": { "type": "integer", "minimum": 0, "maximum": 9007199254740991, "description": "Full Android longVersionCode ((versionCodeMajor << 32) | versionCode), never masked. Capped at Number.MAX_SAFE_INTEGER (2^53 - 1) so the Frida JS client can represent it exactly." },
         "captured_at": { "type": "string", "maxLength": 4096 },
         "signer_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "frida_min_version": { "type": "string", "maxLength": 4096 },
