@@ -60,7 +60,10 @@ Record provenance on the map itself rather than in free text:
 - `client_hints` — an optional sub-object for **advisory**, client-specific hints
   that the core resolver ignores (`frida_min_version`, `frida_max_version`). They
   live under `client_hints` rather than at the top level so the top-level
-  identity keys stay clean and the hints read as non-authoritative.
+  identity keys stay clean and the hints read as non-authoritative. `client_hints`
+  is itself **closed** (`additionalProperties: false`): adding a new hint key is a
+  deliberate schema change (bump this schema, then the client adapters), not a
+  silent extension — an unrecognised key is rejected rather than ignored.
 
 The top-level object, `sources[]` entries, and every class / method / field
 entry are **closed** (`additionalProperties: false`): an unknown or misspelled
@@ -78,10 +81,12 @@ rosetta-xposed clients and must stay in lockstep:
 - **String lengths:** obfuscated / short names ≤ 512; `signature` ≤ 4096; `app`
   and `version` ≤ 256; other free-text strings ≤ 4096.
 - **Identifier shapes:** `app` must match
-  `^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+$` (a dotted Java package id);
-  `version_code` is an integer ≥ 0; `version` must contain a non-whitespace
-  character (a whitespace-only label is rejected); `signer_sha256` matches
-  `^[0-9a-f]{64}$`.
+  `^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$` (a dotted Java package
+  id — every segment must start with a letter, so `com.2example` is rejected);
+  `version_code` is an integer ≥ 0; `version` must be non-blank — the
+  guarantee comes from two complementary constraints: `minLength: 1` rejects
+  the empty string `""` and the `\S` pattern rejects an all-whitespace label
+  like `"   "`; `signer_sha256` matches `^[0-9a-f]{64}$`.
 - **Reserved-key rejection:** the `classes`, `methods`, and `fields` objects
   reject the keys `__proto__`, `constructor`, and `prototype` (prototype-pollution
   guard for JS clients).

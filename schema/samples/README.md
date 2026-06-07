@@ -18,7 +18,10 @@ through:
     - negative `version_code` → `minimum: 0` (`negative-version-code`)
     - over-2^53 `version_code` → `maximum: 9007199254740991` (`version-code-too-large`),
       paired with the 2^32 `valid/version-code-wide.json` accept
-    - bad `app` pattern (`bad-app-pattern`)
+    - bad `app` pattern — a non-package string (`bad-app-pattern`), and a
+      digit-first dotted segment (`bad-app-pattern-digit-segment`, e.g.
+      `com.2example.app`): the pattern requires every segment to start with a
+      letter (`^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$`)
     - empty `version` → `minLength: 1` (`empty-version`)
     - whitespace-only `version` → the `\S` pattern (`whitespace-version`),
       tightening `version` beyond mere non-emptiness
@@ -38,10 +41,24 @@ through:
       (`unknown-top-level-key`, a `signer_sh256` typo)
     - an unknown / typo'd class-entry key → `additionalProperties: false`
       on `classEntry` (`unknown-class-key`, an `extneds` typo)
+    - an unknown / typo'd `sources[]` entry key → `additionalProperties:
+      false` on `mapSource` (`unknown-source-key`, a `clases` typo)
+    - an unknown / typo'd method-entry key → `additionalProperties: false`
+      on `methodEntry` (`unknown-method-key`, `signatures` for `signature`)
+    - an unknown / typo'd field-entry key → `additionalProperties: false`
+      on `fieldEntry` (`unknown-field-key`, a `typ` typo)
+    - a reserved `methods` key → `propertyNames` rejects `__proto__` /
+      `constructor` / `prototype` (`reserved-method-key`, a `__proto__`
+      method)
+    - a reserved `fields` key → same `propertyNames` guard
+      (`reserved-field-key`, a `constructor` field)
     - the `frida_*` hints at the top level → they now live ONLY under
       `client_hints`, so a top-level `frida_min_version` is rejected by
       `additionalProperties: false` (`frida-version-top-level`), paired
       with the `valid/client-hints.json` accept
+    - an unknown key INSIDE `client_hints` → `additionalProperties: false`
+      on the `client_hints` sub-object, so adding a hint requires a schema
+      bump (`unknown-client-hints-key`, an `xposed_only_thing` key)
 
   If a future schema edit silently loosens a constraint, the corresponding
   sample starts being accepted and the `validate.yml` "Schema accepts valid /
@@ -64,6 +81,10 @@ keeps the maps samples tiny while still guarding against drift:
   `methods`/`fields.maxProperties` (5000), `anchors.maxItems` (1000),
   `sources.maxItems` (100), overload-array `maxItems` (200) — a reject
   sample would need to enumerate tens of thousands of entries.
+- **`sources[].classes` lower bound** (`minimum: 0`) — a count can't be
+  negative; the constraint is cheap but redundant with the `version_code`
+  `minimum: 0` reject (`negative-version-code`) that already exercises the
+  draft-07 `minimum` keyword, so no separate sample is carried for it.
 
 These are scoped out of the maps samples on purpose; the `bounds.json`
 parity fixture is the place to extend if a cap changes.
