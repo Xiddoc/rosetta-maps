@@ -261,13 +261,25 @@ jobs:
                   set -euo pipefail
                   shopt -s globstar nullglob
 
-                  python3 scripts/validate_map_semantics.py --self-test
+                  # The self-test is bounded data (built-in fixtures, no I/O over
+                  # the repo), but wrap it in the same VALIDATE_TIMEOUT as the
+                  # real run for consistency — one guard, one knob.
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/validate_map_semantics.py --self-test
 
                   mapfiles=(maps/**/*.json)
                   if [ "${#mapfiles[@]}" = "0" ]; then
                       echo "::error::no maps found under maps/"
                       exit 1
                   fi
+                  # Reuse the shared VALIDATE_TIMEOUT here even at MAX_MAP_FILES
+                  # scale: this validator is pure-Python stdlib doing a single
+                  # linear pass per map (parse each descriptor once, set lookups
+                  # for refs) — O(total bytes), no quadratic blowup and no
+                  # network/subprocess — so its worst case is far cheaper than
+                  # check-jsonschema's, which the same 60 s budget already covers
+                  # for the full MAX_MAP_FILES * MAX_MAP_BYTES corpus. A separate
+                  # var would be redundant; tune VALIDATE_TIMEOUT in one place.
                   timeout "$VALIDATE_TIMEOUT" \
                       python3 scripts/validate_map_semantics.py "${mapfiles[@]}"
                   echo "tier-1 semantics OK for ${#mapfiles[@]} map(s)"
