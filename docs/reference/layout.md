@@ -17,8 +17,7 @@ Resolved JSON maps, one file per `(app, version_code)`, consumed directly by the
 rosetta-frida and rosetta-xposed adapters.
 
 - `<app>` — the Android package name (e.g. `com.example.app`).
-- `<version_code>` — the `PackageInfo.versionCode` (or low 32 bits of
-  `longVersionCode`). This is the **authoritative O(1) selection key**,
+- `<version_code>` — the full Android `longVersionCode` (`(versionCodeMajor << 32) | versionCode`), never masked. This is the **authoritative O(1) selection key**,
   so it **is** the filename; CI rejects any file whose name does not
   equal the map's `version_code`.
 
