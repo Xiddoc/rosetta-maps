@@ -18,7 +18,12 @@ Public CI runs **structural validation only** (the first tier of the trust ladde
   directly, with no cross-repo checkout and no drift-prone mirror to keep in sync;
 - every `version_code` is present and **matches the filename**
   (`maps/<app>/<version_code>.json`);
-- JSON descriptors parse and the file is well-formed.
+- JSON descriptors parse and the file is well-formed — now enforced by the
+  tier-1 map semantics check (`scripts/validate_map_semantics.py`), which
+  verifies every method `signature` is a well-formed JVM descriptor, every
+  app-internal type a descriptor or `field.type` references resolves within the
+  same map, no two overloads collide, and the `app` field matches the parent
+  directory.
 
 ## What CI deliberately does not do
 
