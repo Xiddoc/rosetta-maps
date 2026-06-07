@@ -58,9 +58,14 @@ jobs:
 
             # The signatures linter (below) is pure-Python + PyYAML — same
             # language-neutral, no-JS-toolchain style as the schema checker.
-            # Pinned so a CI run stays reproducible.
+            # Pinned so a CI run stays reproducible. We deliberately split the
+            # two installs: check-jsonschema is a standalone CLI, so `pipx`
+            # gives it an isolated venv; PyYAML is imported BY the interpreter
+            # that runs `python3 scripts/lint_signatures.py`, so it must land in
+            # that exact interpreter — `python3 -m pip` guarantees it goes into
+            # whatever `python3` resolves to here, rather than some other pip.
             - name: Install PyYAML (for the signatures linter)
-              run: pip install 'PyYAML==6.0.1'
+              run: python3 -m pip install 'PyYAML==6.0.1'
 
             # DoS/abuse pre-flight (security audit H3). Runs BEFORE the schema
             # checker, which loads each document fully into memory: reject
@@ -255,10 +260,16 @@ jobs:
 
                   python3 scripts/lint_signatures.py --self-test
 
-                  sigfiles=(signatures/**/signatures.yaml templates/signatures.template.yaml)
-                  if [ "${#sigfiles[@]}" = "0" ]; then
-                      echo "::error::no signatures files found under signatures/"
-                      exit 1
+                  # Check the app signatures separately from the template. The
+                  # template (templates/signatures.template.yaml) is ALWAYS on
+                  # disk, so a combined glob can never be empty — which made the
+                  # old zero-file guard dead code. Split them: notice (don't
+                  # fail) when no app signatures are committed yet, then lint the
+                  # app sigs together WITH the template, which must always lint.
+                  appsigs=(signatures/**/signatures.yaml)
+                  if [ "${#appsigs[@]}" = "0" ]; then
+                      echo "::notice::no app signatures committed under signatures/ yet (linting the template only)"
                   fi
+                  sigfiles=("${appsigs[@]}" templates/signatures.template.yaml)
                   python3 scripts/lint_signatures.py "${sigfiles[@]}"
                   echo "linted ${#sigfiles[@]} signature file(s)"
