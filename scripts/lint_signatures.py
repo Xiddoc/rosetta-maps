@@ -55,15 +55,17 @@ def _lint_signature(sig: object, where: str, errors: list[str]) -> None:
             f"{where}: unknown signature type {sig_type!r} "
             f"(expected one of {sorted(KNOWN_SIGNATURE_TYPES)})"
         )
-    # `count` is optional; when present it must be an int or a "N" / "N-M" range string.
+    # `count` is optional; when present it must be a positive int (>= 1; a
+    # zero/negative count is meaningless) or a digit "N" / "N-M" range string.
+    # `bool` is an int subclass, so reject it explicitly.
     if "count" in sig:
         count = sig["count"]
-        ok = isinstance(count, int) and not isinstance(count, bool)
+        ok = isinstance(count, int) and not isinstance(count, bool) and count >= 1
         if not ok and _is_str(count):
             parts = count.split("-")
             ok = all(p.strip().isdigit() for p in parts) and 1 <= len(parts) <= 2
         if not ok:
-            errors.append(f"{where}: 'count' must be an int or an 'N'/'N-M' range string, got {count!r}")
+            errors.append(f"{where}: 'count' must be a positive int (>= 1) or an 'N'/'N-M' range string, got {count!r}")
 
 
 def _lint_signature_list(sigs: object, where: str, errors: list[str]) -> None:
@@ -147,6 +149,7 @@ _VALID_FIXTURE = """
 _INVALID_FIXTURES = {
     "empty document": "",
     "not a list": "name: Foo\npackage: com.example.app\n",
+    "rule missing name": "- package: 'com.example.app'\n  signatures:\n      - signature: 'x'\n        type: regex\n",
     "rule missing package": "- name: 'Foo'\n  signatures:\n      - signature: 'x'\n        type: regex\n",
     "rule missing signatures": "- name: 'Foo'\n  package: 'com.example.app'\n",
     "unknown signature type": (
@@ -162,9 +165,18 @@ _INVALID_FIXTURES = {
         "      - signature: 'x'\n        type: regex\n  methods:\n"
         "      - signatures:\n            - signature: 'y'\n              type: regex\n"
     ),
+    "field missing name": (
+        "- name: 'Foo'\n  package: 'com.example.app'\n  signatures:\n"
+        "      - signature: 'x'\n        type: regex\n  fields:\n"
+        "      - signatures:\n            - signature: 'y'\n              type: regex\n"
+    ),
     "bad count": (
         "- name: 'Foo'\n  package: 'com.example.app'\n  signatures:\n"
         "      - signature: 'x'\n        type: regex\n        count: 'lots'\n"
+    ),
+    "bad count (zero)": (
+        "- name: 'Foo'\n  package: 'com.example.app'\n  signatures:\n"
+        "      - signature: 'x'\n        type: regex\n        count: 0\n"
     ),
 }
 
