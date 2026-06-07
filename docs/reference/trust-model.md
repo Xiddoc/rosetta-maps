@@ -37,6 +37,12 @@ app is established *off* public CI, via the planned higher tiers:
 
 Each higher tier must preserve the **no-APK-in-public-CI** invariant.
 
+One gap these tiers do not yet close is the map's **own-bytes** integrity (a
+map is authenticated against the *app* via `signer_sha256`, never against the
+publisher who shipped the file). See [map integrity](integrity.md) for why the
+fix is a detached sidecar verified at build time — not a self-hash field inside
+the map.
+
 ## Schema ownership
 
 This repo owns the **canonical map schema** — the single, language-neutral source

@@ -99,6 +99,12 @@ clients:
 - The canonical schema lives in `schema/rosetta-map.schema.json` (this
   repo owns it). Don't duplicate the field-by-field format in prose
   elsewhere; point at the schema so there is a single source of truth.
+- No **self-referential map hash field.** A map's own-bytes integrity is
+  bound from OUTSIDE the artifact (a detached `<version_code>.json.sha256`
+  sidecar verified at build time by `rosetta pull`), never via a hash
+  field inside the map — that would be self-referential AND break the
+  strict `additionalProperties: false` clients. See
+  `docs/reference/integrity.md` (maps#13 M14).
 
 ## Related repos
 
