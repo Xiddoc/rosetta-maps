@@ -12,7 +12,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 256,
-            "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z0-9_]+)+$"
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+$"
         },
         "version": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "\\S", "description": "Human-readable versionName label / fuzzy fallback only. Must contain a non-whitespace character (a whitespace-only label is rejected); version_code is the authoritative selection key." },
         "version_code": { "type": "integer", "minimum": 0, "maximum": 9007199254740991, "description": "Full Android longVersionCode ((versionCodeMajor << 32) | versionCode), never masked. Capped at Number.MAX_SAFE_INTEGER (2^53 - 1) so the Frida JS client can represent it exactly." },
@@ -59,7 +59,7 @@
             "properties": {
                 "tool": { "type": "string", "minLength": 1, "maxLength": 4096, "description": "Provenance of these entries. The canonical, client-neutral vocabulary is `sigmatcher`, `hand-authored`, and `rosetta-runtime-discovered` (the runtime-discovery token is framework-neutral on purpose — do NOT use a framework-specific spelling like `rosetta-frida-runtime-discovered`). Free-form values are permitted for other tools.", "examples": ["sigmatcher", "hand-authored", "rosetta-runtime-discovered"] },
                 "config": { "type": "string", "maxLength": 4096 },
-                "classes": { "type": "integer" },
+                "classes": { "type": "integer", "minimum": 0 },
                 "notes": { "type": "string", "maxLength": 4096 },
                 "confidence": { "$ref": "#/definitions/confidence" }
             }

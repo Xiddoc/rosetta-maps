@@ -1,0 +1,17 @@
+{
+    "schema_version": 2,
+    "app": "com.example.app",
+    "version": "1.0.0",
+    "version_code": 100,
+    "classes": {
+        "com.example.app.Foo": {
+            "obfuscated": "aaaa",
+            "methods": {
+                "__proto__": {
+                    "obfuscated": "c",
+                    "signature": "()V"
+                }
+            }
+        }
+    }
+}
