@@ -100,27 +100,41 @@ sidecar binds the same bytes the same way everywhere.
 - **Location**: directly next to the map; filename = the map filename + the
   `.sha256` suffix. `maps/com.example.app/30405.json` →
   `maps/com.example.app/30405.json.sha256`.
-- **Encoding**: UTF-8 text, exactly one logical line, terminated by a single
-  `\n`.
+- **Encoding**: UTF-8 text, exactly **one** logical line, optionally terminated
+  by a single trailing `\n`.
 - **Content** (coreutils `sha256sum` format `<digest>␠␠<basename>`): the
   lowercase 64-hex SHA-256 of the **exact bytes** of the map file, two ASCII
-  spaces, then the bare map filename (basename only, no directory). Example:
+  spaces, then the bare map filename (basename only, no directory). The
+  basename token is **optional** (a digest-only line is valid), but when present
+  it **must** equal the map's basename. Example (illustrative — `<64-hex
+  digest>` stands for the real hash, e.g. the committed example map's
+  `991b91841128bc28322ed485ad3fa9b4b69ec397ff39809e109170738cd000c5`):
 
   ```
-  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  30405.json
+  <64-hex digest>  30405.json
   ```
 
   This makes `sha256sum -c 30405.json.sha256` work directly when run from the
   map's directory.
 
-**Verification algorithm** (identical on every side):
+**Verification algorithm** (identical on every side — code in
+`scripts/verify_map_sidecars.py` and the `rosetta pull` clients implement
+exactly these rules):
 
-1. Read the sidecar text; the first whitespace-delimited token is the expected
-   digest; lowercase it.
-2. Reject if it does not match `^[0-9a-f]{64}$`.
-3. Compute SHA-256 over the **exact committed map-file bytes** (the raw bytes,
+1. Take **only the first line** of the sidecar (content up to the first `\n`; a
+   single optional trailing `\n` is allowed). **Reject** input that has more
+   than one non-empty line — a single-map sidecar is exactly one line (see
+   [scope](#one-sidecar-one-map) below).
+2. Split that line on **ASCII whitespace** (so leading/trailing whitespace and
+   single-space / multiple-spaces / tab separators all parse the same). The
+   **first** token is the expected digest; lowercase it.
+3. Reject if it does not match `^[0-9a-f]{64}$`.
+4. If a **second** token (the basename) is present, it **must** equal the map
+   file's basename (e.g. `30405.json`); a mismatch **fails closed** (this
+   catches a misfiled or copy-pasted sidecar). An absent basename is allowed.
+5. Compute SHA-256 over the **exact committed map-file bytes** (the raw bytes,
    never re-serialized JSON).
-4. Plain lowercase-hex equality. Match → ok; mismatch → **fail closed**.
+6. Plain lowercase-hex equality. Match → ok; mismatch → **fail closed**.
 
 **Rollout**: the sidecar is **optional**. A map with no sidecar is **skipped**
 (not a failure); only a *present* sidecar that fails to verify is an error.
@@ -131,6 +145,15 @@ authenticity — a PR author who edits the map can edit its sidecar in the same
 PR. Because the sidecar is a separate file, a future detached `.json.sig`
 signature over the digest can add an authenticity tier without breaking this
 format.
+
+### One sidecar, one map
+
+A sidecar describes **exactly one** map (one line). The multi-entry coreutils
+`sha256sum` file form — many `<digest>  <name>` lines in a single file — is
+**deliberately out of scope** and rejected as malformed; verifiers handle one
+`(app, version_code)` map per sidecar. An authenticity tier is a **future,
+separate sibling** file (`<version_code>.json.sig`), never extra lines packed
+into the `.sha256` sidecar.
 
 ## If a schema affordance is ever wanted
 
