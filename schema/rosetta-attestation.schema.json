@@ -1,0 +1,121 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://github.com/Xiddoc/rosetta-maps/schema/rosetta-attestation.schema.json",
+    "title": "Rosetta reproduction attestation (attestation_version 1)",
+    "description": "Canonical schema for a DETACHED reproduction-attestation sidecar that records that a contributor reproduced a published map from its signatures + the APK and signed the result. It is a SEPARATE file beside the map (`<version_code>.json.att.json`), NEVER a field inside the map (the map stays a clean `schema_version: 2` artifact; a self-referential trust field is forbidden by AGENTS.md anti-scope and would break the strict `additionalProperties: false` clients). This is the structural format public CI validates (tier 1 of the off-CI trust ladder); it is APK-free — CI checks the sidecar's SHAPE and that its `map_sha256` binds the committed map bytes, never the APK itself. See docs/reference/trust-model.md.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "attestation_version",
+        "app",
+        "version_code",
+        "map_sha256",
+        "reproduced",
+        "attestations"
+    ],
+    "properties": {
+        "attestation_version": {
+            "const": 1,
+            "description": "Hard-gated format version of the attestation sidecar itself, independent of the map's `schema_version`. A future format change bumps this literal."
+        },
+        "app": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+$",
+            "description": "The map's `app` (dotted Java package id). The semantic validator cross-checks this equals the attested map's `app`."
+        },
+        "version_code": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The map's full Android longVersionCode. The semantic validator cross-checks this equals the attested map's `version_code` and its filename."
+        },
+        "map_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "Lowercase-hex SHA-256 of the EXACT committed map bytes the attestation is about — the same digest the `.sha256` integrity sidecar binds. The semantic validator recomputes it over the committed map file and fails closed on any mismatch, so an attestation can never silently drift off the map it claims to cover."
+        },
+        "reproduced": {
+            "type": "boolean",
+            "const": true,
+            "description": "Asserts that at least one attestor reproduced this exact map (these exact bytes) from `signatures/<app>/signatures.yaml` + the named APK. A negative/absent claim is not an attestation; the literal is gated to `true` so an unreproduced map cannot carry an attestation sidecar at all."
+        },
+        "signatures_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "Optional lowercase-hex SHA-256 of the `signatures/<app>/signatures.yaml` source the map was reproduced FROM, pinning which revision of the source-of-truth produced these bytes. Structural only here (the APK is never fetched in CI)."
+        },
+        "apk": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sha256"],
+            "description": "Identifies the APK the map was reproduced against — by hash only. CI never fetches or hosts it (Hard rule 3); this records WHICH apk, not the apk.",
+            "properties": {
+                "sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Lowercase-hex SHA-256 of the APK bytes the attestor reproduced against."
+                },
+                "signer_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Lowercase-hex SHA-256 of the APK's signing certificate (same form as the map's `signer_sha256`)."
+                },
+                "source": {
+                    "type": "string",
+                    "maxLength": 4096,
+                    "description": "Free-text note on APK provenance (e.g. a store label). NEVER a download URL the CI would fetch."
+                }
+            }
+        },
+        "attestations": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "description": "One or more signed attestations from independent attestors. Each is a detached signature over `map_sha256` (the binding payload), so adding an attestor never rewrites the map and reputation can accrue across contributors.",
+            "items": { "$ref": "#/definitions/attestation" }
+        }
+    },
+    "definitions": {
+        "attestation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["attestor", "method", "signature", "signed_at"],
+            "properties": {
+                "attestor": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "description": "Stable identity of the signer (e.g. a GitHub handle or key id). Human-meaningful; the cryptographic identity is carried by `public_key`/`signature`."
+                },
+                "method": {
+                    "enum": ["minisign", "ssh-ed25519", "gpg"],
+                    "description": "The detached-signature scheme used to sign `map_sha256`. The fixed vocabulary keeps verifiers interoperable; widening it is a deliberate `attestation_version` bump."
+                },
+                "public_key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096,
+                    "description": "The attestor's public key (scheme-appropriate encoding). Optional in the structural format — the trust anchor for who is allowed to attest lives OUTSIDE this file (a maintained keyring), not in the contributed sidecar."
+                },
+                "signature": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 8192,
+                    "description": "The detached signature over the ASCII `map_sha256` digest, in the `method`'s native encoding. CI validates only that it is present and well-shaped; cryptographic verification against a trusted keyring is an off-CI higher tier."
+                },
+                "signed_at": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+                    "description": "ISO-8601 date (YYYY-MM-DD) the attestation was signed."
+                },
+                "notes": {
+                    "type": "string",
+                    "maxLength": 4096
+                }
+            }
+        }
+    }
+}

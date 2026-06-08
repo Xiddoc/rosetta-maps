@@ -1,0 +1,8 @@
+{
+    "attestation_version": 1,
+    "app": "com.example.app",
+    "version_code": 100,
+    "map_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "reproduced": true,
+    "attestations": []
+}
