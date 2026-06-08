@@ -1,0 +1,9 @@
+{
+    "schema_version": 2,
+    "app": "com.example.app",
+    "version": { "name": "3.4.5" },
+    "version_code": 30405,
+    "classes": {
+        "com.example.app.Foo": { "obfuscated": "aaaa" }
+    }
+}
