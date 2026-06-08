@@ -18,22 +18,37 @@ so the same sidecar binds the bytes the same way on both sides.
 SIDECAR FORMAT (authoritative — kept in lockstep with the consumer clients):
 
   * Location: directly next to the map; filename = map filename + `.sha256`.
-  * Encoding: UTF-8 text, exactly one logical line, terminated by a single
-    `\n`.
+  * Encoding: UTF-8 text, exactly ONE logical line, optionally terminated by a
+    single trailing `\n`.
   * Content: coreutils `sha256sum` format — `<digest>␠␠<basename>`: a
     lowercase 64-hex SHA-256 of the EXACT bytes of the map file, two ASCII
     spaces, then the bare map filename (basename only, no directory). This
     makes `sha256sum -c 30405.json.sha256` work directly from the map's
-    directory.
+    directory. The basename token is OPTIONAL (a digest-only line verifies),
+    but if present it MUST equal the map's basename.
 
-VERIFICATION ALGORITHM (identical on every side — `verify_sidecar`):
+VERIFICATION ALGORITHM (identical on every side — `verify_sidecar`; the
+authoritative prose lives in `docs/reference/integrity.md`):
 
-  1. Read the sidecar text; the first whitespace-delimited token is the
-     expected digest; lowercase it.
-  2. Reject if it doesn't match ^[0-9a-f]{64}$.
-  3. Compute SHA-256 over the EXACT committed map-file bytes (raw bytes, never
+  1. Take ONLY the first line of the sidecar (content up to the first `\n`; a
+     single optional trailing `\n` is allowed). Reject input that has MORE than
+     one non-empty line — a single-map sidecar is exactly one line; multi-entry
+     coreutils files are explicitly out of scope (see ONE-MAP-PER-SIDECAR).
+  2. Split that line on ASCII whitespace (tolerating leading/trailing
+     whitespace and any of single-space / multiple-spaces / tab separators).
+     The FIRST token is the expected digest; lowercase it.
+  3. Reject if it doesn't match ^[0-9a-f]{64}$.
+  4. If a SECOND token (the basename) is present it MUST equal the map file's
+     basename (e.g. `30405.json`); a mismatch FAILS CLOSED (catches a
+     misfiled / copy-pasted sidecar). An absent basename token is allowed.
+  5. Compute SHA-256 over the EXACT committed map-file bytes (raw bytes, never
      re-serialized).
-  4. Plain lowercase-hex equality. Match -> ok; mismatch -> FAIL CLOSED.
+  6. Plain lowercase-hex equality. Match -> ok; mismatch -> FAIL CLOSED.
+
+ONE-MAP-PER-SIDECAR — a sidecar describes exactly ONE map (one line). The
+multi-entry coreutils `sha256sum` file form (many `<digest>  <name>` lines in
+one file) is deliberately OUT OF SCOPE; an authenticity tier is a future,
+separate sibling file (`<version_code>.json.sig`), never extra lines here.
 
 TIER — transport integrity, NOT publisher authenticity. A bare digest detects
 corruption/tampering in transit (a poisoned mirror, a truncated download); it
@@ -53,10 +68,20 @@ like the rest of CI.
 
 Usage:
     verify_map_sidecars.py FILE [FILE ...]   # verify each map's sidecar
+    verify_map_sidecars.py --emit FILE       # (re)write FILE's `.sha256` sidecar
     verify_map_sidecars.py --self-test       # run built-in accept/reject
 
-Exit status is 0 only when every map whose sidecar is present verifies (and
-maps without a sidecar are skipped, not failed).
+`--emit` is the canonical authoring path: it writes `FILE.sha256` from the
+real map bytes via the same `render_sidecar` the verifier trusts, so an emitted
+sidecar always verifies (and `sha256sum -c` still works). Prefer it over
+hand-running `sha256sum` so the emitter and verifier can never disagree.
+
+Verification (no `--emit`) also reports ORPHAN sidecars — a `*.json.sha256`
+whose `*.json` map was renamed/deleted, which the per-map glob would otherwise
+never visit — and fails when any is found.
+
+Exit status is 0 only when every map whose sidecar is present verifies (maps
+without a sidecar are skipped, not failed) AND no orphan sidecar exists.
 """
 
 from __future__ import annotations
@@ -105,45 +130,79 @@ def expected_digest(map_bytes: bytes) -> str:
     return hashlib.sha256(map_bytes).hexdigest()
 
 
-def parse_sidecar_digest(sidecar_text: str) -> str | None:
-    """Extract and normalise the digest from sidecar text.
+@dataclass(frozen=True)
+class _ParsedSidecar:
+    """The digest (and optional basename) parsed from a single-line sidecar."""
 
-    The first whitespace-delimited token is the digest (coreutils
-    `sha256sum` format is `<digest>␠␠<basename>`); we lowercase it and require
-    it to be exactly 64 hex characters. Returns the normalised digest, or None
-    when the sidecar is malformed (empty, or a bad-hex / wrong-length token).
+    digest: str
+    basename: str | None
+
+
+def parse_sidecar(sidecar_text: str) -> _ParsedSidecar | None:
+    """Parse the canonical single-line sidecar (see the module VERIFICATION
+    ALGORITHM — code and `docs/reference/integrity.md` describe IDENTICAL rules).
+
+    Returns the normalised digest plus the optional basename token, or None when
+    the sidecar is malformed: empty, MORE than one non-empty line, or a first
+    token that is not a lowercase 64-hex SHA-256. The basename, if present, is
+    returned verbatim for the caller to match against the map (an empty-string
+    basename never occurs because we split on whitespace).
     """
-    tokens = sidecar_text.split()
+    # Only the first line is significant; a single optional trailing newline is
+    # allowed. Any further NON-EMPTY line makes the sidecar malformed.
+    lines = sidecar_text.split("\n")
+    first = lines[0]
+    if any(rest.strip() for rest in lines[1:]):
+        return None  # more than one non-empty line — out of scope, fail closed
+    tokens = first.split()
     if not tokens:
         return None
     digest = tokens[0].lower()
     if not _DIGEST_RE.match(digest):
         return None
-    return digest
+    basename = tokens[1] if len(tokens) > 1 else None
+    return _ParsedSidecar(digest=digest, basename=basename)
 
 
-def verify_sidecar(map_bytes: bytes, sidecar_text: str) -> Result:
+def verify_sidecar(
+    map_bytes: bytes, sidecar_text: str, map_basename: str | None = None
+) -> Result:
     """Pure verification core: does `sidecar_text` bind `map_bytes`?
 
     This is the algorithm the rosetta-frida / rosetta-xposed `rosetta pull`
     clients implement identically. It performs NO I/O — callers read the files
     — so it is trivially unit-testable from the self-test and reusable by any
-    client. Fails CLOSED: a malformed sidecar or any digest mismatch is FAILED.
+    client. Fails CLOSED: a malformed sidecar, a basename mismatch, or any
+    digest mismatch is FAILED.
+
+    `map_basename` is the map file's bare filename (e.g. `30405.json`); when a
+    sidecar carries a basename token it MUST equal it. Pass None to skip the
+    basename check (digest-only verification).
     """
-    declared = parse_sidecar_digest(sidecar_text)
-    if declared is None:
+    parsed = parse_sidecar(sidecar_text)
+    if parsed is None:
         return Result(
             Status.FAILED,
-            "malformed sidecar: first token is not a lowercase 64-hex SHA-256 "
-            "digest (expected coreutils 'sha256sum' format "
-            "'<digest>  <basename>')",
+            "malformed sidecar: expected exactly one line whose first "
+            "whitespace-delimited token is a lowercase 64-hex SHA-256 digest "
+            "(coreutils 'sha256sum' format '<digest>  <basename>')",
+        )
+    if (
+        map_basename is not None
+        and parsed.basename is not None
+        and parsed.basename != map_basename
+    ):
+        return Result(
+            Status.FAILED,
+            f"basename mismatch: sidecar names '{parsed.basename}' but it sits "
+            f"beside '{map_basename}' (a misfiled or copy-pasted sidecar)",
         )
     actual = expected_digest(map_bytes)
-    if declared != actual:
+    if parsed.digest != actual:
         return Result(
             Status.FAILED,
-            f"digest mismatch: sidecar declares {declared} but the map bytes "
-            f"hash to {actual} (the map or its sidecar was altered)",
+            f"digest mismatch: sidecar declares {parsed.digest} but the map "
+            f"bytes hash to {actual} (the map or its sidecar was altered)",
         )
     return Result(Status.OK, f"digest verified ({actual})")
 
@@ -166,6 +225,33 @@ def render_sidecar(map_path: str) -> str:
     return f"{expected_digest(map_bytes)}  {basename}\n"
 
 
+def find_orphan_sidecars(roots: list[str]) -> list[str]:
+    """Return sidecars under `roots` whose map file is missing (orphans).
+
+    The per-map verify path is driven by the `maps/**/*.json` glob, so a
+    sidecar whose map was RENAMED or DELETED is never visited — it silently
+    lingers. This globs `<root>/**/*.json.sha256` and returns every sidecar
+    that has no corresponding `*.json` map beside it. Roots may be files or
+    directories; files are scanned by their containing directory.
+    """
+    import glob
+
+    orphans: list[str] = []
+    seen: set[str] = set()
+    for root in roots:
+        base = root if os.path.isdir(root) else os.path.dirname(root) or "."
+        for side in glob.glob(
+            os.path.join(base, "**", "*.json" + SIDECAR_SUFFIX), recursive=True
+        ):
+            if side in seen:
+                continue
+            seen.add(side)
+            map_path = side[: -len(SIDECAR_SUFFIX)]
+            if not os.path.exists(map_path):
+                orphans.append(side)
+    return sorted(orphans)
+
+
 def verify_map_path(map_path: str) -> Result:
     """Verify one map against its on-disk sidecar (absent sidecar -> SKIPPED).
 
@@ -186,9 +272,11 @@ def verify_map_path(map_path: str) -> Result:
             sidecar_text = fh.read()
     except OSError as exc:
         return Result(Status.FAILED, f"could not read sidecar: {exc}")
-    except ValueError as exc:  # non-UTF-8 sidecar bytes
+    except UnicodeDecodeError as exc:  # non-UTF-8 sidecar bytes
+        # UnicodeDecodeError subclasses ValueError; catch it explicitly so the
+        # "sidecar must be UTF-8 text" rule is a named, fail-closed case.
         return Result(Status.FAILED, f"sidecar is not valid UTF-8 text: {exc}")
-    return verify_sidecar(map_bytes, sidecar_text)
+    return verify_sidecar(map_bytes, sidecar_text, os.path.basename(map_path))
 
 
 # --- Built-in self-test -----------------------------------------------------
@@ -217,60 +305,117 @@ def _self_test() -> int:
                 file=sys.stderr,
             )
 
+    bn = "30405.json"  # the map basename the sidecars name
+
     # (a) matching sidecar -> PASS. The full coreutils line (digest + basename)
-    #     and a digest-only line must both verify, since we read only the first
-    #     token.
+    #     and a digest-only line must both verify, since the basename token is
+    #     optional and we read the digest from the first token.
     check(
         "matching sidecar (full sha256sum line)",
-        verify_sidecar(_MAP_BYTES, f"{_GOOD_DIGEST}  30405.json\n"),
+        verify_sidecar(_MAP_BYTES, f"{_GOOD_DIGEST}  {bn}\n", bn),
         Status.OK,
     )
     check(
         "matching sidecar (digest token only)",
-        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST + "\n"),
+        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST + "\n", bn),
+        Status.OK,
+    )
+    # Digest-only WITHOUT a trailing newline still verifies (the newline is
+    # optional) — pin that a bare 64-hex line passes.
+    check(
+        "matching sidecar (digest only, no trailing newline)",
+        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST, bn),
         Status.OK,
     )
     # An UPPERCASE digest is normalised to lowercase before comparison, so it
     # still verifies — pin that the normalisation actually happens.
     check(
         "matching sidecar (uppercase digest normalised)",
-        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST.upper() + "  30405.json\n"),
+        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST.upper() + f"  {bn}\n", bn),
         Status.OK,
+    )
+
+    # Separator / whitespace tolerance: the line is split on ASCII whitespace,
+    # so leading whitespace, multiple-space and tab separators all parse the
+    # same digest + basename and verify.
+    check(
+        "matching sidecar (leading whitespace before digest)",
+        verify_sidecar(_MAP_BYTES, f"   {_GOOD_DIGEST}  {bn}\n", bn),
+        Status.OK,
+    )
+    check(
+        "matching sidecar (multiple-spaces separator)",
+        verify_sidecar(_MAP_BYTES, f"{_GOOD_DIGEST}     {bn}\n", bn),
+        Status.OK,
+    )
+    check(
+        "matching sidecar (tab separator)",
+        verify_sidecar(_MAP_BYTES, f"{_GOOD_DIGEST}\t{bn}\n", bn),
+        Status.OK,
+    )
+    # A bare CR is whitespace too, so a CRLF-terminated single line still
+    # parses to the same digest + basename and verifies.
+    check(
+        "matching sidecar (CRLF line ending)",
+        verify_sidecar(_MAP_BYTES, f"{_GOOD_DIGEST}  {bn}\r\n", bn),
+        Status.OK,
+    )
+
+    # Basename token present and CORRECT -> PASS; absent -> PASS (optional);
+    # present and WRONG -> FAIL CLOSED (a misfiled / copy-pasted sidecar).
+    check(
+        "missing basename token is allowed",
+        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST + "\n", bn),
+        Status.OK,
+    )
+    check(
+        "wrong basename token (misfiled sidecar) fails closed",
+        verify_sidecar(_MAP_BYTES, f"{_GOOD_DIGEST}  99999.json\n", bn),
+        Status.FAILED,
     )
 
     # (b) tampered / mismatching digest -> FAIL (fail closed). Flip one nibble.
     tampered = ("0" if _GOOD_DIGEST[0] != "0" else "1") + _GOOD_DIGEST[1:]
     check(
         "tampered digest (one nibble flipped)",
-        verify_sidecar(_MAP_BYTES, f"{tampered}  30405.json\n"),
+        verify_sidecar(_MAP_BYTES, f"{tampered}  {bn}\n", bn),
         Status.FAILED,
     )
     # Same digest, but the map bytes were altered after the sidecar was made.
     check(
         "altered map bytes vs a once-correct digest",
-        verify_sidecar(_MAP_BYTES + b"x", f"{_GOOD_DIGEST}  30405.json\n"),
+        verify_sidecar(_MAP_BYTES + b"x", f"{_GOOD_DIGEST}  {bn}\n", bn),
         Status.FAILED,
     )
 
-    # (c) malformed sidecar (bad hex / wrong length / empty) -> FAIL.
+    # (c) malformed sidecar (bad hex / wrong length / empty / multi-line) -> FAIL.
     check(
         "malformed sidecar (non-hex character)",
-        verify_sidecar(_MAP_BYTES, "z" * 64 + "  30405.json\n"),
+        verify_sidecar(_MAP_BYTES, "z" * 64 + f"  {bn}\n", bn),
         Status.FAILED,
     )
     check(
         "malformed sidecar (too short)",
-        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST[:-1] + "  30405.json\n"),
+        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST[:-1] + f"  {bn}\n", bn),
         Status.FAILED,
     )
     check(
         "malformed sidecar (too long)",
-        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST + "ab  30405.json\n"),
+        verify_sidecar(_MAP_BYTES, _GOOD_DIGEST + f"ab  {bn}\n", bn),
         Status.FAILED,
     )
     check(
         "malformed sidecar (empty)",
-        verify_sidecar(_MAP_BYTES, "\n"),
+        verify_sidecar(_MAP_BYTES, "\n", bn),
+        Status.FAILED,
+    )
+    # More than one NON-EMPTY line is malformed (multi-entry coreutils files are
+    # out of scope) — even when the first line is a perfectly good digest.
+    check(
+        "malformed sidecar (extra trailing non-empty line)",
+        verify_sidecar(
+            _MAP_BYTES, f"{_GOOD_DIGEST}  {bn}\n{_GOOD_DIGEST}  other.json\n", bn
+        ),
         Status.FAILED,
     )
 
@@ -315,6 +460,48 @@ def _self_test() -> int:
             Status.FAILED,
         )
 
+        # A non-UTF-8 sidecar fails closed through verify_map_path (the
+        # UnicodeDecodeError branch). Write raw invalid-UTF-8 bytes.
+        nonutf8 = os.path.join(tmp, "40000.json")
+        with open(nonutf8, "wb") as fh:
+            fh.write(_MAP_BYTES)
+        with open(sidecar_path_for(nonutf8), "wb") as fh:
+            fh.write(b"\xff\xfe not utf-8\n")
+        check(
+            "on-disk non-UTF-8 sidecar fails closed",
+            verify_map_path(nonutf8),
+            Status.FAILED,
+        )
+
+        # An on-disk sidecar that names the WRONG basename fails closed even
+        # though its digest matches the bytes (misfiled / copy-pasted sidecar).
+        misfiled = os.path.join(tmp, "50000.json")
+        with open(misfiled, "wb") as fh:
+            fh.write(_MAP_BYTES)
+        with open(sidecar_path_for(misfiled), "w", encoding="utf-8") as fh:
+            fh.write(f"{_GOOD_DIGEST}  99999.json\n")
+        check(
+            "on-disk wrong-basename sidecar fails closed",
+            verify_map_path(misfiled),
+            Status.FAILED,
+        )
+
+        # Orphan-sidecar detection: a sidecar whose map is gone is flagged, a
+        # paired sidecar is not. Pin BOTH directions.
+        orphan_side = os.path.join(tmp, "60000.json" + SIDECAR_SUFFIX)
+        with open(orphan_side, "w", encoding="utf-8") as fh:
+            fh.write(f"{_GOOD_DIGEST}  60000.json\n")
+        orphans = find_orphan_sidecars([tmp])
+        if orphan_side in orphans and sidecar_path_for(paired) not in orphans:
+            print(f"self-test: orphan-sidecar detection -> flagged {orphan_side}")
+        else:
+            failures += 1
+            print(
+                "SELF-TEST FAIL: orphan-sidecar detection: expected to flag "
+                f"{orphan_side} and not the paired sidecar; got {orphans}",
+                file=sys.stderr,
+            )
+
     if failures:
         print(f"self-test: {failures} failure(s)", file=sys.stderr)
         return 1
@@ -330,6 +517,18 @@ def main(argv: list[str]) -> int:
     if args == ["--self-test"]:
         return _self_test()
 
+    if args and args[0] == "--emit":
+        emit_targets = args[1:]
+        if not emit_targets:
+            print("::error::--emit requires at least one map FILE", file=sys.stderr)
+            return 2
+        for path in emit_targets:
+            side = sidecar_path_for(path)
+            with open(side, "w", encoding="utf-8") as fh:
+                fh.write(render_sidecar(path))
+            print(f"wrote {side}")
+        return 0
+
     overall = 0
     verified = skipped = 0
     for path in args:
@@ -344,9 +543,19 @@ def main(argv: list[str]) -> int:
             overall = 1
             print(f"::error file={sidecar_path_for(path)}::{result.reason}")
             print(f"FAIL {path}: {result.reason}", file=sys.stderr)
+
+    # Orphan sweep: a `*.json.sha256` whose map was renamed/deleted is never
+    # visited by the per-map args above, so it can silently linger. Glob the
+    # directories the args live in and fail on any sidecar with no map.
+    orphans = find_orphan_sidecars(args)
+    for side in orphans:
+        overall = 1
+        print(f"::error file={side}::orphan sidecar — its map file is missing")
+        print(f"ORPHAN {side}: its map file is missing", file=sys.stderr)
+
     print(
         f"sidecar verification: {verified} verified, {skipped} skipped "
-        f"(no sidecar)",
+        f"(no sidecar), {len(orphans)} orphan(s)",
         file=sys.stderr,
     )
     return overall
