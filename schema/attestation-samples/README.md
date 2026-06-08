@@ -29,6 +29,10 @@ self-referential trust field). See `docs/reference/trust-model.md`.
       trust field that tried to leak into the artifact)
     - `unknown-apk-key` → `apk.additionalProperties: false` (e.g. a download
       `url` CI must never fetch)
+    - `apk-missing-sha256` → `apk.required: ["sha256"]` (an `apk` object with
+      only `signer_sha256` / `source` and no `sha256`)
+    - `apk-not-object` → `apk` `type: object` (a bare string where the object
+      is required)
     - `bad-app-pattern` → the `app` dotted-package pattern
     - `negative-version-code` → `version_code` `minimum: 0`
 
