@@ -284,6 +284,43 @@ jobs:
                       python3 scripts/validate_map_semantics.py "${mapfiles[@]}"
                   echo "tier-1 semantics OK for ${#mapfiles[@]} map(s)"
 
+            # Detached `.sha256` integrity sidecars (maps#17). A map's own-bytes
+            # integrity is bound from OUTSIDE the artifact by a sibling
+            # `<version_code>.json.sha256` (never a self-referential field inside
+            # the map — see docs/reference/integrity.md). This step verifies that
+            # binding: WHEN a sidecar is present its digest must match the exact
+            # committed map bytes; a map with NO sidecar is SKIPPED, not failed,
+            # so adoption can roll out incrementally. It is pure structural
+            # hashing of the committed bytes — no APK is fetched or read, so Hard
+            # rule 3 holds. Like the other validators it ships a built-in
+            # self-test (matching/tampered/malformed/absent fixtures pinning the
+            # constraint in both directions); we run that first, then the maps.
+            - name: Verify map integrity sidecars (.sha256) + self-test
+              run: |
+                  set -euo pipefail
+                  shopt -s globstar nullglob
+
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/verify_map_sidecars.py --self-test
+
+                  mapfiles=(maps/**/*.json)
+                  if [ "${#mapfiles[@]}" = "0" ]; then
+                      echo "::error::no maps found under maps/"
+                      exit 1
+                  fi
+                  # Append the committed template map so its sidecar
+                  # (templates/map.template.json.sha256) is verified too —
+                  # otherwise the maps/ glob never visits it and an edited
+                  # template with a stale digest would slip through (mirrors how
+                  # the signatures step appends templates/signatures.template.yaml).
+                  # The verifier's orphan sweep also globs the directories these
+                  # paths live in, so a *.json.sha256 whose map was renamed or
+                  # deleted is caught here too.
+                  sidecartargets=("${mapfiles[@]}" templates/map.template.json)
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/verify_map_sidecars.py "${sidecartargets[@]}"
+                  echo "sidecar integrity OK for ${#sidecartargets[@]} file(s)"
+
             # signatures/ is the SOURCE OF TRUTH (AGENTS.md) from which maps are
             # reproduced, so it must be validated too — historically only
             # maps/**/*.json was. This step lints every signatures.yaml for the
