@@ -40,20 +40,29 @@ the wrong shape, for two reasons:
    every client that has not yet shipped the matching schema bump — a breaking
    change for a guarantee that does not need to live in the map at all.
 
-## Recommended approach — a detached sidecar
+## Implemented approach — a detached sidecar (tier: transport integrity)
 
-Bind the map's bytes to a trusted publisher from **outside** the artifact, with
-a sidecar that travels next to the map but is not part of it:
+Bind the map's bytes from **outside** the artifact, with a sidecar that travels
+next to the map but is not part of it:
 
 ```
 maps/com.example.app/30405.json          ← the canonical, unchanged map
-maps/com.example.app/30405.json.sha256   ← (future) detached digest / signature
+maps/com.example.app/30405.json.sha256   ← detached digest sidecar (implemented)
 ```
 
-- The sidecar holds either a bare SHA-256 of the map file or, better, a
-  **detached signature** (e.g. minisign / `ssh-keygen -Y` / a maintainer GPG
-  key) over that digest. A signature additionally proves *who* published it; a
-  bare digest only proves the bytes match what the index recorded.
+The **bare-digest** form is **implemented** (maps#17): every present sidecar is
+verified in CI by `scripts/verify_map_sidecars.py`, and the `rosetta pull`
+clients (rosetta-frida, rosetta-xposed) verify it at build time with the
+identical algorithm specified [below](#sidecar-format-and-verification-contract).
+A **detached signature** (e.g. minisign / `ssh-keygen -Y` / a maintainer GPG
+key) over the digest remains a *future* tier — because the sidecar is a separate
+file, a later `<version_code>.json.sig` can be layered on without changing the
+digest format.
+
+- The sidecar holds a bare SHA-256 of the map file today; a future
+  detached-signature sidecar would additionally prove *who* published it. A
+  signature proves the publisher; a bare digest only proves the bytes match what
+  the index recorded.
 - **A bare `.sha256` committed by the same (untrusted) PR author adds little**
   over just reviewing the map: an attacker who can edit `30405.json` in a PR can
   edit `30405.json.sha256` in the same PR, so the digest only re-states whatever
@@ -66,16 +75,62 @@ maps/com.example.app/30405.json.sha256   ← (future) detached digest / signatur
   developer's machine — the same place and time the map is fetched and bundled —
   **not on the device**. This keeps the device free of network I/O and crypto it
   does not need, consistent with "maps are acquired and bundled at build time,
-  never fetched from the cloud on the device."
+  never fetched from the cloud on the device." (This repo's CI runs the same
+  verification, against the committed bytes, as a structural pre-merge gate.)
 - The canonical map stays a **pure, self-describing map**: no self-referential
   hash, no canonicalisation rules, no client-breaking field. Clients that never
   opt into sidecar verification are completely unaffected, because the map bytes
   they parse are identical.
 
-This is a planned tier, not yet implemented; it slots alongside the other
-off-CI trust tiers (attestation, trusted runner, device telemetry) described in
-the [trust model](trust-model.md), and preserves the same invariants
-(no APK in CI; device does no fetching).
+The bare-digest tier is **implemented** and slots alongside the other off-CI
+trust tiers (attestation, trusted runner, device telemetry) described in the
+[trust model](trust-model.md), and preserves the same invariants (no APK in CI;
+device does no fetching). A detached-signature tier on the same sidecar slot
+remains future work.
+
+## Sidecar format and verification contract
+
+This is the **authoritative** `rosetta pull` verification hook contract. The
+owner side (`scripts/verify_map_sidecars.py` in this repo) and every consumer
+client (rosetta-frida, rosetta-xposed) implement it **identically** so the same
+sidecar binds the same bytes the same way everywhere.
+
+**Sidecar file**
+
+- **Location**: directly next to the map; filename = the map filename + the
+  `.sha256` suffix. `maps/com.example.app/30405.json` →
+  `maps/com.example.app/30405.json.sha256`.
+- **Encoding**: UTF-8 text, exactly one logical line, terminated by a single
+  `\n`.
+- **Content** (coreutils `sha256sum` format `<digest>␠␠<basename>`): the
+  lowercase 64-hex SHA-256 of the **exact bytes** of the map file, two ASCII
+  spaces, then the bare map filename (basename only, no directory). Example:
+
+  ```
+  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  30405.json
+  ```
+
+  This makes `sha256sum -c 30405.json.sha256` work directly when run from the
+  map's directory.
+
+**Verification algorithm** (identical on every side):
+
+1. Read the sidecar text; the first whitespace-delimited token is the expected
+   digest; lowercase it.
+2. Reject if it does not match `^[0-9a-f]{64}$`.
+3. Compute SHA-256 over the **exact committed map-file bytes** (the raw bytes,
+   never re-serialized JSON).
+4. Plain lowercase-hex equality. Match → ok; mismatch → **fail closed**.
+
+**Rollout**: the sidecar is **optional**. A map with no sidecar is **skipped**
+(not a failure); only a *present* sidecar that fails to verify is an error.
+
+**Tier**: this binds the map's **own bytes only** for **transport integrity**
+(it detects corruption/tampering in transit). It is **not** publisher
+authenticity — a PR author who edits the map can edit its sidecar in the same
+PR. Because the sidecar is a separate file, a future detached `.json.sig`
+signature over the digest can add an authenticity tier without breaking this
+format.
 
 ## If a schema affordance is ever wanted
 
