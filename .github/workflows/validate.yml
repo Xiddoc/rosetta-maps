@@ -308,9 +308,18 @@ jobs:
                       echo "::error::no maps found under maps/"
                       exit 1
                   fi
+                  # Append the committed template map so its sidecar
+                  # (templates/map.template.json.sha256) is verified too —
+                  # otherwise the maps/ glob never visits it and an edited
+                  # template with a stale digest would slip through (mirrors how
+                  # the signatures step appends templates/signatures.template.yaml).
+                  # The verifier's orphan sweep also globs the directories these
+                  # paths live in, so a *.json.sha256 whose map was renamed or
+                  # deleted is caught here too.
+                  sidecartargets=("${mapfiles[@]}" templates/map.template.json)
                   timeout "$VALIDATE_TIMEOUT" \
-                      python3 scripts/verify_map_sidecars.py "${mapfiles[@]}"
-                  echo "sidecar integrity OK for ${#mapfiles[@]} map(s)"
+                      python3 scripts/verify_map_sidecars.py "${sidecartargets[@]}"
+                  echo "sidecar integrity OK for ${#sidecartargets[@]} file(s)"
 
             # signatures/ is the SOURCE OF TRUTH (AGENTS.md) from which maps are
             # reproduced, so it must be validated too — historically only
