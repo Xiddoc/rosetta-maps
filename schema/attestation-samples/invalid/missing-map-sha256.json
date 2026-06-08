@@ -1,0 +1,7 @@
+{
+    "attestation_version": 1,
+    "app": "com.example.app",
+    "version_code": 100,
+    "reproduced": true,
+    "attestations": [{ "attestor": "a", "method": "gpg", "signature": "s", "signed_at": "2026-06-08" }]
+}

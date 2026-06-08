@@ -76,7 +76,19 @@ jobs:
                   set -euo pipefail
                   shopt -s globstar nullglob
 
-                  mapfiles=(maps/**/*.json)
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
+                  # sidecars don't match `*.json`, so they need no pruning.)
+                  mapfiles=()
+                  for _f in maps/**/*.json; do
+                      [[ "$_f" == *.json.att.json ]] && continue
+                      mapfiles+=("$_f")
+                  done
                   n="${#mapfiles[@]}"
                   if [ "$n" = "0" ]; then
                       echo "::error::no maps found under maps/"
@@ -124,7 +136,19 @@ jobs:
               run: |
                   set -euo pipefail
                   shopt -s globstar nullglob
-                  mapfiles=(maps/**/*.json)
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
+                  # sidecars don't match `*.json`, so they need no pruning.)
+                  mapfiles=()
+                  for _f in maps/**/*.json; do
+                      [[ "$_f" == *.json.att.json ]] && continue
+                      mapfiles+=("$_f")
+                  done
                   if [ "${#mapfiles[@]}" = "0" ]; then
                       echo "::error::no maps found under maps/"
                       exit 1
@@ -195,7 +219,19 @@ jobs:
               run: |
                   set -euo pipefail
                   shopt -s globstar nullglob
-                  mapfiles=(maps/**/*.json)
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
+                  # sidecars don't match `*.json`, so they need no pruning.)
+                  mapfiles=()
+                  for _f in maps/**/*.json; do
+                      [[ "$_f" == *.json.att.json ]] && continue
+                      mapfiles+=("$_f")
+                  done
                   if [ "${#mapfiles[@]}" = "0" ]; then
                       echo "::error::no maps found under maps/"
                       exit 1
@@ -267,7 +303,19 @@ jobs:
                   timeout "$VALIDATE_TIMEOUT" \
                       python3 scripts/validate_map_semantics.py --self-test
 
-                  mapfiles=(maps/**/*.json)
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
+                  # sidecars don't match `*.json`, so they need no pruning.)
+                  mapfiles=()
+                  for _f in maps/**/*.json; do
+                      [[ "$_f" == *.json.att.json ]] && continue
+                      mapfiles+=("$_f")
+                  done
                   if [ "${#mapfiles[@]}" = "0" ]; then
                       echo "::error::no maps found under maps/"
                       exit 1
@@ -303,7 +351,19 @@ jobs:
                   timeout "$VALIDATE_TIMEOUT" \
                       python3 scripts/verify_map_sidecars.py --self-test
 
-                  mapfiles=(maps/**/*.json)
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
+                  # sidecars don't match `*.json`, so they need no pruning.)
+                  mapfiles=()
+                  for _f in maps/**/*.json; do
+                      [[ "$_f" == *.json.att.json ]] && continue
+                      mapfiles+=("$_f")
+                  done
                   if [ "${#mapfiles[@]}" = "0" ]; then
                       echo "::error::no maps found under maps/"
                       exit 1
@@ -320,6 +380,134 @@ jobs:
                   timeout "$VALIDATE_TIMEOUT" \
                       python3 scripts/verify_map_sidecars.py "${sidecartargets[@]}"
                   echo "sidecar integrity OK for ${#sidecartargets[@]} file(s)"
+
+            # Reproduction + signed attestation sidecars (maps#18), tier 1 of the
+            # off-CI trust ladder (docs/reference/trust-model.md). A contributor
+            # who reproduced a map from its signatures + the APK records and signs
+            # that claim in a DETACHED `<version_code>.json.att.json` sidecar
+            # beside the map — never a field inside the map (the map stays a clean
+            # schema_version:2 artifact; a self-referential trust field is
+            # forbidden by AGENTS.md anti-scope and would break the strict
+            # clients). Public CI validates only the sidecar's STRUCTURE and that
+            # its `map_sha256` binds the committed map bytes; it NEVER fetches or
+            # hosts the APK (Hard rule 3) and does NOT cryptographically verify the
+            # signatures against a keyring (an off-CI higher tier). Drift is pinned
+            # in BOTH directions: the JSON Schema accept/reject samples below, plus
+            # the validator's own self-test for the semantic (binding/identity)
+            # checks. A map with NO attestation is SKIPPED (opt-in rollout).
+            - name: Attestation schema accepts valid + rejects invalid samples
+              run: |
+                  set -euo pipefail
+                  shopt -s globstar nullglob
+                  schema=schema/rosetta-attestation.schema.json
+
+                  valid=(schema/attestation-samples/valid/*.json)
+                  invalid=(schema/attestation-samples/invalid/*.json)
+                  if [ "${#valid[@]}" = "0" ] || [ "${#invalid[@]}" = "0" ]; then
+                      echo "::error::expected samples under schema/attestation-samples/{valid,invalid}/"
+                      exit 1
+                  fi
+
+                  # Every valid sample MUST validate.
+                  timeout "$VALIDATE_TIMEOUT" check-jsonschema \
+                      --schemafile "$schema" "${valid[@]}"
+                  echo "all ${#valid[@]} valid attestation sample(s) accepted"
+
+                  # Every invalid sample MUST be rejected (one at a time).
+                  fail=0
+                  for f in "${invalid[@]}"; do
+                      if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
+                          --schemafile "$schema" "$f" >/dev/null 2>&1; then
+                          echo "::error file=$f::attestation schema ACCEPTED an invalid sample (a constraint may have loosened)"
+                          fail=1
+                      fi
+                  done
+                  if [ "$fail" != "0" ]; then
+                      exit 1
+                  fi
+                  echo "all ${#invalid[@]} invalid attestation sample(s) correctly rejected"
+
+            - name: Validate attestation sidecars (.att.json) + self-test
+              run: |
+                  set -euo pipefail
+                  shopt -s globstar nullglob
+
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/validate_attestations.py --self-test
+
+                  # The validator is driven by the MAP paths (it derives each
+                  # sidecar from the map path and SKIPS maps with no attestation),
+                  # so prune ONLY the exact `<version_code>.json.att.json` sidecar
+                  # convention from the glob, exactly like the map steps above (a
+                  # misfiled `<version_code>.att.json` falls through and is rejected
+                  # as a malformed map). The orphan sweep keys off the same narrow
+                  # `*.json.att.json` glob, catching a sidecar whose map was removed.
+                  mapfiles=()
+                  for _f in maps/**/*.json; do
+                      [[ "$_f" == *.json.att.json ]] && continue
+                      mapfiles+=("$_f")
+                  done
+                  if [ "${#mapfiles[@]}" = "0" ]; then
+                      echo "::error::no maps found under maps/"
+                      exit 1
+                  fi
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/validate_attestations.py "${mapfiles[@]}"
+                  echo "attestation sidecars OK for ${#mapfiles[@]} map(s)"
+
+            # Schema-migration contract worked example (maps#19). The live
+            # canonical schema stays schema_version:2; this step pins the
+            # HYPOTHETICAL 2->3 migration contract documented in
+            # docs/reference/schema-migration.md so the strategy is CI-checkable
+            # without bumping the real schema. It validates, in both directions:
+            #   * `before.v2.json` MUST pass the LIVE v2 schema (a real v2 map);
+            #   * `after.v3.json` MUST pass the fixture-only v3 schema kept beside
+            #     it (the migrator output);
+            #   * `after.v3.json` MUST be REJECTED by the LIVE v2 schema (the bump
+            #     is real in the other direction too — a migrated v3 artifact does
+            #     not pass as v2);
+            #   * `before.v2.json` MUST be REJECTED by the v3 schema (the bump is
+            #     real — an un-migrated map does not pass as v3);
+            #   * every `invalid/` after MUST be REJECTED by the v3 schema (a map
+            #     that didn't complete the migration — still v2, or `version` left
+            #     a bare string — fails the emit-as-v3 gate).
+            # The v3 schema here is a FIXTURE, never consumed as canonical.
+            - name: Schema-migration 2->3 worked example (hypothetical)
+              run: |
+                  set -euo pipefail
+                  dir=schema/migration-samples/v2-to-v3
+                  v2=schema/rosetta-map.schema.json
+                  v3="$dir/hypothetical-v3.schema.json"
+
+                  # before == valid v2; after == valid v3.
+                  timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v2" "$dir/before.v2.json"
+                  timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v3" "$dir/after.v3.json"
+                  echo "migration before/after validate against their schemas"
+
+                  # The bump is real in BOTH directions: a migrated v3 artifact
+                  # must NOT pass the live v2 schema either (proving v3 is a clean
+                  # break, not a v2 superset).
+                  if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
+                      --schemafile "$v2" "$dir/after.v3.json" >/dev/null 2>&1; then
+                      echo "::error file=$dir/after.v3.json::live v2 schema ACCEPTED a v3 artifact (the 2->3 break is not real)"
+                      exit 1
+                  fi
+                  echo "migration after.v3 rejected by the live v2 schema"
+
+                  # The v3 gate is real in both directions: an un-migrated v2 map
+                  # and every invalid `after` MUST be rejected by the v3 schema.
+                  fail=0
+                  for f in "$dir/before.v2.json" "$dir"/invalid/*.json; do
+                      if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
+                          --schemafile "$v3" "$f" >/dev/null 2>&1; then
+                          echo "::error file=$f::v3 schema ACCEPTED a non-migrated/invalid map (the 2->3 gate loosened)"
+                          fail=1
+                      fi
+                  done
+                  if [ "$fail" != "0" ]; then
+                      exit 1
+                  fi
+                  echo "migration v3 gate rejects un-migrated + invalid maps"
 
             # signatures/ is the SOURCE OF TRUTH (AGENTS.md) from which maps are
             # reproduced, so it must be validated too — historically only

@@ -43,6 +43,7 @@ nav:
       - Trust model & validation: reference/trust-model.md
       - Map integrity & provenance: reference/integrity.md
       - Map schema: reference/schema.md
+      - Schema migration: reference/schema-migration.md
 
 markdown_extensions:
   - admonition

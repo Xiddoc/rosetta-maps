@@ -1,0 +1,8 @@
+{
+    "attestation_version": 1,
+    "app": "com.example.app",
+    "version_code": -1,
+    "map_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "reproduced": true,
+    "attestations": [{ "attestor": "a", "method": "gpg", "signature": "s", "signed_at": "2026-06-08" }]
+}
