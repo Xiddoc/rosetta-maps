@@ -25,9 +25,11 @@ a bare string into a structured object `{ "name": "..." }`.
   v3 schema.
 
 `.github/workflows/validate.yml` (the "Schema-migration 2->3 worked example"
-step) pins all four directions: `before` passes the live v2 schema, `after`
-passes the v3 schema, and `before` + both `invalid/` maps are rejected by the v3
-schema — so the migrator's "emit-as-v3" gate is demonstrably real.
+step) pins every direction: `before` passes the live v2 schema, `after` passes
+the v3 schema, `after` is **rejected by the live v2 schema** (a v3 artifact does
+not pass as v2 — the break is real both ways), and `before` + both `invalid/`
+maps are rejected by the v3 schema — so the migrator's "emit-as-v3" gate is
+demonstrably real.
 
 ## Adding another worked example
 

@@ -76,14 +76,17 @@ jobs:
                   set -euo pipefail
                   shopt -s globstar nullglob
 
-                  # Glob every map, then PRUNE detached sidecars that also
-                  # end in `.json` (the `<version_code>.json.att.json`
-                  # attestation sidecars, maps#18). They are validated by
-                  # their own steps/schema, never as maps. (`.json.sha256`
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
                   # sidecars don't match `*.json`, so they need no pruning.)
                   mapfiles=()
                   for _f in maps/**/*.json; do
-                      [[ "$_f" == *.att.json ]] && continue
+                      [[ "$_f" == *.json.att.json ]] && continue
                       mapfiles+=("$_f")
                   done
                   n="${#mapfiles[@]}"
@@ -133,14 +136,17 @@ jobs:
               run: |
                   set -euo pipefail
                   shopt -s globstar nullglob
-                  # Glob every map, then PRUNE detached sidecars that also
-                  # end in `.json` (the `<version_code>.json.att.json`
-                  # attestation sidecars, maps#18). They are validated by
-                  # their own steps/schema, never as maps. (`.json.sha256`
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
                   # sidecars don't match `*.json`, so they need no pruning.)
                   mapfiles=()
                   for _f in maps/**/*.json; do
-                      [[ "$_f" == *.att.json ]] && continue
+                      [[ "$_f" == *.json.att.json ]] && continue
                       mapfiles+=("$_f")
                   done
                   if [ "${#mapfiles[@]}" = "0" ]; then
@@ -213,14 +219,17 @@ jobs:
               run: |
                   set -euo pipefail
                   shopt -s globstar nullglob
-                  # Glob every map, then PRUNE detached sidecars that also
-                  # end in `.json` (the `<version_code>.json.att.json`
-                  # attestation sidecars, maps#18). They are validated by
-                  # their own steps/schema, never as maps. (`.json.sha256`
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
                   # sidecars don't match `*.json`, so they need no pruning.)
                   mapfiles=()
                   for _f in maps/**/*.json; do
-                      [[ "$_f" == *.att.json ]] && continue
+                      [[ "$_f" == *.json.att.json ]] && continue
                       mapfiles+=("$_f")
                   done
                   if [ "${#mapfiles[@]}" = "0" ]; then
@@ -294,14 +303,17 @@ jobs:
                   timeout "$VALIDATE_TIMEOUT" \
                       python3 scripts/validate_map_semantics.py --self-test
 
-                  # Glob every map, then PRUNE detached sidecars that also
-                  # end in `.json` (the `<version_code>.json.att.json`
-                  # attestation sidecars, maps#18). They are validated by
-                  # their own steps/schema, never as maps. (`.json.sha256`
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
                   # sidecars don't match `*.json`, so they need no pruning.)
                   mapfiles=()
                   for _f in maps/**/*.json; do
-                      [[ "$_f" == *.att.json ]] && continue
+                      [[ "$_f" == *.json.att.json ]] && continue
                       mapfiles+=("$_f")
                   done
                   if [ "${#mapfiles[@]}" = "0" ]; then
@@ -339,14 +351,17 @@ jobs:
                   timeout "$VALIDATE_TIMEOUT" \
                       python3 scripts/verify_map_sidecars.py --self-test
 
-                  # Glob every map, then PRUNE detached sidecars that also
-                  # end in `.json` (the `<version_code>.json.att.json`
-                  # attestation sidecars, maps#18). They are validated by
-                  # their own steps/schema, never as maps. (`.json.sha256`
+                  # Glob every map, then PRUNE ONLY the exact attestation
+                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
+                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
+                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
+                  # a real sidecar; pruning it broadly would hide it from BOTH the
+                  # map steps AND the attestation orphan sweep, so it must fall
+                  # through here and be rejected as a malformed map. (`.json.sha256`
                   # sidecars don't match `*.json`, so they need no pruning.)
                   mapfiles=()
                   for _f in maps/**/*.json; do
-                      [[ "$_f" == *.att.json ]] && continue
+                      [[ "$_f" == *.json.att.json ]] && continue
                       mapfiles+=("$_f")
                   done
                   if [ "${#mapfiles[@]}" = "0" ]; then
@@ -422,12 +437,14 @@ jobs:
 
                   # The validator is driven by the MAP paths (it derives each
                   # sidecar from the map path and SKIPS maps with no attestation),
-                  # so prune the `.att.json` sidecars from the glob exactly like
-                  # the map steps above. Its orphan sweep still globs the same
-                  # directories, catching an `*.att.json` whose map was removed.
+                  # so prune ONLY the exact `<version_code>.json.att.json` sidecar
+                  # convention from the glob, exactly like the map steps above (a
+                  # misfiled `<version_code>.att.json` falls through and is rejected
+                  # as a malformed map). The orphan sweep keys off the same narrow
+                  # `*.json.att.json` glob, catching a sidecar whose map was removed.
                   mapfiles=()
                   for _f in maps/**/*.json; do
-                      [[ "$_f" == *.att.json ]] && continue
+                      [[ "$_f" == *.json.att.json ]] && continue
                       mapfiles+=("$_f")
                   done
                   if [ "${#mapfiles[@]}" = "0" ]; then
@@ -446,6 +463,9 @@ jobs:
             #   * `before.v2.json` MUST pass the LIVE v2 schema (a real v2 map);
             #   * `after.v3.json` MUST pass the fixture-only v3 schema kept beside
             #     it (the migrator output);
+            #   * `after.v3.json` MUST be REJECTED by the LIVE v2 schema (the bump
+            #     is real in the other direction too — a migrated v3 artifact does
+            #     not pass as v2);
             #   * `before.v2.json` MUST be REJECTED by the v3 schema (the bump is
             #     real — an un-migrated map does not pass as v3);
             #   * every `invalid/` after MUST be REJECTED by the v3 schema (a map
@@ -463,6 +483,16 @@ jobs:
                   timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v2" "$dir/before.v2.json"
                   timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v3" "$dir/after.v3.json"
                   echo "migration before/after validate against their schemas"
+
+                  # The bump is real in BOTH directions: a migrated v3 artifact
+                  # must NOT pass the live v2 schema either (proving v3 is a clean
+                  # break, not a v2 superset).
+                  if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
+                      --schemafile "$v2" "$dir/after.v3.json" >/dev/null 2>&1; then
+                      echo "::error file=$dir/after.v3.json::live v2 schema ACCEPTED a v3 artifact (the 2->3 break is not real)"
+                      exit 1
+                  fi
+                  echo "migration after.v3 rejected by the live v2 schema"
 
                   # The v3 gate is real in both directions: an un-migrated v2 map
                   # and every invalid `after` MUST be rejected by the v3 schema.
