@@ -149,8 +149,11 @@ def _shape_errors(doc: object) -> list[str]:
         )
 
     app = doc.get("app")
-    if not isinstance(app, str) or not _APP_RE.match(app):
-        errors.append(f"app must be a dotted package id, got {app!r}")
+    # Mirror the schema's `app` bounds EXACTLY (minLength:1 is subsumed by the
+    # pattern, maxLength:256 is NOT — enforce it here so standalone mode, with no
+    # check-jsonschema, applies the same length cap the schema does).
+    if not isinstance(app, str) or not _APP_RE.match(app) or len(app) > 256:
+        errors.append(f"app must be a dotted package id (<= 256 chars), got {app!r}")
 
     vc = doc.get("version_code")
     if isinstance(vc, bool) or not isinstance(vc, int) or not (0 <= vc <= _MAX_SAFE_INT):
@@ -333,6 +336,12 @@ def find_orphan_attestations(roots: list[str]) -> list[str]:
 # binds its map PASSES, and every distinct way one can be wrong FAILS. The
 # opt-in rule (no sidecar -> SKIPPED) is pinned too.
 
+# A deliberately MINIMAL binding fixture, NOT a schema-valid map: the attestation
+# validator only reads the map's `app` / `version_code` (for the identity cross-
+# check) and hashes its raw bytes (for the map-binding check), so the fixture
+# carries just those keys. It intentionally omits the fields a real
+# `schema_version: 2` map needs (e.g. `classes`, `captured_at`); do not treat it
+# as a valid map — the map schema/layout steps validate real maps elsewhere.
 _MAP_BYTES = b'{"schema_version": 2, "app": "com.example.app", "version_code": 30405}\n'
 _MAP_DOC = json.loads(_MAP_BYTES)
 _GOOD_MAP_DIGEST = hashlib.sha256(_MAP_BYTES).hexdigest()
@@ -389,6 +398,14 @@ def _invalid_docs() -> dict:
     d = copy.deepcopy(_valid_doc())
     d["app"] = "com.other.pkg"
     out["app != attested map app"] = d
+
+    # Over-length `app` — pins the schema's maxLength:256 in the standalone
+    # script. Build a dotted id that is pattern-valid but > 256 chars (the
+    # binding-identity cross-check would also reject it, but the shape gate
+    # fires first, which is what we are pinning here).
+    d = copy.deepcopy(_valid_doc())
+    d["app"] = "com." + ("a" * 256)
+    out["app exceeds 256-char cap"] = d
 
     d = copy.deepcopy(_valid_doc())
     d["version_code"] = 99999
@@ -457,6 +474,25 @@ def _self_test() -> int:
         print("SELF-TEST FAIL: minimal valid attestation rejected", file=sys.stderr)
     else:
         print("self-test: minimal valid attestation accepted")
+
+    # Boundary (accept direction) for the app maxLength:256 cap: an app exactly
+    # at the 256-char limit must still pass the shape gate. Use a fresh map doc
+    # whose `app` matches, so only the length cap (not the identity cross-check)
+    # is under test.
+    long_app = "com." + ("a" * 252)  # 4 + 252 == 256 chars exactly
+    assert len(long_app) == 256
+    boundary_bytes = json.dumps(
+        {"schema_version": 2, "app": long_app, "version_code": 30405}
+    ).encode("utf-8")
+    boundary_doc = json.loads(boundary_bytes)
+    boundary_att = _valid_doc()
+    boundary_att["app"] = long_app
+    boundary_att["map_sha256"] = hashlib.sha256(boundary_bytes).hexdigest()
+    if check_attestation(boundary_att, boundary_bytes, boundary_doc, synth_path):
+        failures += 1
+        print("SELF-TEST FAIL: app at 256-char cap rejected", file=sys.stderr)
+    else:
+        print("self-test: app at the 256-char cap accepted")
 
     for label, doc in _invalid_docs().items():
         if not check_attestation(doc, _MAP_BYTES, _MAP_DOC, synth_path):
