@@ -16,14 +16,15 @@ maps/<app>/<version_code>.json
 
 ## Format
 
-Strict JSON, `schema_version: 2`. The canonical schema, field semantics, and
+Strict JSON, `schema_version: 3`. The canonical schema, field semantics, and
 authoring guidance live in `../schema/rosetta-map.schema.json` (owned here) and
 its [docs page](https://Xiddoc.github.io/rosetta-maps/reference/schema/).
 
 ## Provenance
 
-Carry it on the map itself via `sources[]`, per-class `source` /
-`confidence`, `signer_sha256`, and `captured_at`. See `../CONTRIBUTING.md`.
+Carry it on the map itself via `sources[]`, per-class `source`,
+`signer_sha256`, `captured_at`, and optionally `generated_from`. See
+`../CONTRIBUTING.md`.
 
 `com.example.app/30405.json` is the worked example — a feature-complete map
 exercising AIDL stubs/callbacks, overloads, enums, and fields.

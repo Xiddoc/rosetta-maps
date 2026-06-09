@@ -33,6 +33,11 @@ Checks, per `maps/**/*.json`:
                               path under `signatures/` must point at a committed
                               file (catches a drifted provenance pointer such as
                               a `signatures/example.json` that never existed).
+  6. status/superseded_by   — (v3) `superseded_by` is allowed ONLY when
+                              `status == "superseded"`, and `status ==
+                              "superseded"` REQUIRES `superseded_by`. The schema
+                              validates each field's shape but cannot express
+                              this relationship.
 
 CONSERVATIVE BOUND on check 2 (read before assuming it is exhaustive): a
 referenced object type is flagged as a dangling app-internal reference ONLY
@@ -307,6 +312,42 @@ def _check_source_configs(doc: dict, map_path: str, errors: list[str]) -> None:
             )
 
 
+# --- status / superseded_by relationship (check 6) --------------------------
+#
+# The schema (rosetta-map.schema.json) can validate `status` against its enum
+# and `superseded_by` against `integer`, but it cannot express the RELATIONSHIP
+# between them — that is a tier-1 semantic check (the same class as the
+# descriptor/overload/app-dir checks above). The rule (v3, issue #40):
+#
+#   * `superseded_by` is allowed ONLY when `status == "superseded"`. A pointer to
+#     a successor map is meaningless on an `active`/`retracted`/absent-status map.
+#   * when `status == "superseded"`, `superseded_by` MUST be present — a
+#     superseded map has to say what supersedes it.
+#
+# `status` absent is treated as `active` (so `superseded_by` is then forbidden).
+
+
+def _check_status(doc: dict, errors: list[str]) -> None:
+    """check 6: enforce the status <-> superseded_by relationship."""
+    status = doc.get("status")
+    has_superseded_by = "superseded_by" in doc
+    is_superseded = status == "superseded"
+
+    if has_superseded_by and not is_superseded:
+        shown = "active (absent)" if status is None else repr(status)
+        errors.append(
+            f"'superseded_by' is present but status is {shown}; "
+            f"'superseded_by' is allowed ONLY when status == 'superseded' — "
+            f"set status to 'superseded' or drop 'superseded_by'"
+        )
+    if is_superseded and not has_superseded_by:
+        errors.append(
+            "status is 'superseded' but 'superseded_by' is missing; a "
+            "superseded map MUST point at its successor's version_code via "
+            "'superseded_by'"
+        )
+
+
 def _unresolved_type_error(context: str, binary: str) -> str:
     """Build the actionable error for a dangling app-internal type reference."""
     return (
@@ -326,6 +367,11 @@ def check_map(doc: object, path: str) -> list[str]:
     errors: list[str] = []
     if not isinstance(doc, dict):
         return ["map is not a JSON object"]
+
+    # --- check 6: status <-> superseded_by relationship ---
+    # Runs regardless of `classes` (it is a top-level lifecycle invariant, not a
+    # per-class one), so check it before the classes early-return below.
+    _check_status(doc, errors)
 
     classes = doc.get("classes")
     if not isinstance(classes, dict):
@@ -465,7 +511,7 @@ def check_file(path: str) -> list[str]:
 # false-positiving.
 
 _VALID_MAP = {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.app",
     "version": "1.0",
     "version_code": 1,
@@ -512,7 +558,7 @@ _VALID_MAP = {
 # real-key half of `resolvable`. Deleting `resolvable.add(ckey)` in check_map
 # (the real-key resolution line) would make this fixture wrongly fail.
 _VALID_REALKEY_REF = {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.app",
     "version": "1.0",
     "version_code": 1,
@@ -535,7 +581,7 @@ _VALID_REALKEY_REF = {
 # repo root and synthesises a maps/com.example.app/<vc>.json path, so this
 # repo-relative path resolves to the worked example's signatures.
 _VALID_SOURCE_CONFIG = {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.app",
     "version": "1.0",
     "version_code": 1,
@@ -548,10 +594,45 @@ _VALID_SOURCE_CONFIG = {
 }
 
 
+# A map that exercises the status/superseded_by relationship in the ACCEPT
+# direction: status == "superseded" WITH a superseded_by pointer (check 6 must
+# accept this pairing). Carried as a v3 map for honesty; check_map ignores
+# schema_version, so the value here is documentary.
+_VALID_SUPERSEDED = {
+    "schema_version": 3,
+    "app": "com.example.app",
+    "version": "1.0",
+    "version_code": 1,
+    "status": "superseded",
+    "superseded_by": 2,
+    "classes": {"com.example.app.Foo": {"obfuscated": "aaaa", "methods": {}}},
+}
+
+
 def _invalid_fixtures() -> dict:
     import copy
 
     fixtures: dict = {}
+
+    # check 6: superseded_by present but status is NOT 'superseded' (here:
+    # 'active'). The schema accepts both fields independently, so ONLY this
+    # semantic check catches the meaningless pairing.
+    f6a = copy.deepcopy(_VALID_MAP)
+    f6a["status"] = "active"
+    f6a["superseded_by"] = 2
+    fixtures["superseded_by without status=superseded"] = f6a
+
+    # check 6: superseded_by present with NO status at all (status absent ⇒
+    # active ⇒ superseded_by still forbidden).
+    f6b = copy.deepcopy(_VALID_MAP)
+    f6b["superseded_by"] = 2
+    fixtures["superseded_by with absent status"] = f6b
+
+    # check 6: status == 'superseded' but superseded_by MISSING — a superseded
+    # map must name its successor.
+    f6c = copy.deepcopy(_VALID_MAP)
+    f6c["status"] = "superseded"
+    fixtures["status=superseded without superseded_by"] = f6c
 
     # check 5: dangling repo-internal source config — points under signatures/
     # but the file does not exist (the historical `signatures/example.json`
@@ -662,6 +743,7 @@ def _self_test() -> int:
         ("valid baseline", _VALID_MAP),
         ("valid real-key ref", _VALID_REALKEY_REF),
         ("valid source config", _VALID_SOURCE_CONFIG),
+        ("valid superseded", _VALID_SUPERSEDED),
     ):
         synth_path = os.path.join("maps", doc["app"], f"{doc['version_code']}.json")
         errs = check_map(doc, synth_path)

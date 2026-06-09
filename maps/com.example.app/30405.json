@@ -1,10 +1,14 @@
 {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.app",
     "version": "3.4.5",
     "version_code": 30405,
     "captured_at": "2026-05-13",
     "signer_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "generated_from": {
+        "signatures_rev": "0123abc"
+    },
+    "status": "active",
     "client_hints": {
         "frida_min_version": "16.0.0",
         "frida_max_version": "17.99.99"
@@ -13,8 +17,7 @@
         {
             "tool": "sigmatcher",
             "config": "signatures/com.example.app/signatures.yaml",
-            "classes": 10,
-            "confidence": "high"
+            "classes": 10
         },
         {
             "tool": "hand-authored",
@@ -34,7 +37,6 @@
                 "Transaction failed"
             ],
             "source": "sigmatcher",
-            "confidence": "high",
             "methods": {
                 "requestTicket": [
                     {

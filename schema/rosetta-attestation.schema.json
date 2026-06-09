@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "https://github.com/Xiddoc/rosetta-maps/schema/rosetta-attestation.schema.json",
     "title": "Rosetta reproduction attestation (attestation_version 1)",
-    "description": "Canonical schema for a DETACHED reproduction-attestation sidecar that records that a contributor reproduced a published map from its signatures + the APK and signed the result. It is a SEPARATE file beside the map (`<version_code>.json.att.json`), NEVER a field inside the map (the map stays a clean `schema_version: 2` artifact; a self-referential trust field is forbidden by AGENTS.md anti-scope and would break the strict `additionalProperties: false` clients). This is the structural format public CI validates (tier 1 of the off-CI trust ladder); it is APK-free — CI checks the sidecar's SHAPE and that its `map_sha256` binds the committed map bytes, never the APK itself. See docs/reference/trust-model.md.",
+    "description": "Canonical schema for a DETACHED reproduction-attestation sidecar that records that a contributor reproduced a published map from its signatures + the APK and signed the result. It is a SEPARATE file beside the map (`<version_code>.json.att.json`), NEVER a field inside the map (the map stays a clean `schema_version: 3` artifact; a self-referential trust field is forbidden by AGENTS.md anti-scope and would break the strict `additionalProperties: false` clients). This is the structural format public CI validates (tier 1 of the off-CI trust ladder); it is APK-free — CI checks the sidecar's SHAPE and that its `map_sha256` binds the committed map bytes, never the APK itself. See docs/reference/trust-model.md.",
     "type": "object",
     "additionalProperties": false,
     "required": [

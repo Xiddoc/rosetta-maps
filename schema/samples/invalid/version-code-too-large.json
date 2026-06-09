@@ -1,9 +1,11 @@
 {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.app",
     "version": "1.0.0",
     "version_code": 9007199254740992,
     "classes": {
-        "com.example.app.Foo": { "obfuscated": "aaaa" }
+        "com.example.app.Foo": {
+            "obfuscated": "aaaa"
+        }
     }
 }

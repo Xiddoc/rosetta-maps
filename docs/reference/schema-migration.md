@@ -1,15 +1,18 @@
 # Schema evolution & the migration contract
 
 `schema_version` is a **hard gate**, not a hint. The canonical schema pins it
-with `"schema_version": { "const": 2 }`, and both client adapters reject any
-other value fail-closed (rosetta-frida's Zod `z.literal(2)`, rosetta-xposed's
-`MapLoader` `CURRENT_SCHEMA_VERSION` check). A `schema_version: 1` map is not
-"old but readable" — it is **rejected**. This page defines what happens the day
-the format must move to `schema_version: 3`, so that bump is a deliberate,
-reproducible operation rather than an ad-hoc scramble.
+with `"schema_version": { "const": 3 }`, and both client adapters reject any
+other value fail-closed (rosetta-frida's Zod `z.literal(3)`, rosetta-xposed's
+`MapLoader` `CURRENT_SCHEMA_VERSION` check). A `schema_version: 2` map is not
+"old but readable" — it is **rejected**. This page defines the migration
+strategy and documents the **executed** `2 -> 3` bump, so that future bumps are
+a deliberate, reproducible operation rather than an ad-hoc scramble.
 
-This is a **strategy + a worked hypothetical example**. The live canonical schema
-stays `schema_version: 2`; nothing here bumps it.
+The `2 -> 3` migration described below has **already happened**: the live
+canonical schema is now `schema_version: 3`. The worked example under
+`schema/migration-samples/v2-to-v3/` is exercised against a **frozen** copy of
+the old v2 schema (`frozen-v2.schema.json`) on the `before` side and the live
+v3 schema on the `after` side.
 
 ## The decision: migrate **in place**, at bump time, once
 
@@ -99,14 +102,41 @@ bump, a v3 corpus would be unreadable by a lagging client — which is exactly w
 the bump is one coordinated event, and why on-read migration (strategy A) was
 rejected: it would let the clients drift apart silently.
 
-## Worked hypothetical: a 2→3 bump
+## The executed 2→3 bump
 
-This is **illustrative only** — it does not describe a real planned change. Say v3
-splits the human label `version` into a structured object:
+The `2 -> 3` bump was a real, batched change (issues #19, #43, #39, #38/#32,
+#36, #40). The field-by-field shape lives **only** in the canonical schema
+(`schema/rosetta-map.schema.json`) — see the [map schema](schema.md) page rather
+than re-listing it here. In summary, v3:
 
-- **v2:** `"version": "3.4.5"` (a plain string).
-- **v3 (hypothetical):** `"version": { "name": "3.4.5" }` (an object; the gate
-  becomes `"schema_version": { "const": 3 }`).
+- bumps the hard gate to `"schema_version": { "const": 3 }`;
+- **removes** `confidence` entirely (the per-class and `sources[]` field);
+- tightens `captured_at` from a free-form string to an ISO `YYYY-MM-DD` date;
+- lets `signer_sha256` be **either** a single 64-hex string **or** a non-empty
+  array of them (match-any across signing certs);
+- adds optional `generated_from` (`{ signatures_rev }`), `status`
+  (`active` / `superseded` / `retracted`, absent ⇒ active), and `superseded_by`
+  (a `version_code`). The `status` ⟷ `superseded_by` relationship is enforced by
+  the semantic validator (`scripts/validate_map_semantics.py`), not the schema.
+
+### `generated_from` design notes
+
+Two deliberate choices about `generated_from` are recorded here so they are not
+re-litigated:
+
+- **`signatures_rev` is an intentionally-unverified provenance hint.** It is
+  validated as a hex *shape* only (`^[0-9a-f]{7,40}$`); a fabricated rev passes
+  silently. There is **no** repo-internal git-existence check, and one will not be
+  added — a map may legitimately be authored where the signatures rev is not a
+  commit in *this* repo. This is deliberately asymmetric with `sources[].config`,
+  which semantic check 5 *does* bind to a committed file: a config path names a
+  file that must exist here, whereas a signatures rev is just a backwards-pointing
+  breadcrumb to wherever the signatures lived when the map was generated.
+- **`generated_from` is map-level, not `sources[].rev`.** A map is generated from a
+  single signatures revision, so the rev belongs once at the top level; per-source
+  provenance stays in `sources[]`, which also carries hand-authored and
+  runtime-discovered entries that have no git rev at all. (This is why issue #36's
+  per-source-`rev` alternative was not chosen.)
 
 The migrator hop is then:
 
@@ -114,26 +144,29 @@ The migrator hop is then:
 migrate_v2_to_v3(map):
     assert map.schema_version == 2          # accept-as-v2 gate
     map.schema_version = 3
-    map.version = { "name": map.version }    # string -> { name: string }
+    drop map.confidence and source.confidence (removed in v3)
+    normalize map.captured_at -> "YYYY-MM-DD"
     return map                               # emit-as-v3 gate (validate vs v3 schema)
 ```
 
 A **before/after fixture pair** demonstrating exactly this transform lives under
 [`schema/migration-samples/v2-to-v3/`](https://github.com/Xiddoc/rosetta-maps/tree/master/schema/migration-samples/v2-to-v3):
 
-- `before.v2.json` — a valid v2 map (validates against the **live** v2 schema).
+- `before.v2.json` — a valid v2 map (validates against the **frozen** v2 schema
+  kept beside it, `frozen-v2.schema.json`): carries `confidence` and a free-form
+  `captured_at`.
 - `after.v3.json` — the same map after `migrate_v2_to_v3` (validates against the
-  **hypothetical** v3 schema kept beside it, `hypothetical-v3.schema.json`).
+  **live** canonical v3 schema).
 - `invalid/` — an `after` that did **not** complete the migration (still carries
-  `schema_version: 2`) and one that left `version` a bare string: both MUST be
-  **rejected** by the v3 schema, pinning that the migrator's emit-as-v3 gate is
-  real in both directions.
+  `schema_version: 2`) and one that left a `confidence` field in: both MUST be
+  **rejected** by the live v3 schema, pinning that the migrator's emit-as-v3 gate
+  is real in both directions.
 
-These fixtures are exercised by the existing `validate.yml` sample steps' sibling
-pattern (a dedicated migration-samples step), so the *contract* is CI-pinned even
-though the live schema stays v2. The hypothetical v3 schema is **not** the
-canonical schema — it is a fixture that exists only to make the worked example
-checkable; the canonical `schema/rosetta-map.schema.json` remains `const: 2`.
+These fixtures are exercised by the `validate.yml` "Schema-migration 2->3 worked
+example" step, so the *contract* stays CI-pinned. The frozen v2 schema is **not**
+the canonical schema — it is a fixture that exists only to keep the worked
+example checkable now that the live `schema/rosetta-map.schema.json` is
+`const: 3`.
 
 ## Anti-scope
 
@@ -141,5 +174,6 @@ checkable; the canonical `schema/rosetta-map.schema.json` remains `const: 2`.
   for (RFC 0001: maps are bundled at build time, no device-side transforms).
 - No mixed-version corpus — at any commit the repo is exactly one `schema_version`.
 - No bespoke skip-a-version migrators — only chained single-major-version hops.
-- This does **not** bump the live schema; it defines the contract for when a bump
-  happens. The canonical schema stays `schema_version: 2`.
+- The canonical schema is bumped first; the clients (rosetta-frida Zod,
+  rosetta-xposed Kotlin) and the shared conformance fixture track it — never a
+  fork or a mirror in the other direction.

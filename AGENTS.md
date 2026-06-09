@@ -15,7 +15,7 @@ tools — an obfuscation-map "CVE database" (RFC 0001 Decision 4, in the
   versions. A map is *reproducible* from its signatures + the APK, which is
   what makes it verifiable.
 - **`maps/<app>/<version_code>.json`** — the **published artifacts**:
-  resolved `schema_version: 2` JSON consumed directly by rosetta-frida and
+  resolved `schema_version: 3` JSON consumed directly by rosetta-frida and
   rosetta-xposed.
 
 This repo is **data + CI, not a code library.** It has no build; the only
@@ -33,13 +33,13 @@ rosetta-maps/
 
 ## Hard rules
 
-1. **Maps are strict JSON, `schema_version: 2`, one per `(app,
+1. **Maps are strict JSON, `schema_version: 3`, one per `(app,
    version_code)`.** The filename IS the `version_code` (the authoritative
    O(1) selection key, RFC 0001 Decision 3). `validate.yml` enforces both
    the schema and the filename↔`version_code` match.
 2. **This repo owns the canonical schema; CI validates against it.**
    `schema/rosetta-map.schema.json` is the single, language-neutral source
-   of truth for the `schema_version: 2` format — the format belongs with
+   of truth for the `schema_version: 3` format — the format belongs with
    the data, and the data lives here. CI validates every map against this
    file directly with a language-neutral JSON Schema checker
    (check-jsonschema — no JS toolchain, no cross-repo checkout). The
@@ -74,7 +74,7 @@ clients:
 - A schema change is not done until the client adapters (frida Zod,
   xposed Kotlin) and, where applicable, the shared conformance
   `validation.json` fixture are updated to match — the three copies of the
-  `schema_version: 2` format must move together (Hard rule 2).
+  `schema_version: 3` format must move together (Hard rule 2).
 - Never weaken or skip a CI check to make a PR pass; fix the data.
 - For SEMANTIC (non-schema) constraints — relationships the JSON Schema
   cannot express — a CI check that carries its own in-script `--self-test`

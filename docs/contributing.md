@@ -21,7 +21,8 @@ provenance stay legible:
    from `templates/map.template.json` and validate locally against the canonical
    schema this repo owns.
 3. **Record provenance** on the map using the schema fields — `sources[]`,
-   per-class `source`/`confidence`, `signer_sha256`, and `captured_at`.
+   per-class `source`, `signer_sha256`, `captured_at`, and optionally
+   `generated_from`.
 4. **Open the PR**, keeping it to a single `(app, version_code)` map plus any
    signatures it needs.
 

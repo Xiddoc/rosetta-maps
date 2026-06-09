@@ -1,7 +1,7 @@
 # Map schema
 
 `schema/rosetta-map.schema.json` is the **canonical** JSON Schema (draft-07) for
-the `schema_version: 2` map format. It is the single, language-neutral source of
+the `schema_version: 3` map format. It is the single, language-neutral source of
 truth for the format — this repo owns it because this repo owns the data it
 describes.
 
@@ -47,16 +47,24 @@ byte-faithful with the maps rosetta-frida emits.
 Record provenance on the map itself rather than in free text:
 
 - `sources[]` — which tool(s) produced which entries (`tool`, `config`, `classes`,
-  `confidence`, `notes`).
-- per-class `source` and `confidence`.
-- `signer_sha256` — the lowercase-hex SHA-256 of the signing certificate, if you
-  read it. This pins publisher authenticity and detects repacks. **Format-checked:**
-  it must match `^[0-9a-f]{64}$` — exactly 64 lowercase hex chars, **no colon
-  separators** (the canonical on-disk form is `abcd…`, not the `AB:CD:…`
-  certificate-fingerprint spelling some tools print). Clients enforce it
+  `notes`).
+- per-class `source`.
+- `signer_sha256` — the lowercase-hex SHA-256 of the signing certificate(s), if
+  you read them. This pins publisher authenticity and detects repacks.
+  **Format-checked:** each value must match `^[0-9a-f]{64}$` — exactly 64
+  lowercase hex chars, **no colon separators** (the canonical on-disk form is
+  `abcd…`, not the `AB:CD:…` certificate-fingerprint spelling some tools print).
+  It may be a **single string** or a **non-empty array** of such strings (an app
+  may present several signing certs; clients match-any). Clients enforce it
   **fail-closed**, so omit the key entirely if you don't have it — don't leave a
   placeholder, which would always `SignerMismatch`.
-- `captured_at` — the date you captured the map.
+- `captured_at` — the date you captured the map, as an ISO `YYYY-MM-DD` date.
+- `generated_from` — optional `{ "signatures_rev": "<git sha>" }` binding the
+  map to the exact signatures revision it was generated from.
+- `status` — optional lifecycle marker (`active` / `superseded` / `retracted`;
+  absent ⇒ `active`). When `superseded`, set `superseded_by` to the
+  `version_code` that replaces this map (the semantic validator enforces this
+  pairing).
 - `client_hints` — an optional sub-object for **advisory**, client-specific hints
   that the core resolver ignores (`frida_min_version`, `frida_max_version`). They
   live under `client_hints` rather than at the top level so the top-level
