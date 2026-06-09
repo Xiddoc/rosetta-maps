@@ -90,3 +90,14 @@ rosetta-xposed clients and must stay in lockstep:
 - **Reserved-key rejection:** the `classes`, `methods`, and `fields` objects
   reject the keys `__proto__`, `constructor`, and `prototype` (prototype-pollution
   guard for JS clients).
+
+Every numeric bound above is pinned in BOTH directions by the curated samples
+CI checks (`schema/samples/`): `valid/bounds-at-max.json` exercises the
+at-the-limit values (`app`/`version` at 256, `obfuscated` at 512, `sources` at
+100, an overload array at 200, `anchors` at 1000) and the `invalid/*-too-long`
+/ `invalid/*-too-many` samples each push exactly one of those bounds one over
+the limit. The whole-file byte ceiling (`MAX_MAP_BYTES`, the maps-side
+equivalent of the clients' input-byte cap) is a CI-workflow guard in
+`validate.yml`, since JSON Schema cannot express a total-document-size or
+nesting-depth limit; those two remain client-/CI-enforced rather than schema
+keywords.
