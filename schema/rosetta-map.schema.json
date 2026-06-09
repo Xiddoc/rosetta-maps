@@ -34,11 +34,12 @@
             "required": ["signatures_rev"],
             "description": "Optional provenance binding the map to the exact signatures revision it was generated from (v3 addition). When present, `signatures_rev` is required.",
             "properties": {
-                "signatures_rev": { "type": "string", "pattern": "^[0-9a-f]{7,40}$", "description": "The git commit (short or full SHA-1, 7-40 lowercase hex chars) of the signatures the map was generated from." }
+                "signatures_rev": { "type": "string", "pattern": "^[0-9a-f]{7,40}$", "description": "The git commit (short or full SHA-1, 7-40 lowercase hex chars) of the signatures the map was generated from. Validated as a hex SHAPE only: this is an intentionally-unverified provenance hint with NO repo-internal existence check, deliberately asymmetric with `sources[].config` (which the semantic validator binds to a committed file). A map may be authored where the signatures rev is not a commit in this repo." }
             }
         },
         "status": {
             "enum": ["active", "superseded", "retracted"],
+            "default": "active",
             "description": "Optional lifecycle status (v3 addition). Absent is treated as `active`. `superseded` requires `superseded_by`; `retracted` marks a withdrawn map."
         },
         "superseded_by": {
