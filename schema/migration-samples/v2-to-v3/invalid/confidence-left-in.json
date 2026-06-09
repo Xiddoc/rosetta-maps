@@ -4,15 +4,10 @@
     "version": "3.4.5",
     "version_code": 30405,
     "captured_at": "2026-05-01",
-    "sources": [
-        { "tool": "sigmatcher", "classes": 1 }
-    ],
     "classes": {
         "com.example.app.Foo": {
             "obfuscated": "aaaa",
-            "methods": {
-                "doIt": { "obfuscated": "a", "signature": "(Landroid/os/Bundle;)V" }
-            }
+            "confidence": "high"
         }
     }
 }

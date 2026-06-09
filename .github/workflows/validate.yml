@@ -126,7 +126,7 @@ jobs:
             # RFC 0001 Decision 4, tier 1: structural validation against the
             # canonical map schema. This repo OWNS that schema
             # (schema/rosetta-map.schema.json) — it is the language-neutral
-            # source of truth for the `schema_version: 2` format, and the
+            # source of truth for the `schema_version: 3` format, and the
             # rosetta-frida (TS) and rosetta-xposed (Kotlin) adapters are
             # CLIENTS that track it. So CI validates maps against its own
             # schema: self-contained, no cross-repo checkout, and no
@@ -388,7 +388,7 @@ jobs:
             # who reproduced a map from its signatures + the APK records and signs
             # that claim in a DETACHED `<version_code>.json.att.json` sidecar
             # beside the map — never a field inside the map (the map stays a clean
-            # schema_version:2 artifact; a self-referential trust field is
+            # schema_version:3 artifact; a self-referential trust field is
             # forbidden by AGENTS.md anti-scope and would break the strict
             # clients). Public CI validates only the sidecar's STRUCTURE and that
             # its `map_sha256` binds the committed map bytes; it NEVER fetches or
@@ -458,28 +458,31 @@ jobs:
                   echo "attestation sidecars OK for ${#mapfiles[@]} map(s)"
 
             # Schema-migration contract worked example (maps#19). The live
-            # canonical schema stays schema_version:2; this step pins the
-            # HYPOTHETICAL 2->3 migration contract documented in
-            # docs/reference/schema-migration.md so the strategy is CI-checkable
-            # without bumping the real schema. It validates, in both directions:
-            #   * `before.v2.json` MUST pass the LIVE v2 schema (a real v2 map);
-            #   * `after.v3.json` MUST pass the fixture-only v3 schema kept beside
-            #     it (the migrator output);
-            #   * `after.v3.json` MUST be REJECTED by the LIVE v2 schema (the bump
+            # canonical schema is now schema_version:3 (the 2->3 bump executed).
+            # This step keeps the worked 2->3 migration documented in
+            # docs/reference/schema-migration.md CI-checkable by pinning the
+            # transform against a FROZEN copy of the old v2 schema kept beside the
+            # fixtures (frozen-v2.schema.json) and the LIVE v3 canonical schema. It
+            # validates, in both directions:
+            #   * `before.v2.json` MUST pass the FROZEN v2 schema (a real v2 map);
+            #   * `after.v3.json` MUST pass the LIVE canonical (v3) schema (the
+            #     migrator output);
+            #   * `after.v3.json` MUST be REJECTED by the FROZEN v2 schema (the bump
             #     is real in the other direction too — a migrated v3 artifact does
             #     not pass as v2);
-            #   * `before.v2.json` MUST be REJECTED by the v3 schema (the bump is
-            #     real — an un-migrated map does not pass as v3);
-            #   * every `invalid/` after MUST be REJECTED by the v3 schema (a map
-            #     that didn't complete the migration — still v2, or `version` left
-            #     a bare string — fails the emit-as-v3 gate).
-            # The v3 schema here is a FIXTURE, never consumed as canonical.
-            - name: Schema-migration 2->3 worked example (hypothetical)
+            #   * `before.v2.json` MUST be REJECTED by the live v3 schema (the bump
+            #     is real — an un-migrated map does not pass as v3);
+            #   * every `invalid/` after MUST be REJECTED by the live v3 schema (a
+            #     map that didn't complete the migration — still v2, or `confidence`
+            #     left in — fails the emit-as-v3 gate).
+            # frozen-v2.schema.json is a FIXTURE (the pre-bump canonical), never the
+            # live schema.
+            - name: Schema-migration 2->3 worked example (executed bump)
               run: |
                   set -euo pipefail
                   dir=schema/migration-samples/v2-to-v3
-                  v2=schema/rosetta-map.schema.json
-                  v3="$dir/hypothetical-v3.schema.json"
+                  v2="$dir/frozen-v2.schema.json"
+                  v3=schema/rosetta-map.schema.json
 
                   # before == valid v2; after == valid v3.
                   timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v2" "$dir/before.v2.json"
@@ -487,22 +490,22 @@ jobs:
                   echo "migration before/after validate against their schemas"
 
                   # The bump is real in BOTH directions: a migrated v3 artifact
-                  # must NOT pass the live v2 schema either (proving v3 is a clean
+                  # must NOT pass the frozen v2 schema either (proving v3 is a clean
                   # break, not a v2 superset).
                   if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
                       --schemafile "$v2" "$dir/after.v3.json" >/dev/null 2>&1; then
-                      echo "::error file=$dir/after.v3.json::live v2 schema ACCEPTED a v3 artifact (the 2->3 break is not real)"
+                      echo "::error file=$dir/after.v3.json::frozen v2 schema ACCEPTED a v3 artifact (the 2->3 break is not real)"
                       exit 1
                   fi
-                  echo "migration after.v3 rejected by the live v2 schema"
+                  echo "migration after.v3 rejected by the frozen v2 schema"
 
                   # The v3 gate is real in both directions: an un-migrated v2 map
-                  # and every invalid `after` MUST be rejected by the v3 schema.
+                  # and every invalid `after` MUST be rejected by the live v3 schema.
                   fail=0
                   for f in "$dir/before.v2.json" "$dir"/invalid/*.json; do
                       if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
                           --schemafile "$v3" "$f" >/dev/null 2>&1; then
-                          echo "::error file=$f::v3 schema ACCEPTED a non-migrated/invalid map (the 2->3 gate loosened)"
+                          echo "::error file=$f::live v3 schema ACCEPTED a non-migrated/invalid map (the 2->3 gate loosened)"
                           fail=1
                       fi
                   done
