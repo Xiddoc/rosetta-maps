@@ -538,3 +538,34 @@ jobs:
                   sigfiles=("${appsigs[@]}" templates/signatures.template.yaml)
                   python3 scripts/lint_signatures.py "${sigfiles[@]}"
                   echo "linted ${#sigfiles[@]} signature file(s)"
+
+            # Map-freshness DASHBOARD (maps#34). signatures/ is the source of
+            # truth: the class rules it carries are the classes a map is
+            # EXPECTED to resolve. A `maps/<app>/<version_code>.json` generated
+            # before a rule was added is MISSING that class — STALE (completeness
+            # drift). This step surfaces that drift as a markdown table in the
+            # job summary so it's visible on the PR. It reads ONLY the committed
+            # signatures YAML + map JSON (no APK — Hard rule 3) and ships a
+            # built-in self-test; we run that first, then the corpus.
+            #
+            # NON-BLOCKING BY DESIGN: a staleness finding NEVER fails the job —
+            # a signatures-only PR that strands old maps is normal and
+            # mergeable, and you regenerate maps on your own cadence (one
+            # (app, version_code) per PR). The script exits 0 on any staleness
+            # finding and non-zero ONLY on its own malformed inputs (garbled
+            # YAML/JSON), which the other validators already reject too. It
+            # needs no extra permissions beyond the job-level `contents: read`.
+            - name: Map-freshness dashboard (non-blocking) + self-test
+              run: |
+                  set -euo pipefail
+
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/check_map_freshness.py --self-test
+
+                  # Analyse the whole corpus. This step is advisory: it writes a
+                  # dashboard to $GITHUB_STEP_SUMMARY and exits 0 even when maps
+                  # are stale; a non-zero exit here means a malformed input,
+                  # which is a real failure worth surfacing.
+                  timeout "$VALIDATE_TIMEOUT" \
+                      python3 scripts/check_map_freshness.py maps signatures
+                  echo "map-freshness dashboard generated"
