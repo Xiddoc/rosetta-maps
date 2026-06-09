@@ -5,11 +5,17 @@
 # rules resolve across point releases.
 #
 # Each top-level entry identifies ONE class; nested `methods` / `fields`
-# refine members within a matched class. Prefer, in order:
-#   1. AIDL descriptor strings (never rotated)
-#   2. stable `static final String` literals reached by live code
-#   3. stable framework superclass / interface refs
-#   4. cross-class anchors (a resolved class's descriptor referenced elsewhere)
+# refine members within a matched class. Prefer, in order (generic-first —
+# these work for any class, so they are the default):
+#   1. stable string literals reached by live code (endpoint URLs, log tags,
+#      `static final String` constants, field/key names)
+#   2. stable framework superclass / interface refs (an obfuscated class still
+#      extends a non-rotating android/androidx/java parent)
+#   3. cross-class / structural anchors (a resolved class's descriptor
+#      referenced elsewhere, a distinctive constant or method-table shape)
+#   4. AIDL / Binder descriptor strings — a lucky SPECIAL CASE *when present*
+#      (a `.Stub` embeds its binder descriptor verbatim and it never rotates,
+#      but most classes have no AIDL contract, so this is the exception)
 
 - name: 'RealClassName'
   package: 'com.example.yourapp'
