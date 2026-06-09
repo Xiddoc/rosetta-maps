@@ -1,15 +1,18 @@
 {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.yourapp",
     "version": "1.2.3",
     "version_code": 10203,
     "captured_at": "2026-01-01",
+    "generated_from": {
+        "signatures_rev": "0000000"
+    },
+    "status": "active",
     "sources": [
         {
             "tool": "sigmatcher",
             "config": "signatures/com.example.yourapp/signatures.yaml",
-            "classes": 1,
-            "confidence": "high"
+            "classes": 1
         }
     ],
     "classes": {
