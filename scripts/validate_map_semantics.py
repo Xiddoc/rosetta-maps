@@ -511,7 +511,7 @@ def check_file(path: str) -> list[str]:
 # false-positiving.
 
 _VALID_MAP = {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.app",
     "version": "1.0",
     "version_code": 1,
@@ -558,7 +558,7 @@ _VALID_MAP = {
 # real-key half of `resolvable`. Deleting `resolvable.add(ckey)` in check_map
 # (the real-key resolution line) would make this fixture wrongly fail.
 _VALID_REALKEY_REF = {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.app",
     "version": "1.0",
     "version_code": 1,
@@ -581,7 +581,7 @@ _VALID_REALKEY_REF = {
 # repo root and synthesises a maps/com.example.app/<vc>.json path, so this
 # repo-relative path resolves to the worked example's signatures.
 _VALID_SOURCE_CONFIG = {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.app",
     "version": "1.0",
     "version_code": 1,
