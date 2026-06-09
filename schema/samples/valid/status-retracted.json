@@ -3,10 +3,8 @@
     "app": "com.example.app",
     "version": "1.0.0",
     "version_code": 100,
-    "frida_min_version": "16.0.0",
+    "status": "retracted",
     "classes": {
-        "com.example.app.Foo": {
-            "obfuscated": "aaaa"
-        }
+        "com.example.app.Foo": { "obfuscated": "aaaa" }
     }
 }

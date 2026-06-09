@@ -13,7 +13,8 @@ through:
   one enforced constraint. The set pins, in both directions, every enforced
   constraint of the canonical schema:
     - empty `obfuscated` → `minLength: 1` (`empty-{class,method,field}-obfuscated`)
-    - wrong `schema_version` → the `const: 2` hard gate (`wrong-schema-version`)
+    - wrong `schema_version` → the `const: 3` hard gate (`wrong-schema-version`,
+      now a `schema_version: 2` map — the previous version is rejected)
     - missing `version_code` (`missing-version-code`)
     - negative `version_code` → `minimum: 0` (`negative-version-code`)
     - over-2^53 `version_code` → `maximum: 9007199254740991` (`version-code-too-large`),
@@ -30,13 +31,36 @@ through:
     - colon-separated `signer_sha256` → same `pattern` rejects the
       `AB:CD:…` certificate-fingerprint form (`signer-sha256-colons`); the
       canonical on-disk form is lowercase, NO colons, exactly 64 hex chars
+    - `signer_sha256` as an ARRAY (v3): a non-empty array of 64-hex strings is
+      accepted (`valid/signer-sha256-array.json`), while an uppercase element
+      (`signer-sha256-array-uppercase`) and an empty array
+      (`signer-sha256-empty-array`, violating `minItems: 1`) are rejected
+    - `captured_at` not an ISO date (v3): `format: date` rejects a free-form
+      string (`captured-at-not-date`), paired with the valid maps that carry a
+      `YYYY-MM-DD` value
+    - `generated_from` (v3): a valid `{ signatures_rev }` is accepted
+      (`valid/generated-from.json`), while a bad `signatures_rev` that isn't
+      7–40 lowercase hex (`bad-signatures-rev`) and a `generated_from` missing
+      its required `signatures_rev` (`generated-from-missing-rev`) are rejected
+    - `status` / `superseded_by` (v3): the `active`/`superseded`/`retracted`
+      enum accepts `valid/status-superseded.json` and
+      `valid/status-retracted.json`, while a bad enum value (`bad-status`) and a
+      non-integer `superseded_by` (`superseded-by-not-integer`) are rejected.
+      The SEMANTIC pairing rule (`superseded_by` allowed only when
+      `status == superseded`, and required when it is) is NOT a JSON-Schema
+      constraint — it is pinned in both directions by
+      `scripts/validate_map_semantics.py --self-test` (check 6), per the
+      AGENTS.md "semantic constraints go in the script self-test" rule
+    - the removed `confidence` field (v3): now rejected by
+      `additionalProperties: false` both on a class entry
+      (`confidence-class-removed`) and a `sources[]` entry
+      (`confidence-source-removed`)
     - a reserved `classes` key → `propertyNames` rejects `__proto__` /
       `constructor` / `prototype` (`reserved-class-key`)
     - a method missing its required `signature` (`method-missing-signature`)
     - a field missing its required `type` (`field-missing-type`) — the
       symmetric twin of `method-missing-signature`
     - a bad `kind` enum value → `classKind` enum (`bad-class-kind`)
-    - a bad `confidence` enum value → `confidence` enum (`bad-confidence`)
     - an unknown / typo'd top-level key → `additionalProperties: false`
       (`unknown-top-level-key`, a `signer_sh256` typo)
     - an unknown / typo'd class-entry key → `additionalProperties: false`
@@ -93,7 +117,7 @@ The `check-jsonschema` step in `.github/workflows/validate.yml` enforces
 both directions. The rosetta-frida (Zod) and rosetta-xposed (Kotlin)
 client validators assert the same verdicts in their shared conformance
 `validation.json` fixture, so the three hand-maintained copies of the
-`schema_version: 2` format stay in lockstep. (Note: the `signer_sha256`
+`schema_version: 3` format stay in lockstep. (Note: the `signer_sha256`
 format is enforced by the full schema and by the Frida Zod / Xposed
 `SignerGuard` paths, but NOT by the Xposed `:core` `MapLoader.validate`
 that the shared `validation.json` fixture runs through — so the signer

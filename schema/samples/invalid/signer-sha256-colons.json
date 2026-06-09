@@ -1,10 +1,12 @@
 {
-    "schema_version": 2,
+    "schema_version": 3,
     "app": "com.example.app",
     "version": "1.0.0",
     "version_code": 100,
     "signer_sha256": "01:23:45:67:89:ab:cd:ef:01:23:45:67:89:ab:cd:ef:01:23:45:67:89:ab:cd:ef:01:23:45:67:89:ab:cd:ef",
     "classes": {
-        "com.example.app.Foo": { "obfuscated": "aaaa" }
+        "com.example.app.Foo": {
+            "obfuscated": "aaaa"
+        }
     }
 }
