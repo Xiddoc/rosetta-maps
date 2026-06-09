@@ -119,6 +119,25 @@ than re-listing it here. In summary, v3:
   (a `version_code`). The `status` ⟷ `superseded_by` relationship is enforced by
   the semantic validator (`scripts/validate_map_semantics.py`), not the schema.
 
+### `generated_from` design notes
+
+Two deliberate choices about `generated_from` are recorded here so they are not
+re-litigated:
+
+- **`signatures_rev` is an intentionally-unverified provenance hint.** It is
+  validated as a hex *shape* only (`^[0-9a-f]{7,40}$`); a fabricated rev passes
+  silently. There is **no** repo-internal git-existence check, and one will not be
+  added — a map may legitimately be authored where the signatures rev is not a
+  commit in *this* repo. This is deliberately asymmetric with `sources[].config`,
+  which semantic check 5 *does* bind to a committed file: a config path names a
+  file that must exist here, whereas a signatures rev is just a backwards-pointing
+  breadcrumb to wherever the signatures lived when the map was generated.
+- **`generated_from` is map-level, not `sources[].rev`.** A map is generated from a
+  single signatures revision, so the rev belongs once at the top level; per-source
+  provenance stays in `sources[]`, which also carries hand-authored and
+  runtime-discovered entries that have no git rev at all. (This is why issue #36's
+  per-source-`rev` alternative was not chosen.)
+
 The migrator hop is then:
 
 ```text
