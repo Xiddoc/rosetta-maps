@@ -29,6 +29,10 @@ Checks, per `maps/**/*.json`:
                               on the same (obfuscated-name, descriptor) pair.
   4. app-dir match          — the map's `app` equals its parent directory name
                               under `maps/` (maps/<app>/<version_code>.json).
+  5. source-config paths    — every `sources[].config` written as a repo-internal
+                              path under `signatures/` must point at a committed
+                              file (catches a drifted provenance pointer such as
+                              a `signatures/example.json` that never existed).
 
 CONSERVATIVE BOUND on check 2 (read before assuming it is exhaustive): a
 referenced object type is flagged as a dangling app-internal reference ONLY
@@ -250,6 +254,59 @@ def _iter_method_entries(methods: dict):
             yield mkey, value
 
 
+# --- source-config path resolution (check 5) --------------------------------
+#
+# A `sources[].config` value is free-form, but when it is written as a
+# REPO-RELATIVE path under `signatures/` it names a file that MUST exist in this
+# repo (the worked example's `signatures/com.example.app/signatures.yaml` is the
+# canonical case). A drifted config — e.g. the old `signatures/example.json`
+# that never existed — is exactly the dangling provenance pointer this check
+# catches. We only fire for the unambiguous repo-internal shape (`signatures/…`)
+# so a config that legitimately names an out-of-repo tool config (an absolute
+# path, a bare filename, a URL) is never flagged.
+_SIGNATURES_PREFIX = "signatures/"
+
+
+def _config_is_repo_internal(config: str) -> bool:
+    """True when `config` is a repo-relative path under signatures/ we can resolve."""
+    return (
+        isinstance(config, str)
+        and config.startswith(_SIGNATURES_PREFIX)
+        and "\\" not in config
+        and ".." not in config.split("/")
+    )
+
+
+def _check_source_configs(doc: dict, map_path: str, errors: list[str]) -> None:
+    """check 5: every repo-internal `sources[].config` must point at a real file.
+
+    The repo root is derived from the map path: maps/<app>/<vc>.json lives two
+    directories below the repo root, so the signatures/ tree is a sibling of the
+    map's grandparent. Resolving relative to the map (not the process CWD) keeps
+    the check correct no matter where CI invokes it from.
+    """
+    sources = doc.get("sources")
+    if not isinstance(sources, list):
+        return
+    # maps/<app>/<vc>.json -> repo root is dirname(dirname(dirname(realpath))).
+    map_real = os.path.realpath(map_path)
+    repo_root = os.path.dirname(os.path.dirname(os.path.dirname(map_real)))
+    for i, src in enumerate(sources):
+        if not isinstance(src, dict):
+            continue
+        config = src.get("config")
+        if not isinstance(config, str) or not _config_is_repo_internal(config):
+            continue
+        target = os.path.join(repo_root, config)
+        if not os.path.isfile(target):
+            errors.append(
+                f"sources[{i}].config '{config}' points at a repo-internal "
+                f"signatures path that does not exist — fix the path so it names "
+                f"a committed file (e.g. signatures/<app>/signatures.yaml), or "
+                f"drop the config if the source is not a repo-internal file"
+            )
+
+
 def _unresolved_type_error(context: str, binary: str) -> str:
     """Build the actionable error for a dangling app-internal type reference."""
     return (
@@ -292,6 +349,9 @@ def check_map(doc: object, path: str) -> list[str]:
             f"app field '{app}' != parent directory '{parent}' "
             f"(expected maps/<app>/<version_code>.json with app == <app>)"
         )
+
+    # --- check 5: source-config paths resolve ---
+    _check_source_configs(doc, path, errors)
 
     # Resolvable obfuscated-type set: every class's `obfuscated` short name and
     # its real key (so a descriptor or field type may reference either spelling).
@@ -470,10 +530,35 @@ _VALID_REALKEY_REF = {
 }
 
 
+# A map whose `sources[].config` names the REAL committed signatures file
+# (check 5 must ACCEPT a config that resolves). The self-test runs from the
+# repo root and synthesises a maps/com.example.app/<vc>.json path, so this
+# repo-relative path resolves to the worked example's signatures.
+_VALID_SOURCE_CONFIG = {
+    "schema_version": 2,
+    "app": "com.example.app",
+    "version": "1.0",
+    "version_code": 1,
+    "sources": [
+        {"tool": "sigmatcher", "config": "signatures/com.example.app/signatures.yaml"},
+        # A non-repo-internal config (bare filename) must be IGNORED, not flagged.
+        {"tool": "hand-authored", "config": "notes.txt"},
+    ],
+    "classes": {"com.example.app.Foo": {"obfuscated": "aaaa", "methods": {}}},
+}
+
+
 def _invalid_fixtures() -> dict:
     import copy
 
     fixtures: dict = {}
+
+    # check 5: dangling repo-internal source config — points under signatures/
+    # but the file does not exist (the historical `signatures/example.json`
+    # drift). Must be flagged.
+    f5 = copy.deepcopy(_VALID_MAP)
+    f5["sources"] = [{"tool": "sigmatcher", "config": "signatures/example.json"}]
+    fixtures["dangling source config path"] = f5
 
     # check 1: malformed descriptor — missing ')'.
     f1 = copy.deepcopy(_VALID_MAP)
@@ -573,7 +658,11 @@ def _exact_count_fixtures() -> dict:
 def _self_test() -> int:
     failures = 0
     # Valid baselines: path's parent dir must equal the app field.
-    for label, doc in (("valid baseline", _VALID_MAP), ("valid real-key ref", _VALID_REALKEY_REF)):
+    for label, doc in (
+        ("valid baseline", _VALID_MAP),
+        ("valid real-key ref", _VALID_REALKEY_REF),
+        ("valid source config", _VALID_SOURCE_CONFIG),
+    ):
         synth_path = os.path.join("maps", doc["app"], f"{doc['version_code']}.json")
         errs = check_map(doc, synth_path)
         if errs:

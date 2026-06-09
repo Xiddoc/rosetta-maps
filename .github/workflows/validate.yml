@@ -285,14 +285,16 @@ jobs:
             # can't express: that every method `signature` is a well-formed JVM
             # descriptor, that every app-internal obfuscated type a descriptor
             # references resolves to a class the SAME map defines, that no two
-            # overloads in a class collide on (obfuscated-name, descriptor), and
-            # that the `app` field equals the parent directory under maps/. It is
-            # pure-Python (stdlib only) and reads ONLY the committed JSON — no APK
-            # (Hard rule 3). It ships a built-in self-test (accept/reject
-            # fixtures pinning each of the four checks in both directions) so the
+            # overloads in a class collide on (obfuscated-name, descriptor), that
+            # the `app` field equals the parent directory under maps/, and that
+            # every repo-internal `sources[].config` path resolves to a committed
+            # file. It is pure-Python (stdlib only) and reads ONLY the committed
+            # JSON + checks for the existence of committed signatures files — no
+            # APK (Hard rule 3). It ships a built-in self-test (accept/reject
+            # fixtures pinning each of the five checks in both directions) so the
             # validator itself can't silently rot; we run that first, then check
             # the real maps.
-            - name: Tier-1 map semantics (descriptors, refs, overloads, app-dir)
+            - name: Tier-1 map semantics (descriptors, refs, overloads, app-dir, configs)
               run: |
                   set -euo pipefail
                   shopt -s globstar nullglob
