@@ -45,12 +45,15 @@ holds the map whose `"version_code": 30405`. CI enforces this.
 3. **Record provenance** on the map. Use the existing schema fields rather
    than free text where possible:
    - `sources[]` — which tool(s) produced which entries (`tool`, `config`,
-     `classes`, `confidence`, `notes`).
-   - per-class `source` and `confidence`.
+     `classes`, `notes`).
+   - per-class `source`.
    - `signer_sha256` — the lowercase-hex SHA-256 of the signing
-     certificate, if you read it. This pins publisher authenticity and
-     detects repacks.
-   - `captured_at` — the date you captured it.
+     certificate(s), if you read them (a single string, or an array when an
+     app presents several signing certs). This pins publisher authenticity
+     and detects repacks.
+   - `captured_at` — the date you captured it (ISO `YYYY-MM-DD`).
+   - `generated_from.signatures_rev` — optionally, the git revision of the
+     signatures the map was generated from.
 
 4. **Open a PR.** Keep each PR to a single `(app, version_code)` map (plus
    any signatures it needs) so review and provenance stay legible.
@@ -96,7 +99,7 @@ against the real app is established *off* public CI:
   legally-clean machine (FOSS apps, or a maintainer's device).
 - **Device-side health-check telemetry** (planned) — the rosetta libraries'
   attach-time health check is the correctness oracle; aggregated pass/fail
-  becomes a "verified-on `version_code` V" signal. `confidence` is a
+  becomes a "verified-on `version_code` V" signal. Trust accrues as a
   gradient, not a binary.
 
 ## Signatures are the source; don't invent a third format

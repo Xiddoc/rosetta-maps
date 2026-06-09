@@ -6,8 +6,9 @@ rosetta-maps follows a layered, provenance-based trust model, in one line:
 > correctness, reputation accrues over time.**
 
 A contributed map is *verifiable* rather than merely trusted because it is
-reproducible from its signatures + the APK. Trust is a gradient that accrues over
-time, not a binary stamp.
+reproducible from its signatures + the APK. Trust accrues over time as
+independent reproduction + attestation accumulate, rather than being a binary
+stamp.
 
 ## What CI checks
 
@@ -62,7 +63,7 @@ The deliverable here is **tier 1's format + its public-CI structural gate**; tie
 When a contributor reproduces a map from `signatures/<app>/signatures.yaml` + the
 APK and wants to record that correctness claim, they commit a **detached
 attestation sidecar** next to the map — **never** a field inside the map (the map
-stays a clean `schema_version: 2` artifact; a self-referential trust field is
+stays a clean `schema_version: 3` artifact; a self-referential trust field is
 forbidden by the [AGENTS.md anti-scope](https://github.com/Xiddoc/rosetta-maps)
 and would break the strict `additionalProperties: false` clients, exactly as for
 the [`.sha256` integrity sidecar](integrity.md)):
@@ -123,7 +124,7 @@ the map.
 ## Schema ownership
 
 This repo owns the **canonical map schema** — the single, language-neutral source
-of truth for the `schema_version: 2` format. The format belongs with the data, and
+of truth for the `schema_version: 3` format. The format belongs with the data, and
 the data lives here. The [rosetta-frida](https://github.com/Xiddoc/rosetta-frida)
 (TypeScript) and [rosetta-xposed](https://github.com/Xiddoc/rosetta-xposed)
 (Kotlin) adapters are **clients** that track this schema; rosetta-frida is the

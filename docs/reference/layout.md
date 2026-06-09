@@ -21,9 +21,10 @@ rosetta-frida and rosetta-xposed adapters.
   so it **is** the filename; CI rejects any file whose name does not
   equal the map's `version_code`.
 
-Maps are strict JSON, `schema_version: 2`. Field semantics live with the
+Maps are strict JSON, `schema_version: 3`. Field semantics live with the
 [canonical schema](schema.md). Provenance is carried on the map itself via
-`sources[]`, per-class `source`/`confidence`, `signer_sha256`, and `captured_at`.
+`sources[]`, per-class `source`, `signer_sha256`, `captured_at`, and optionally
+`generated_from`.
 
 `maps/com.example.app/30405.json` is the worked example — a feature-complete map
 exercising AIDL stubs/callbacks, overloads, enums, and fields.
@@ -59,7 +60,7 @@ convergence point is the resolved **map**, not the signature.
 ## `schema/` — the canonical map schema
 
 `rosetta-map.schema.json` is the single, language-neutral source of truth for the
-`schema_version: 2` format, owned here. See the [map schema](schema.md) page.
+`schema_version: 3` format, owned here. See the [map schema](schema.md) page.
 
 ## `templates/`
 
