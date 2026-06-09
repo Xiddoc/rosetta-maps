@@ -22,9 +22,11 @@ holds the map whose `"version_code": 30405`. CI enforces this.
 ## Submitting a contribution
 
 1. **Add or extend the signatures** for the app under
-   `signatures/<app>/signatures.yaml`. Anchor on rotation-stable evidence
-   (AIDL descriptor strings, stable string literals, framework superclass
-   refs) so the rules survive a release rotation. Start from
+   `signatures/<app>/signatures.yaml`. Anchor on rotation-stable evidence —
+   generic-first: stable string literals and framework superclass refs are
+   the default (they work for any class), then constants and structural
+   anchors, with AIDL/Binder descriptor strings a lucky special case *when
+   present* — so the rules survive a release rotation. Start from
    `templates/signatures.template.yaml`.
 
 2. **Generate the map** for the specific `version_code` you have, from the

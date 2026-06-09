@@ -69,6 +69,30 @@ The top-level object, `sources[]` entries, and every class / method / field
 entry are **closed** (`additionalProperties: false`): an unknown or misspelled
 key (e.g. `extneds`, `signer_sh256`) is rejected rather than silently dropped.
 
+## Anchoring evidence types
+
+A map is *reproduced* from its `signatures/<app>/signatures.yaml`, which pins
+each class on the most **rotation-stable** evidence available. The evidence
+taxonomy is generic-first — these are the default because they work for any
+class:
+
+- **String literals** — endpoint URLs, log tags, `static final String`
+  constants, field/key names reached by live code.
+- **Superclass / framework parent** — an obfuscated class still extends a
+  non-rotating `android` / `androidx` / `java` parent or implements a stable
+  interface.
+- **Constants** — a `static final` value or magic number.
+- **Structural / cross-class** — a resolved class's descriptor referenced
+  elsewhere, or a distinctive method-table shape.
+- **AIDL / Binder descriptor** — a niche special case *when present*: a `.Stub`
+  embeds its binder descriptor verbatim and it never rotates, but most classes
+  have no AIDL contract, so it is the exception, not the rule.
+
+This describes the *authoring* evidence, not on-disk schema fields — the format
+itself is defined only here in `schema/rosetta-map.schema.json` (this section
+adds no fields). See `templates/signatures.template.yaml` and
+[CONTRIBUTING.md](../../CONTRIBUTING.md) for the worked authoring flow.
+
 ## Input bounds and key safety
 
 The schema imposes defensive caps so a malformed or hostile map can't blow up a
