@@ -21,13 +21,16 @@ rosetta-frida and rosetta-xposed adapters.
   so it **is** the filename; CI rejects any file whose name does not
   equal the map's `version_code`.
 
-Maps are strict JSON, `schema_version: 3`. Field semantics live with the
+Maps are strict JSON, `schema_version: 4` — a pure real→obfuscated mapping (the
+AIDL/Binder fields and `anchors[]` were removed in v4; finding-evidence lives in
+the signatures source). Field semantics live with the
 [canonical schema](schema.md). Provenance is carried on the map itself via
 `sources[]`, per-class `source`, `signer_sha256`, `captured_at`, and optionally
 `generated_from`.
 
 `maps/com.example.app/30405.json` is the worked example — a feature-complete map
-exercising AIDL stubs/callbacks, overloads, enums, and fields.
+exercising overloads, constructors, enums, fields, and synthetic / anonymous
+classes.
 
 ## `signatures/` — source of truth
 
@@ -42,12 +45,15 @@ signatures/<app>/signatures.yaml
 
 One file per app. Signatures are **multi-version on purpose**: anchor on
 rotation-stable evidence so the same rules resolve across point releases even as
-obfuscated names rotate. In rough order of robustness:
+obfuscated names rotate. Generic-first — these work for any class and are the
+default:
 
-1. AIDL descriptor strings (never rotated by R8);
-2. stable `static final String` literals reached by live code;
-3. stable framework superclass / interface references;
-4. cross-class anchors (a resolved class's descriptor referenced elsewhere).
+1. stable `static final String` literals reached by live code;
+2. stable framework superclass / interface references;
+3. cross-class anchors (a resolved class's descriptor referenced elsewhere);
+4. AIDL descriptor strings — a lucky special case *when present* (a `.Stub`
+   embeds its binder descriptor verbatim), but most classes have no AIDL
+   contract, so it is the exception, not the rule.
 
 ### Two dialects, no third
 
@@ -60,7 +66,7 @@ convergence point is the resolved **map**, not the signature.
 ## `schema/` — the canonical map schema
 
 `rosetta-map.schema.json` is the single, language-neutral source of truth for the
-`schema_version: 3` format, owned here. See the [map schema](schema.md) page.
+`schema_version: 4` format, owned here. See the [map schema](schema.md) page.
 
 ## `templates/`
 

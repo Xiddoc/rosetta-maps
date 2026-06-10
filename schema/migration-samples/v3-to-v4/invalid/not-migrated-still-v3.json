@@ -1,0 +1,19 @@
+{
+    "schema_version": 3,
+    "app": "com.example.app",
+    "version": "3.4.5",
+    "version_code": 30405,
+    "captured_at": "2026-05-01",
+    "classes": {
+        "com.example.app.IRemoteService$Stub": {
+            "obfuscated": "aaaa",
+            "kind": "class",
+            "methods": {
+                "requestTicket": {
+                    "obfuscated": "c",
+                    "signature": "(Landroid/os/Bundle;)V"
+                }
+            }
+        }
+    }
+}

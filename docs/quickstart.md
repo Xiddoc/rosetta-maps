@@ -37,8 +37,9 @@ PR.
 ## The worked example
 
 `maps/com.example.app/30405.json` is a feature-complete example map — it exercises
-overloads, enums, fields, and (as one special case) AIDL stubs/callbacks, generated
-from `signatures/com.example.app/signatures.yaml`. Copy it (and the matching
+overloads, constructors, enums, fields, and synthetic / anonymous classes (plus a
+plain Binder `.Stub` class), generated from
+`signatures/com.example.app/signatures.yaml`. Copy it (and the matching
 signatures) as the starting point for a real contribution.
 
 ## Anchoring evidence types

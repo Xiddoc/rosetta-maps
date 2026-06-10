@@ -1,13 +1,13 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://github.com/Xiddoc/rosetta-maps/schema/rosetta-map.schema.json",
-    "title": "Rosetta map (schema_version 4)",
-    "description": "Canonical, language-neutral schema for the `schema_version: 4` map format. This repo (rosetta-maps) OWNS this schema: it is the single source of truth for the format that the maps here are stored in, and the rosetta-frida (TS/Zod) and rosetta-xposed (Kotlin) adapters are clients that must track it. CI validates every map against this file; editors can point at it for autocompletion. Changing the format means bumping this schema first, then updating the client adapters. v4 makes the published map a PURE real->obfuscated mapping: the AIDL/Binder-specific fields (`aidl_descriptor`, `aidl_txn`, the `aidl_stub`/`aidl_callback` kinds) and the descriptive `anchors[]` array were removed. Finding-evidence like string literals or an AIDL descriptor is authoring input that lives in `signatures/<app>/signatures.yaml`, never in the emitted artifact (a field only belongs here when a resolver reads it).",
+    "$id": "https://github.com/Xiddoc/rosetta-maps/schema/migration-samples/v3-to-v4/frozen-v3.schema.json",
+    "title": "FROZEN Rosetta map (schema_version 3) — migration fixture only",
+    "description": "NOT the canonical schema. A FROZEN copy of the previous schema_version:3 canonical schema, kept ONLY so the worked 3->4 migration example (and the older 2->3 example's `after` side) stays CI-checkable after the live canonical schema was bumped to v4. The v3-to-v4 `before.v3.json` and the v2-to-v3 `after.v3.json` fixtures validate against THIS; the migrated `after.v4.json` validates against the live canonical (now v4) schema. Do not consume this as a real schema.",
     "type": "object",
     "additionalProperties": false,
     "required": ["schema_version", "app", "version", "version_code", "classes"],
     "properties": {
-        "schema_version": { "const": 4 },
+        "schema_version": { "const": 3 },
         "app": {
             "type": "string",
             "minLength": 1,
@@ -75,6 +75,8 @@
                 "class",
                 "interface",
                 "enum",
+                "aidl_stub",
+                "aidl_callback",
                 "synthetic",
                 "anonymous"
             ]
@@ -97,6 +99,7 @@
             "properties": {
                 "obfuscated": { "type": "string", "minLength": 1, "maxLength": 512 },
                 "signature": { "type": "string", "minLength": 1, "maxLength": 4096 },
+                "aidl_txn": { "type": "integer" },
                 "static": { "type": "boolean" },
                 "synthetic": { "type": "boolean" },
                 "is_constructor": { "type": "boolean" }
@@ -132,6 +135,12 @@
                 "extends": { "type": "string", "maxLength": 4096 },
                 "kind": { "$ref": "#/definitions/classKind" },
                 "dex": { "type": "string", "maxLength": 4096 },
+                "aidl_descriptor": { "type": "string", "maxLength": 4096 },
+                "anchors": {
+                    "type": "array",
+                    "maxItems": 1000,
+                    "items": { "type": "string", "maxLength": 4096 }
+                },
                 "methods": {
                     "type": "object",
                     "maxProperties": 5000,

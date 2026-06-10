@@ -16,9 +16,11 @@ maps/<app>/<version_code>.json
 
 ## Format
 
-Strict JSON, `schema_version: 3`. The canonical schema, field semantics, and
-authoring guidance live in `../schema/rosetta-map.schema.json` (owned here) and
-its [docs page](https://Xiddoc.github.io/rosetta-maps/reference/schema/).
+Strict JSON, `schema_version: 4` — a pure real→obfuscated mapping (the AIDL/Binder
+fields and `anchors[]` were removed in v4; finding-evidence lives in the
+signatures source). The canonical schema, field semantics, and authoring guidance
+live in `../schema/rosetta-map.schema.json` (owned here) and its
+[docs page](https://Xiddoc.github.io/rosetta-maps/reference/schema/).
 
 ## Provenance
 
@@ -27,7 +29,8 @@ Carry it on the map itself via `sources[]`, per-class `source`,
 `../CONTRIBUTING.md`.
 
 `com.example.app/30405.json` is the worked example — a feature-complete map
-exercising AIDL stubs/callbacks, overloads, enums, and fields.
+exercising overloads, constructors, enums, fields, and synthetic / anonymous
+classes.
 
 > **The example's `signer_sha256` is a placeholder, not a real hash.**
 > `com.example.app/30405.json` carries an obviously-fake, well-formed

@@ -3,13 +3,10 @@
     "app": "com.example.app",
     "version": "1.0.0",
     "version_code": 100,
-    "client_hints": {
-        "frida_min_version": "16.0.0",
-        "xposed_only_thing": "nope"
-    },
     "classes": {
         "com.example.app.Foo": {
-            "obfuscated": "aaaa"
+            "obfuscated": "aaaa",
+            "aidl_descriptor": "com.example.app.IFoo"
         }
     }
 }

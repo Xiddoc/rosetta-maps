@@ -4,6 +4,12 @@
 # multi-version on purpose: anchor on rotation-stable evidence so the same
 # rules resolve across point releases.
 #
+# This file is AUTHORING INPUT (the source of truth), not the published map.
+# The anchoring evidence below — string literals, superclass refs, AIDL
+# descriptors — is how a class is FOUND; it is NOT copied into the emitted
+# `maps/<app>/<version_code>.json`, which is a pure real->obfuscated mapping
+# (schema_version 4). A field belongs in the map only when a resolver reads it.
+#
 # Each top-level entry identifies ONE class; nested `methods` / `fields`
 # refine members within a matched class. Prefer, in order (generic-first —
 # these work for any class, so they are the default):

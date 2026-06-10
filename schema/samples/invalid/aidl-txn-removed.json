@@ -7,9 +7,10 @@
         "com.example.app.Foo": {
             "obfuscated": "aaaa",
             "methods": {
-                "bar": {
-                    "obfuscated": "",
-                    "signature": "()V"
+                "doIt": {
+                    "obfuscated": "a",
+                    "signature": "(Landroid/os/Bundle;)V",
+                    "aidl_txn": 2
                 }
             }
         }

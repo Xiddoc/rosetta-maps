@@ -1,5 +1,5 @@
 {
-    "schema_version": 3,
+    "schema_version": 4,
     "app": "com.example.app",
     "version": "3.4.5",
     "version_code": 30405,
@@ -18,14 +18,13 @@
         "com.example.app.service.IRemoteService$Stub": {
             "obfuscated": "aaaa",
             "extends": "zzzz",
-            "kind": "aidl_stub",
+            "kind": "class",
             "dex": "classes6.dex",
             "methods": {
                 "requestTicket": [
                     {
                         "obfuscated": "c",
                         "signature": "(Landroid/os/Bundle;Lbbbb;)V",
-                        "aidl_txn": 2,
                         "static": false
                     }
                 ]
