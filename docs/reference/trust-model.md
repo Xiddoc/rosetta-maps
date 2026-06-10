@@ -65,7 +65,7 @@ The deliverable here is **tier 1's format + its public-CI structural gate**; tie
 When a contributor reproduces a map from `signatures/<app>/signatures.yaml` + the
 APK and wants to record that correctness claim, they commit a **detached
 attestation sidecar** next to the map — **never** a field inside the map (the map
-stays a clean `schema_version: 3` artifact; a self-referential trust field is
+stays a clean `schema_version: 4` artifact; a self-referential trust field is
 forbidden by the [AGENTS.md anti-scope](https://github.com/Xiddoc/rosetta-maps)
 and would break the strict `additionalProperties: false` clients):
 
@@ -124,7 +124,7 @@ above. See [the map safety model](integrity.md) for the full rationale.
 ## Schema ownership
 
 This repo owns the **canonical map schema** — the single, language-neutral source
-of truth for the `schema_version: 3` format. The format belongs with the data, and
+of truth for the `schema_version: 4` format. The format belongs with the data, and
 the data lives here. The [rosetta-frida](https://github.com/Xiddoc/rosetta-frida)
 (TypeScript) and [rosetta-xposed](https://github.com/Xiddoc/rosetta-xposed)
 (Kotlin) adapters are **clients** that track this schema; rosetta-frida is the

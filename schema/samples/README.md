@@ -13,8 +13,8 @@ through:
   one enforced constraint. The set pins, in both directions, every enforced
   constraint of the canonical schema:
     - empty `obfuscated` → `minLength: 1` (`empty-{class,method,field}-obfuscated`)
-    - wrong `schema_version` → the `const: 3` hard gate (`wrong-schema-version`,
-      now a `schema_version: 2` map — the previous version is rejected)
+    - wrong `schema_version` → the `const: 4` hard gate (`wrong-schema-version`,
+      now a `schema_version: 3` map — the previous version is rejected)
     - missing `version_code` (`missing-version-code`)
     - negative `version_code` → `minimum: 0` (`negative-version-code`)
     - over-2^53 `version_code` → `maximum: 9007199254740991` (`version-code-too-large`),
@@ -55,6 +55,13 @@ through:
       `additionalProperties: false` both on a class entry
       (`confidence-class-removed`) and a `sources[]` entry
       (`confidence-source-removed`)
+    - the removed AIDL/Binder fields and `anchors[]` (v4): the published map is
+      now a PURE real->obf mapping, so each removed field is rejected by
+      `additionalProperties: false` / the tightened `classKind` enum — an
+      `aidl_descriptor` on a class (`aidl-descriptor-removed`), an `aidl_txn` on a
+      method (`aidl-txn-removed`), an `anchors` array on a class
+      (`anchors-removed`), and a `kind: aidl_stub` (`aidl-kind-removed`, pinning
+      that the `aidl_stub`/`aidl_callback` kinds were dropped from the enum)
     - a reserved `classes` key → `propertyNames` rejects `__proto__` /
       `constructor` / `prototype` (`reserved-class-key`)
     - a method missing its required `signature` (`method-missing-signature`)
@@ -102,9 +109,9 @@ keeps the maps samples tiny while still guarding against drift:
   `obfuscated` 512, `signature`/`type`/`notes`/etc. 4096) — a reject
   sample would need a multi-kilobyte string literal.
 - **Cardinality caps** — `classes.maxProperties` (50000),
-  `methods`/`fields.maxProperties` (5000), `anchors.maxItems` (1000),
-  `sources.maxItems` (100), overload-array `maxItems` (200) — a reject
-  sample would need to enumerate tens of thousands of entries.
+  `methods`/`fields.maxProperties` (5000), `sources.maxItems` (100),
+  overload-array `maxItems` (200) — a reject sample would need to enumerate
+  tens of thousands of entries.
 - **`sources[].classes` lower bound** (`minimum: 0`) — a count can't be
   negative; the constraint is cheap but redundant with the `version_code`
   `minimum: 0` reject (`negative-version-code`) that already exercises the
@@ -117,7 +124,7 @@ The `check-jsonschema` step in `.github/workflows/validate.yml` enforces
 both directions. The rosetta-frida (Zod) and rosetta-xposed (Kotlin)
 client validators assert the same verdicts in their shared conformance
 `validation.json` fixture, so the three hand-maintained copies of the
-`schema_version: 3` format stay in lockstep. (Note: the `signer_sha256`
+`schema_version: 4` format stay in lockstep. (Note: the `signer_sha256`
 format is enforced by the full schema and by the Frida Zod / Xposed
 `SignerGuard` paths, but NOT by the Xposed `:core` `MapLoader.validate`
 that the shared `validation.json` fixture runs through — so the signer

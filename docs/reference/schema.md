@@ -1,9 +1,16 @@
 # Map schema
 
 `schema/rosetta-map.schema.json` is the **canonical** JSON Schema (draft-07) for
-the `schema_version: 3` map format. It is the single, language-neutral source of
+the `schema_version: 4` map format. It is the single, language-neutral source of
 truth for the format — this repo owns it because this repo owns the data it
 describes.
+
+The published map is a **pure real→obfuscated mapping**. As of `schema_version: 4`
+the AIDL/Binder-specific fields (`aidl_descriptor`, `aidl_txn`, and the
+`aidl_stub` / `aidl_callback` `kind` values) and the descriptive `anchors[]`
+array were **removed**: no resolver read them, and finding-evidence belongs in
+the signatures source, not the artifact (see *Anchoring evidence types* below and
+[schema-migration.md](schema-migration.md)).
 
 CI validates every map under `maps/` against this file. It is also the reference
 for field semantics when authoring a map by hand.
@@ -108,8 +115,7 @@ client. These exact limits are mirrored by the rosetta-frida (Zod) and
 rosetta-xposed clients and must stay in lockstep:
 
 - **Sizes:** `classes` ≤ 50000 entries; per-class `methods` and `fields` ≤ 5000
-  each; a method-overload array is 1–200 entries; `anchors` ≤ 1000; `sources` ≤
-  100.
+  each; a method-overload array is 1–200 entries; `sources` ≤ 100.
 - **String lengths:** obfuscated / short names ≤ 512; `signature` ≤ 4096; `app`
   and `version` ≤ 256; other free-text strings ≤ 4096.
 - **Identifier shapes:** `app` must match
@@ -126,9 +132,8 @@ rosetta-xposed clients and must stay in lockstep:
 Every numeric bound above is pinned in BOTH directions by the curated samples
 CI checks (`schema/samples/`): `valid/bounds-at-max.json` exercises the
 at-the-limit values (`app`/`version` at 256, `obfuscated` at 512, `sources` at
-100, an overload array at 200, `anchors` at 1000) and the `invalid/*-too-long`
-/ `invalid/*-too-many` samples each push exactly one of those bounds one over
-the limit. The whole-file byte ceiling (`MAX_MAP_BYTES`, the maps-side
+100, an overload array at 200) and the `invalid/*-too-long` / `invalid/*-too-many`
+samples each push exactly one of those bounds one over the limit. The whole-file byte ceiling (`MAX_MAP_BYTES`, the maps-side
 equivalent of the clients' input-byte cap) is a CI-workflow guard in
 `validate.yml`, since JSON Schema cannot express a total-document-size or
 nesting-depth limit; those two remain client-/CI-enforced rather than schema
