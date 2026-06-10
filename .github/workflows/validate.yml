@@ -404,32 +404,23 @@ jobs:
                       python3 scripts/validate_attestations.py "${mapfiles[@]}"
                   echo "attestation sidecars OK for ${#mapfiles[@]} map(s)"
 
-            # Schema-migration contract worked example (maps#19). The live
-            # canonical schema is now schema_version:3 (the 2->3 bump executed).
-            # This step keeps the worked 2->3 migration documented in
-            # docs/reference/schema-migration.md CI-checkable by pinning the
-            # transform against a FROZEN copy of the old v2 schema kept beside the
-            # fixtures (frozen-v2.schema.json) and the LIVE v3 canonical schema. It
-            # validates, in both directions:
-            #   * `before.v2.json` MUST pass the FROZEN v2 schema (a real v2 map);
-            #   * `after.v3.json` MUST pass the LIVE canonical (v3) schema (the
-            #     migrator output);
-            #   * `after.v3.json` MUST be REJECTED by the FROZEN v2 schema (the bump
-            #     is real in the other direction too — a migrated v3 artifact does
-            #     not pass as v2);
-            #   * `before.v2.json` MUST be REJECTED by the live v3 schema (the bump
-            #     is real — an un-migrated map does not pass as v3);
-            #   * every `invalid/` after MUST be REJECTED by the live v3 schema (a
-            #     map that didn't complete the migration — still v2, or `confidence`
-            #     left in — fails the emit-as-v3 gate).
-            # frozen-v2.schema.json is a FIXTURE (the pre-bump canonical), never the
-            # live schema.
+            # Schema-migration contract worked examples (maps#19). The live
+            # canonical schema is now schema_version:4 (the 3->4 bump executed).
+            # Each PAST hop is pinned against FROZEN copies of the schemas it
+            # bracketed, so an older worked example no longer depends on the live
+            # schema once a newer version exists. The frozen v3 schema lives beside
+            # the v3-to-v4 fixtures (frozen-v3.schema.json) and is shared as the
+            # `after` schema of the 2->3 hop and the `before` schema of the 3->4 hop.
+            #
+            # 2->3: bump schema_version, drop `confidence`, ISO-normalize
+            # `captured_at`. Pinned in both directions against frozen-v2 (before)
+            # and frozen-v3 (after).
             - name: Schema-migration 2->3 worked example (executed bump)
               run: |
                   set -euo pipefail
                   dir=schema/migration-samples/v2-to-v3
                   v2="$dir/frozen-v2.schema.json"
-                  v3=schema/rosetta-map.schema.json
+                  v3=schema/migration-samples/v3-to-v4/frozen-v3.schema.json
 
                   # before == valid v2; after == valid v3.
                   timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v2" "$dir/before.v2.json"
@@ -447,12 +438,12 @@ jobs:
                   echo "migration after.v3 rejected by the frozen v2 schema"
 
                   # The v3 gate is real in both directions: an un-migrated v2 map
-                  # and every invalid `after` MUST be rejected by the live v3 schema.
+                  # and every invalid `after` MUST be rejected by the frozen v3 schema.
                   fail=0
                   for f in "$dir/before.v2.json" "$dir"/invalid/*.json; do
                       if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
                           --schemafile "$v3" "$f" >/dev/null 2>&1; then
-                          echo "::error file=$f::live v3 schema ACCEPTED a non-migrated/invalid map (the 2->3 gate loosened)"
+                          echo "::error file=$f::frozen v3 schema ACCEPTED a non-migrated/invalid map (the 2->3 gate loosened)"
                           fail=1
                       fi
                   done
@@ -460,6 +451,49 @@ jobs:
                       exit 1
                   fi
                   echo "migration v3 gate rejects un-migrated + invalid maps"
+
+            # 3->4: make the published map a PURE real->obf mapping — drop the
+            # AIDL/Binder fields (`aidl_descriptor`, `aidl_txn`, the
+            # `aidl_stub`/`aidl_callback` kinds) and the descriptive `anchors[]`.
+            # Pinned in both directions against frozen-v3 (before) and the LIVE v4
+            # canonical schema (after):
+            #   * `before.v3.json` MUST pass the FROZEN v3 schema (a real v3 map
+            #     carrying the removed fields);
+            #   * `after.v4.json` MUST pass the LIVE canonical (v4) schema;
+            #   * `after.v4.json` MUST be REJECTED by the frozen v3 schema is NOT
+            #     asserted (v4 is a strict subset of v3's fields, so a v4 map still
+            #     parses as v3) — instead we pin the forward gate:
+            #   * `before.v3.json` MUST be REJECTED by the live v4 schema (v3
+            #     `schema_version` + the removed fields fail the v4 gate);
+            #   * every `invalid/` after MUST be REJECTED by the live v4 schema (a
+            #     map still at v3, or one that left an `aidl_*`/`anchors` field in,
+            #     fails the emit-as-v4 gate).
+            - name: Schema-migration 3->4 worked example (executed bump)
+              run: |
+                  set -euo pipefail
+                  dir=schema/migration-samples/v3-to-v4
+                  v3="$dir/frozen-v3.schema.json"
+                  v4=schema/rosetta-map.schema.json
+
+                  # before == valid v3; after == valid v4.
+                  timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v3" "$dir/before.v3.json"
+                  timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v4" "$dir/after.v4.json"
+                  echo "migration before/after validate against their schemas"
+
+                  # The v4 gate is real in both directions: an un-migrated v3 map
+                  # and every invalid `after` MUST be rejected by the live v4 schema.
+                  fail=0
+                  for f in "$dir/before.v3.json" "$dir"/invalid/*.json; do
+                      if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
+                          --schemafile "$v4" "$f" >/dev/null 2>&1; then
+                          echo "::error file=$f::live v4 schema ACCEPTED a non-migrated/invalid map (the 3->4 gate loosened)"
+                          fail=1
+                      fi
+                  done
+                  if [ "$fail" != "0" ]; then
+                      exit 1
+                  fi
+                  echo "migration v4 gate rejects un-migrated + invalid maps"
 
             # signatures/ is the SOURCE OF TRUTH (AGENTS.md) from which maps are
             # reproduced, so it must be validated too — historically only

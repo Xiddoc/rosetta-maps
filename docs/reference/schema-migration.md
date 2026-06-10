@@ -1,18 +1,19 @@
 # Schema evolution & the migration contract
 
 `schema_version` is a **hard gate**, not a hint. The canonical schema pins it
-with `"schema_version": { "const": 3 }`, and both client adapters reject any
-other value fail-closed (rosetta-frida's Zod `z.literal(3)`, rosetta-xposed's
-`MapLoader` `CURRENT_SCHEMA_VERSION` check). A `schema_version: 2` map is not
+with `"schema_version": { "const": 4 }`, and both client adapters reject any
+other value fail-closed (rosetta-frida's Zod `z.literal(4)`, rosetta-xposed's
+`MapLoader` `CURRENT_SCHEMA_VERSION` check). A `schema_version: 3` map is not
 "old but readable" — it is **rejected**. This page defines the migration
-strategy and documents the **executed** `2 -> 3` bump, so that future bumps are
-a deliberate, reproducible operation rather than an ad-hoc scramble.
+strategy and documents the **executed** `2 -> 3` and `3 -> 4` bumps, so that
+future bumps are a deliberate, reproducible operation rather than an ad-hoc
+scramble.
 
-The `2 -> 3` migration described below has **already happened**: the live
-canonical schema is now `schema_version: 3`. The worked example under
-`schema/migration-samples/v2-to-v3/` is exercised against a **frozen** copy of
-the old v2 schema (`frozen-v2.schema.json`) on the `before` side and the live
-v3 schema on the `after` side.
+Both migrations described below have **already happened**: the live canonical
+schema is now `schema_version: 4`. Each PAST hop is exercised against **frozen**
+copies of the schemas it bracketed (`frozen-v2.schema.json`, `frozen-v3.schema.json`),
+so an older worked example no longer depends on the live schema once a newer
+version exists.
 
 ## The decision: migrate **in place**, at bump time, once
 
@@ -88,9 +89,9 @@ format move in lockstep:
 
 1. **`schema/rosetta-map.schema.json`** (this repo) — the canonical source of
    truth, bumped **first**.
-2. **rosetta-frida** Zod validator (`src/validate/schema.ts`) — `z.literal(3)` and
+2. **rosetta-frida** Zod validator (`src/validate/schema.ts`) — `z.literal(4)` and
    the new shape.
-3. **rosetta-xposed** Kotlin `MapLoader` / model — `CURRENT_SCHEMA_VERSION = 3`
+3. **rosetta-xposed** Kotlin `MapLoader` / model — `CURRENT_SCHEMA_VERSION = 4`
    and the new shape.
 
 …plus the shared conformance fixture (`validation.json`) the two code clients run
@@ -154,17 +155,102 @@ A **before/after fixture pair** demonstrating exactly this transform lives under
   kept beside it, `frozen-v2.schema.json`): carries `confidence` and a free-form
   `captured_at`.
 - `after.v3.json` — the same map after `migrate_v2_to_v3` (validates against the
-  **live** canonical v3 schema).
+  **frozen v3** schema, `../v3-to-v4/frozen-v3.schema.json` — the live schema has
+  since moved to v4).
 - `invalid/` — an `after` that did **not** complete the migration (still carries
   `schema_version: 2`) and one that left a `confidence` field in: both MUST be
-  **rejected** by the live v3 schema, pinning that the migrator's emit-as-v3 gate
+  **rejected** by the frozen v3 schema, pinning that the migrator's emit-as-v3 gate
   is real in both directions.
 
 These fixtures are exercised by the `validate.yml` "Schema-migration 2->3 worked
-example" step, so the *contract* stays CI-pinned. The frozen v2 schema is **not**
-the canonical schema — it is a fixture that exists only to keep the worked
-example checkable now that the live `schema/rosetta-map.schema.json` is
-`const: 3`.
+example" step, so the *contract* stays CI-pinned. The frozen schemas are **not**
+the canonical schema — they are fixtures that exist only to keep the worked
+examples checkable now that the live `schema/rosetta-map.schema.json` is
+`const: 4`.
+
+## The executed 3→4 bump
+
+The `3 -> 4` bump finished a change that the v3 bump **stranded** (see *Lessons*
+below): issues **#35** (de-emphasize AIDL / generalize the schema fields) and the
+schema slice of **#41** (anchoring strategy). v4 makes the published map a **pure
+real→obfuscated mapping**. The field-by-field shape lives **only** in the canonical
+schema — in summary, v4:
+
+- bumps the hard gate to `"schema_version": { "const": 4 }`;
+- **removes** the AIDL/Binder-specific fields — `classEntry.aidl_descriptor`,
+  `methodEntry.aidl_txn`, and the `aidl_stub` / `aidl_callback` values from the
+  `classKind` enum (so `kind` is purely structural again);
+- **removes** the descriptive `anchors[]` array from `classEntry`.
+
+**Why these came out.** No resolver ever read them — both static resolvers
+(rosetta-frida `src/resolver/`, rosetta-xposed `core/.../resolver/`) translate
+purely off `obfuscated` + a method `signature`. `anchors` had a single consumer
+(rosetta-frida's attach-time health check) and the AIDL fields had none. They were
+*finding-evidence* — how a class is identified — which belongs in the
+`signatures/<app>/signatures.yaml` **source**, not in the resolved artifact. The
+generic structural fields (`extends`, the remaining `kind` values, `dex`) stay:
+they describe a Java class generically rather than privileging an Android API
+family.
+
+**Runtime self-verification (the health check) is deliberately out of scope for
+v4** and tracked as a separate follow-up issue. Re-asserting signature evidence at
+attach time can produce **false** staleness — an AIDL descriptor or a log string
+can change between two releases while the class is still the right hook target —
+so a richer self-verification design needs more thought than a reflexive
+anchor-match. With the AIDL/anchor fields gone, the frida health check degrades to
+"the mapped obfuscated class loads" (plus the target-namespace guard).
+
+The migrator hop is:
+
+```text
+migrate_v3_to_v4(map):
+    assert map.schema_version == 3          # accept-as-v3 gate
+    map.schema_version = 4
+    drop class.aidl_descriptor, class.anchors, method.aidl_txn (removed in v4)
+    remap kind aidl_stub|aidl_callback -> class|interface (removed enum values)
+    return map                               # emit-as-v4 gate (validate vs v4 schema)
+```
+
+A **before/after fixture pair** lives under
+[`schema/migration-samples/v3-to-v4/`](https://github.com/Xiddoc/rosetta-maps/tree/master/schema/migration-samples/v3-to-v4):
+
+- `frozen-v3.schema.json` — a frozen copy of the pre-bump v3 canonical schema
+  (shared: it is also the `after` schema of the 2→3 hop).
+- `before.v3.json` — a valid v3 map carrying `aidl_descriptor`, `aidl_txn`,
+  `anchors`, and a `kind: aidl_stub` (validates against `frozen-v3.schema.json`).
+- `after.v4.json` — the same map after `migrate_v3_to_v4` (validates against the
+  **live** canonical v4 schema).
+- `invalid/` — an `after` still at `schema_version: 3`, and one that left an
+  `aidl_descriptor` in: both MUST be **rejected** by the live v4 schema, pinning
+  the emit-as-v4 gate in both directions.
+
+These are exercised by the `validate.yml` "Schema-migration 3->4 worked example"
+step.
+
+## Lessons from the v3 bump (why v4 was needed)
+
+The `3 -> 4` bump exists because the `2 -> 3` bump **stranded** work that two open
+issues had explicitly said would "ride the v3 bump (#19)." The v3 commit listed
+six issues and silently omitted #35 and #41's schema slice; only #35's
+no-schema-change docs rebalance landed, so the breaking field removal needed a
+second migration right behind v3. Durable lessons, so it does not recur:
+
+1. **Breaking-version windows are scarce — batch them deliberately.** Before
+   cutting any schema bump, sweep **all** open issues for ones tagged
+   schema-breaking and explicitly *include or consciously exclude each in the bump
+   PR description*. A `schema-breaking` label + a "pending breaking changes"
+   checklist keeps an issue from missing the train.
+2. **An artifact field must have a reader.** `aidl_descriptor` / `aidl_txn` /
+   `anchors` accreted as speculative metadata that no resolver consumed. A field
+   enters the **published** map only when a runtime consumer reads it; evidence
+   that only *produces* the map belongs in `signatures.yaml`.
+3. **Separate source from artifact.** `signatures/<app>/signatures.yaml` is *how
+   to find* a class (evidence, may rotate); `maps/<app>/<version_code>.json` is
+   *what we found* (resolved real→obf). Don't duplicate finding-evidence into the
+   artifact "just in case."
+4. **Don't freeze a taxonomy before a consumer needs it.** #41's typed-anchor
+   union was *not* built speculatively — the right call. Prove a taxonomy on a real
+   map and a real consumer before committing the format to it.
 
 ## Anti-scope
 

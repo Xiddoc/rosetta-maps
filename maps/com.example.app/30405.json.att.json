@@ -2,13 +2,13 @@
     "attestation_version": 1,
     "app": "com.example.app",
     "version_code": 30405,
-    "map_sha256": "8679226551224dd49125c7d09a9929a8df17b6457e0c3b8cbcae74128ea25ab6",
+    "map_sha256": "4860f6ca9e0be921abd9b1ff381ad2b144607da1c1fddb4ecf0581b0aeaa2b6e",
     "reproduced": true,
     "signatures_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
     "apk": {
         "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
         "signer_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
-        "source": "illustrative worked example — no real APK is fetched or hosted (Hard rule 3)"
+        "source": "illustrative worked example \u2014 no real APK is fetched or hosted (Hard rule 3)"
     },
     "attestations": [
         {
@@ -17,7 +17,7 @@
             "public_key": "RWQexamplePublicKeyBase64ForTheWorkedExampleOnly==",
             "signature": "RUTexampleDetachedSignatureOverTheMapDigestBase64ForTheWorkedExampleOnly==",
             "signed_at": "2026-06-08",
-            "notes": "Illustrative attestation for the worked-example map; the signature is a placeholder, not a real minisign output. Copy this file's SHAPE — recompute map_sha256 over your real map bytes and sign that digest."
+            "notes": "Illustrative attestation for the worked-example map; the signature is a placeholder, not a real minisign output. Copy this file's SHAPE \u2014 recompute map_sha256 over your real map bytes and sign that digest."
         }
     ]
 }

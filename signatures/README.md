@@ -13,12 +13,19 @@ signatures/<app>/signatures.yaml
 
 One file per app. Signatures are **multi-version on purpose**: anchor on
 rotation-stable evidence so the same rules resolve across point releases
-even as obfuscated names rotate. In rough order of robustness:
+even as obfuscated names rotate. Generic-first — these work for any class
+and are the default:
 
-1. AIDL descriptor strings (never rotated by R8);
-2. stable `static final String` literals reached by live code;
-3. stable framework superclass / interface references;
-4. cross-class anchors (a resolved class's descriptor referenced elsewhere).
+1. stable `static final String` literals reached by live code;
+2. stable framework superclass / interface references;
+3. cross-class anchors (a resolved class's descriptor referenced elsewhere);
+4. AIDL descriptor strings — a lucky special case *when present* (a `.Stub`
+   embeds its binder descriptor verbatim), but most classes have no AIDL
+   contract, so it is the exception, not the rule.
+
+This anchoring evidence is **authoring input only** — it identifies a class in
+the source, and is not copied into the published map (a pure real→obfuscated
+mapping at `schema_version: 4`).
 
 ## Two dialects, no third
 
