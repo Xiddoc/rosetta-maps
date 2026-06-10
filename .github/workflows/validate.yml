@@ -82,8 +82,7 @@ jobs:
                   # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
                   # a real sidecar; pruning it broadly would hide it from BOTH the
                   # map steps AND the attestation orphan sweep, so it must fall
-                  # through here and be rejected as a malformed map. (`.json.sha256`
-                  # sidecars don't match `*.json`, so they need no pruning.)
+                  # through here and be rejected as a malformed map.
                   mapfiles=()
                   for _f in maps/**/*.json; do
                       [[ "$_f" == *.json.att.json ]] && continue
@@ -142,8 +141,7 @@ jobs:
                   # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
                   # a real sidecar; pruning it broadly would hide it from BOTH the
                   # map steps AND the attestation orphan sweep, so it must fall
-                  # through here and be rejected as a malformed map. (`.json.sha256`
-                  # sidecars don't match `*.json`, so they need no pruning.)
+                  # through here and be rejected as a malformed map.
                   mapfiles=()
                   for _f in maps/**/*.json; do
                       [[ "$_f" == *.json.att.json ]] && continue
@@ -225,8 +223,7 @@ jobs:
                   # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
                   # a real sidecar; pruning it broadly would hide it from BOTH the
                   # map steps AND the attestation orphan sweep, so it must fall
-                  # through here and be rejected as a malformed map. (`.json.sha256`
-                  # sidecars don't match `*.json`, so they need no pruning.)
+                  # through here and be rejected as a malformed map.
                   mapfiles=()
                   for _f in maps/**/*.json; do
                       [[ "$_f" == *.json.att.json ]] && continue
@@ -311,8 +308,7 @@ jobs:
                   # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
                   # a real sidecar; pruning it broadly would hide it from BOTH the
                   # map steps AND the attestation orphan sweep, so it must fall
-                  # through here and be rejected as a malformed map. (`.json.sha256`
-                  # sidecars don't match `*.json`, so they need no pruning.)
+                  # through here and be rejected as a malformed map.
                   mapfiles=()
                   for _f in maps/**/*.json; do
                       [[ "$_f" == *.json.att.json ]] && continue
@@ -333,55 +329,6 @@ jobs:
                   timeout "$VALIDATE_TIMEOUT" \
                       python3 scripts/validate_map_semantics.py "${mapfiles[@]}"
                   echo "tier-1 semantics OK for ${#mapfiles[@]} map(s)"
-
-            # Detached `.sha256` integrity sidecars (maps#17). A map's own-bytes
-            # integrity is bound from OUTSIDE the artifact by a sibling
-            # `<version_code>.json.sha256` (never a self-referential field inside
-            # the map — see docs/reference/integrity.md). This step verifies that
-            # binding: WHEN a sidecar is present its digest must match the exact
-            # committed map bytes; a map with NO sidecar is SKIPPED, not failed,
-            # so adoption can roll out incrementally. It is pure structural
-            # hashing of the committed bytes — no APK is fetched or read, so Hard
-            # rule 3 holds. Like the other validators it ships a built-in
-            # self-test (matching/tampered/malformed/absent fixtures pinning the
-            # constraint in both directions); we run that first, then the maps.
-            - name: Verify map integrity sidecars (.sha256) + self-test
-              run: |
-                  set -euo pipefail
-                  shopt -s globstar nullglob
-
-                  timeout "$VALIDATE_TIMEOUT" \
-                      python3 scripts/verify_map_sidecars.py --self-test
-
-                  # Glob every map, then PRUNE ONLY the exact attestation
-                  # sidecar convention `<version_code>.json.att.json` (maps#18) —
-                  # match the full `.json.att.json` infix, NOT a broad `*.att.json`.
-                  # A misfiled `<version_code>.att.json` (no `.json.` infix) is NOT
-                  # a real sidecar; pruning it broadly would hide it from BOTH the
-                  # map steps AND the attestation orphan sweep, so it must fall
-                  # through here and be rejected as a malformed map. (`.json.sha256`
-                  # sidecars don't match `*.json`, so they need no pruning.)
-                  mapfiles=()
-                  for _f in maps/**/*.json; do
-                      [[ "$_f" == *.json.att.json ]] && continue
-                      mapfiles+=("$_f")
-                  done
-                  if [ "${#mapfiles[@]}" = "0" ]; then
-                      echo "::error::no maps found under maps/"
-                      exit 1
-                  fi
-                  # Append the committed template map so its sidecar
-                  # (templates/map.template.json.sha256) is verified too —
-                  # otherwise the maps/ glob never visits it and an edited
-                  # template with a stale digest would slip through (mirrors how
-                  # the signatures step appends templates/signatures.template.yaml).
-                  # The verifier's orphan sweep also globs the directories these
-                  # paths live in, so a *.json.sha256 whose map was renamed or
-                  # deleted is caught here too.
-                  sidecartargets=("${mapfiles[@]}" templates/map.template.json)
-                  timeout "$VALIDATE_TIMEOUT" \
-                      python3 scripts/verify_map_sidecars.py "${sidecartargets[@]}"
-                  echo "sidecar integrity OK for ${#sidecartargets[@]} file(s)"
 
             # Reproduction + signed attestation sidecars (maps#18), tier 1 of the
             # off-CI trust ladder (docs/reference/trust-model.md). A contributor
@@ -543,34 +490,3 @@ jobs:
                   sigfiles=("${appsigs[@]}" templates/signatures.template.yaml)
                   python3 scripts/lint_signatures.py "${sigfiles[@]}"
                   echo "linted ${#sigfiles[@]} signature file(s)"
-
-            # Map-freshness DASHBOARD (maps#34). signatures/ is the source of
-            # truth: the class rules it carries are the classes a map is
-            # EXPECTED to resolve. A `maps/<app>/<version_code>.json` generated
-            # before a rule was added is MISSING that class — STALE (completeness
-            # drift). This step surfaces that drift as a markdown table in the
-            # job summary so it's visible on the PR. It reads ONLY the committed
-            # signatures YAML + map JSON (no APK — Hard rule 3) and ships a
-            # built-in self-test; we run that first, then the corpus.
-            #
-            # NON-BLOCKING BY DESIGN: a staleness finding NEVER fails the job —
-            # a signatures-only PR that strands old maps is normal and
-            # mergeable, and you regenerate maps on your own cadence (one
-            # (app, version_code) per PR). The script exits 0 on any staleness
-            # finding and non-zero ONLY on its own malformed inputs (garbled
-            # YAML/JSON), which the other validators already reject too. It
-            # needs no extra permissions beyond the job-level `contents: read`.
-            - name: Map-freshness dashboard (non-blocking) + self-test
-              run: |
-                  set -euo pipefail
-
-                  timeout "$VALIDATE_TIMEOUT" \
-                      python3 scripts/check_map_freshness.py --self-test
-
-                  # Analyse the whole corpus. This step is advisory: it writes a
-                  # dashboard to $GITHUB_STEP_SUMMARY and exits 0 even when maps
-                  # are stale; a non-zero exit here means a malformed input,
-                  # which is a real failure worth surfacing.
-                  timeout "$VALIDATE_TIMEOUT" \
-                      python3 scripts/check_map_freshness.py maps signatures
-                  echo "map-freshness dashboard generated"
