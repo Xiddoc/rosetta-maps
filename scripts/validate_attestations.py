@@ -2,17 +2,17 @@
 """Validate detached reproduction-attestation sidecars (maps#18).
 
 A published map (`maps/<app>/<version_code>.json`) records nothing about WHO
-reproduced it from its signatures + the APK — the `.sha256` sidecar
-(`verify_map_sidecars.py`) binds the map's own BYTES (transport integrity), and
-the schema validates its SHAPE, but neither says "a human rebuilt these exact
-bytes from the source-of-truth and signed the result." That correctness claim
-is the first higher trust tier (RFC 0001 Decision 4; docs/reference/trust-model.md),
+reproduced it from its signatures + the APK — the schema validates its SHAPE,
+but does not say "a human rebuilt these exact bytes from the source-of-truth and
+signed the result." (A map needs no separate bytes-integrity sidecar: it is data
+not code, and git-over-HTTPS + content-addressing already provide transport
+integrity — see docs/reference/integrity.md.) That correctness claim is the
+first higher trust tier (RFC 0001 Decision 4; docs/reference/trust-model.md),
 and it is recorded in a SEPARATE sidecar beside the map — never a field inside
 the map (AGENTS.md anti-scope: no self-referential trust field; it would also
 break the strict `additionalProperties: false` clients):
 
     maps/com.example.app/30405.json            ← the canonical, unchanged map
-    maps/com.example.app/30405.json.sha256     ← bytes-integrity sidecar (maps#17)
     maps/com.example.app/30405.json.att.json   ← THIS attestation sidecar (maps#18)
 
 This validator is the PUBLIC-CI, tier-1 STRUCTURAL gate for that sidecar. It is
@@ -43,8 +43,8 @@ higher tier SUBSUMES the ones below it; none of them ever uploads an APK.
 
 OPT-IN ROLLOUT — the attestation sidecar is OPTIONAL. A map with NO `.att.json`
 is SKIPPED (not failed); only a PRESENT sidecar that fails to validate is an
-error. Like `verify_map_sidecars.py`, verification also flags ORPHAN sidecars
-(an `*.att.json` whose map was renamed/deleted).
+error. Verification also flags ORPHAN sidecars (an `*.att.json` whose map was
+renamed/deleted).
 
 Usage:
     validate_attestations.py FILE [FILE ...]   # validate each map's attestation

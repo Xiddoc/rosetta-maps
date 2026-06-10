@@ -36,11 +36,9 @@ Concretely, a 2→3 bump is **one PR (or a tight series) that:**
    and makes the format change;
 2. **migrates every `maps/**/*.json` in place** to v3 via an explicit, scripted
    migrator (`rosetta migrate`, see below) — never hand-edited per file;
-3. re-emits each map's **`.sha256` sidecar** (the bytes changed, so the digest
-   must too) via `scripts/verify_map_sidecars.py --emit`;
-4. updates the drift-guard samples under `schema/samples/{valid,invalid}/` to the
+3. updates the drift-guard samples under `schema/samples/{valid,invalid}/` to the
    new shape;
-5. lands the matching client bumps (rosetta-frida Zod, rosetta-xposed Kotlin) and
+4. lands the matching client bumps (rosetta-frida Zod, rosetta-xposed Kotlin) and
    the shared conformance fixture **together** (Hard rule 2).
 
 After the PR merges, the repo contains **only** v3 maps and a v3 schema; CI
@@ -78,8 +76,8 @@ run as a one-off script in the bump PR. The contract it must honour:
   schema and MUST produce output valid against the target schema; a migration
   that emits an invalid v3 map is a migrator bug, caught by CI's normal schema
   step after the bump.
-- **Deterministic bytes.** Same input → same output bytes, so the re-emitted
-  `.sha256` sidecars are reproducible and reviewable.
+- **Deterministic bytes.** Same input → same output bytes, so a re-run produces
+  a reviewable, identical diff and any future attestation digest is reproducible.
 - **One step per major version.** 1→2→3 chained migrators, never a bespoke 1→3
   jump, so each hop is independently testable.
 

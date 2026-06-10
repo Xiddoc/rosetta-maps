@@ -26,15 +26,17 @@ Public CI runs **structural validation only** (the first tier of the trust ladde
   same map, no two overloads collide, and the `app` field matches the parent
   directory.
 
-CI also checks the **structure** of two detached sidecars when present (both are
-opt-in, and both are separate files, never fields inside the map):
+CI also checks the **structure** of a detached `.att.json`
+**reproduction-attestation** sidecar when one is present (opt-in, and a separate
+file, never a field inside the map): it records and signs that a contributor
+reproduced the map (`scripts/validate_attestations.py`). This is the first
+higher trust tier — see [the trust ladder](#the-trust-ladder-precedence) below.
 
-- a [`.sha256` integrity sidecar](integrity.md) binds the map's own bytes
-  (`scripts/verify_map_sidecars.py`);
-- a `.att.json` **reproduction-attestation** sidecar records and signs that a
-  contributor reproduced the map (`scripts/validate_attestations.py`). This is
-  the first higher trust tier — see [the trust ladder](#the-trust-ladder-precedence)
-  below.
+A map's own bytes need no per-file digest sidecar: maps are **data, not code**
+(the resolver only ever returns a member that already exists in the
+already-loaded app, so a tampered map is at worst a wrong-resolution bug, never
+code delivery), and git-over-HTTPS plus git's content-addressing already provide
+transport integrity. See [the map safety model](integrity.md).
 
 ## What CI deliberately does not do
 
@@ -50,7 +52,7 @@ tier preserves the no-APK-in-public-CI invariant**:
 
 | Tier | Name | What it proves | Where it runs |
 | ---- | ---- | -------------- | ------------- |
-| 0 | **Structural** (schema + semantics + `.sha256`) | the file is well-formed and its own bytes are intact | public CI |
+| 0 | **Structural** (schema + semantics) | the file is well-formed and internally consistent | public CI |
 | 1 | **Reproduction + signed attestation** | a human rebuilt these exact bytes from the signatures + APK and signed the claim | authored off-CI; its **structure** is checked in public CI |
 | 2 | **Self-hosted trusted runner** | "CI with APK" re-derived the map on a legally-clean machine | a maintainer's runner (FOSS apps / owned devices) — *described, not yet implemented* |
 | 3 | **Device-side health-check telemetry** | the adapters' attach-time health check passed against the live app | aggregated device reports — *described, not yet implemented* |
@@ -65,12 +67,10 @@ APK and wants to record that correctness claim, they commit a **detached
 attestation sidecar** next to the map — **never** a field inside the map (the map
 stays a clean `schema_version: 3` artifact; a self-referential trust field is
 forbidden by the [AGENTS.md anti-scope](https://github.com/Xiddoc/rosetta-maps)
-and would break the strict `additionalProperties: false` clients, exactly as for
-the [`.sha256` integrity sidecar](integrity.md)):
+and would break the strict `additionalProperties: false` clients):
 
 ```
 maps/com.example.app/30405.json            ← the canonical, unchanged map
-maps/com.example.app/30405.json.sha256     ← tier 0: bytes-integrity sidecar
 maps/com.example.app/30405.json.att.json   ← tier 1: this attestation sidecar
 ```
 
@@ -78,19 +78,18 @@ maps/com.example.app/30405.json.att.json   ← tier 1: this attestation sidecar
 [`schema/rosetta-attestation.schema.json`](https://github.com/Xiddoc/rosetta-maps/blob/master/schema/rosetta-attestation.schema.json)
 (`attestation_version: 1`). In one line: it records the map's identity
 (`app`, `version_code`), the **`map_sha256`** that binds it to the exact committed
-map bytes (the same digest the `.sha256` sidecar carries), `reproduced: true`, an
+map bytes (the signature payload), `reproduced: true`, an
 optional APK identity (**by hash only** — never a URL CI would fetch), and a
 non-empty `attestations[]` list. Each attestation entry is a **detached signature
 over the `map_sha256` digest** (`minisign` / `ssh-ed25519` / `gpg`) with the
 signer's identity and date — so adding an attestor never rewrites the map and
 reputation accrues across independent contributors.
 
-**How it composes with the lower tiers** — the attestation's `map_sha256` is the
-**same digest** the tier-0 `.sha256` sidecar binds, so the three artifacts chain:
-the `.sha256` sidecar proves the bytes are intact, the attestation proves *who
-reproduced those exact bytes and signed for it*, and the map itself stays
-byte-identical and self-describing. A map may carry any subset (attestation is
-**opt-in**); the tiers are independent files that never modify the map.
+**How it composes** — the attestation's `map_sha256` digests the exact committed
+map bytes, so it both *binds* those bytes and is the payload the signature signs:
+the attestation proves *who reproduced those exact bytes and signed for it*,
+while the map itself stays byte-identical and self-describing. Attestation is
+**opt-in**; it is an independent file that never modifies the map.
 
 **What public CI checks (and deliberately does not)** —
 [`scripts/validate_attestations.py`](https://github.com/Xiddoc/rosetta-maps/blob/master/scripts/validate_attestations.py)
@@ -115,11 +114,12 @@ flagged.
 
 Each higher tier must preserve the **no-APK-in-public-CI** invariant.
 
-One gap these tiers do not yet close is the map's **own-bytes** integrity (a
-map is authenticated against the *app* via `signer_sha256`, never against the
-publisher who shipped the file). See [map integrity](integrity.md) for why the
-fix is a detached sidecar verified at build time — not a self-hash field inside
-the map.
+These tiers are about *correctness* and *provenance*, not malware: a map is
+**data, not code**, so a tampered map is at worst a wrong-resolution / DoS bug,
+never code delivery. `signer_sha256` authenticates the map against the *app* it
+was authored for (a version guard), not against the publisher who shipped the
+file; publisher authenticity, if ever wanted, folds into the tier-1 attestation
+above. See [the map safety model](integrity.md) for the full rationale.
 
 ## Schema ownership
 

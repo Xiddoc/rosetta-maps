@@ -41,7 +41,7 @@ nav:
   - Reference:
       - Repository layout: reference/layout.md
       - Trust model & validation: reference/trust-model.md
-      - Map integrity & provenance: reference/integrity.md
+      - Map safety model: reference/integrity.md
       - Map schema: reference/schema.md
       - Schema migration: reference/schema-migration.md
 

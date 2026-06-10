@@ -106,12 +106,18 @@ clients:
 - The canonical schema lives in `schema/rosetta-map.schema.json` (this
   repo owns it). Don't duplicate the field-by-field format in prose
   elsewhere; point at the schema so there is a single source of truth.
-- No **self-referential map hash field.** A map's own-bytes integrity is
-  bound from OUTSIDE the artifact (a detached `<version_code>.json.sha256`
-  sidecar verified at build time by `rosetta pull` (planned)), never via a
-  hash field inside the map — that would be self-referential AND break the
-  strict `additionalProperties: false` clients. See
-  `docs/reference/integrity.md` (maps#13 M14).
+- No **self-referential map hash field.** Maps are DATA, not code: the
+  resolver only ever returns a member that already exists in the
+  already-loaded app, so a tampered map is at worst a wrong-resolution / DoS
+  bug, never code delivery. Transport integrity already comes from
+  git-over-HTTPS + git content-addressing, and `signer_sha256` is a functional
+  version guard (which app build the map was authored for), not a security
+  control. Do NOT add a per-map digest field inside the map (self-referential
+  AND breaks the strict `additionalProperties: false` clients) and do NOT
+  reintroduce a detached `.sha256` digest sidecar (removed in maps#37 — it
+  restated git's guarantee without strengthening it). Any future PUBLISHER
+  authenticity need folds into the attestation tier (`<version_code>.json.att.json`),
+  not a digest. See `docs/reference/integrity.md`.
 
 ## Related repos
 

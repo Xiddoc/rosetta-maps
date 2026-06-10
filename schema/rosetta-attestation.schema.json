@@ -34,7 +34,7 @@
         "map_sha256": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$",
-            "description": "Lowercase-hex SHA-256 of the EXACT committed map bytes the attestation is about — the same digest the `.sha256` integrity sidecar binds. The semantic validator recomputes it over the committed map file and fails closed on any mismatch, so an attestation can never silently drift off the map it claims to cover."
+            "description": "Lowercase-hex SHA-256 of the EXACT committed map bytes the attestation is about — both the map-binding and the payload the detached signature signs. The semantic validator recomputes it over the committed map file and fails closed on any mismatch, so an attestation can never silently drift off the map it claims to cover."
         },
         "reproduced": {
             "type": "boolean",
