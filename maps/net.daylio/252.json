@@ -1,0 +1,207 @@
+{
+    "schema_version": 4,
+    "app": "net.daylio",
+    "version": "1.63.12",
+    "version_code": 252,
+    "captured_at": "2026-06-09",
+    "sources": [
+        {
+            "tool": "sigmatcher",
+            "config": "signatures/net.daylio/signatures.yaml",
+            "classes": 28,
+            "notes": "Multi-version-hardened signatures, verified to resolve on both version_code 252 and 267; this map is the resolution for 252."
+        }
+    ],
+    "classes": {
+        "net.daylio.MyApplication": {
+            "obfuscated": "net.daylio.MyApplication",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.activities.OverviewActivity": {
+            "obfuscated": "net.daylio.activities.OverviewActivity",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.BackupModule": {
+            "obfuscated": "net.daylio.modules.m",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.MoodIconPackModule": {
+            "obfuscated": "net.daylio.modules.dc",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.ReminderModule": {
+            "obfuscated": "net.daylio.modules.ed",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.EntriesDataProvider": {
+            "obfuscated": "net.daylio.modules.cc",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.CsvExportModule": {
+            "obfuscated": "net.daylio.modules.v5",
+            "kind": "class",
+            "source": "sigmatcher",
+            "methods": {
+                "writeCsvFile": {
+                    "obfuscated": "R4",
+                    "signature": "(Ljava/lang/String;)Ljava/io/File;"
+                }
+            }
+        },
+        "net.daylio.modules.CsvExportTask": {
+            "obfuscated": "net.daylio.modules.v5$b",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "zf.CsvExportView": {
+            "obfuscated": "zf.b",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.PdfExportModule": {
+            "obfuscated": "net.daylio.modules.x5",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "pf.PdfExportRenderer": {
+            "obfuscated": "pf.e",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "sg.PdfExportView": {
+            "obfuscated": "sg.a",
+            "kind": "class",
+            "source": "sigmatcher",
+            "methods": {
+                "onPdfReady": {
+                    "obfuscated": "c",
+                    "signature": "(Ljava/io/File;)V"
+                }
+            }
+        },
+        "sg.PdfExportSettingsView": {
+            "obfuscated": "sg.d",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.purchases.PremiumStatusManager": {
+            "obfuscated": "net.daylio.modules.purchases.d0",
+            "kind": "class",
+            "source": "sigmatcher",
+            "methods": {
+                "isPremium": {
+                    "obfuscated": "u6",
+                    "signature": "()Z"
+                },
+                "onPremiumSubscribed": {
+                    "obfuscated": "I7",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "onPremiumLifetimeRestored": {
+                    "obfuscated": "T9",
+                    "signature": "(J)V"
+                },
+                "onPremiumSubscriptionRestored": {
+                    "obfuscated": "fb",
+                    "signature": "()V"
+                },
+                "onPremiumLost": {
+                    "obfuscated": "Y0",
+                    "signature": "()V"
+                }
+            }
+        },
+        "ad.Prefs": {
+            "obfuscated": "ad.c",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.purchases.BillingClientWrapper": {
+            "obfuscated": "net.daylio.modules.purchases.b",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.purchases.PremiumRestoreModule": {
+            "obfuscated": "net.daylio.modules.purchases.e0",
+            "kind": "class",
+            "source": "sigmatcher",
+            "methods": {
+                "isRestoreInProgress": {
+                    "obfuscated": "hd",
+                    "signature": "()Z"
+                }
+            }
+        },
+        "md.ProductSku": {
+            "obfuscated": "md.v",
+            "kind": "enum",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.SpecialOfferModule": {
+            "obfuscated": "net.daylio.modules.pd",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "sd.BackupMetadata": {
+            "obfuscated": "sd.a",
+            "kind": "class",
+            "source": "sigmatcher",
+            "methods": {
+                "fromJson": {
+                    "obfuscated": "a",
+                    "signature": "(Lorg/json/JSONObject;)Lsd/a;"
+                },
+                "toJson": {
+                    "obfuscated": "toJson",
+                    "signature": "()Lorg/json/JSONObject;"
+                }
+            }
+        },
+        "net.daylio.modules.BackupPersistenceModule": {
+            "obfuscated": "net.daylio.modules.s",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.assets.AssetsSyncModule": {
+            "obfuscated": "net.daylio.modules.assets.p",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.backup.tasks.AssetsSyncWorkerBase": {
+            "obfuscated": "net.daylio.backup.tasks.AssetsSyncWorkerBase",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.backup.tasks.UploadAssetsToCloudWorker": {
+            "obfuscated": "net.daylio.backup.tasks.UploadAssetsToCloudWorker",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.backup.tasks.DownloadAssetsFromCloudWorker": {
+            "obfuscated": "net.daylio.backup.tasks.DownloadAssetsFromCloudWorker",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.backup.tasks.SyncAssetsWorker": {
+            "obfuscated": "net.daylio.backup.tasks.SyncAssetsWorker",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "net.daylio.modules.drive.DriveServiceModule": {
+            "obfuscated": "net.daylio.modules.drive.c",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "of.DriveQueryUtil": {
+            "obfuscated": "of.o3",
+            "kind": "class",
+            "source": "sigmatcher"
+        }
+    }
+}
