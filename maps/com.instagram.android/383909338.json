@@ -1,0 +1,2070 @@
+{
+    "schema_version": 5,
+    "app": "com.instagram.android",
+    "version": "433.0.0.47.68",
+    "version_code": 383909338,
+    "captured_at": "2026-06-11",
+    "signer_sha256": "44c3bb8c7ea35b3bb11cbfa3c2f5879240df2e49e39816b4437b9856fbb29541",
+    "sources": [
+        {
+            "tool": "sigmatcher",
+            "config": "signatures/com.instagram.android/signatures.yaml",
+            "classes": 53
+        },
+        {
+            "tool": "sigmatcher",
+            "config": "signatures/com.instagram.android/signatures.yaml",
+            "classes": 149
+        },
+        {
+            "tool": "sigmatcher",
+            "config": "signatures/com.instagram.android/signatures.yaml",
+            "classes": 112
+        }
+    ],
+    "classes": {
+        "com.facebook.analytics2.logger.GooglePlayUploadService": {
+            "obfuscated": "com.facebook.analytics2.logger.GooglePlayUploadService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes18.dex"
+        },
+        "com.facebook.browser.lite.BrowserLiteFragment": {
+            "obfuscated": "com.facebook.browser.lite.BrowserLiteFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.facebook.browser.lite.chrome.container.IGWatchAndBrowseLiteChrome": {
+            "obfuscated": "com.facebook.browser.lite.chrome.container.IGWatchAndBrowseLiteChrome",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.facebook.browser.lite.views.BrowserLiteWrapperView": {
+            "obfuscated": "com.facebook.browser.lite.views.BrowserLiteWrapperView",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.facebook.iabeventlogging.model.IABLaunchEvent": {
+            "obfuscated": "com.facebook.iabeventlogging.model.IABLaunchEvent",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.facebook.msys.mca.Mailbox": {
+            "obfuscated": "com.facebook.msys.mca.Mailbox",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.facebook.pando.PandoConsistencyServiceJNI": {
+            "obfuscated": "com.facebook.pando.PandoConsistencyServiceJNI",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.facebook.pando.PandoGraphQLRequest": {
+            "obfuscated": "com.facebook.pando.PandoGraphQLRequest",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.facebook.pando.PandoGraphQLServiceJNI": {
+            "obfuscated": "com.facebook.pando.PandoGraphQLServiceJNI",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.facebook.pando.TreeJNI": {
+            "obfuscated": "com.facebook.pando.TreeJNI",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.facebook.pando.TreeWithGraphQL": {
+            "obfuscated": "com.facebook.pando.TreeWithGraphQL",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.facebook.rti.push.FbnsFlytrapHealthMonitor": {
+            "obfuscated": "X.mFZ",
+            "kind": "class",
+            "dex": "classes18.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.accountlinking.AccountLinkingMainGroupManagementFragment": {
+            "obfuscated": "X.ELA",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.accountlinking.model.AccountFamily": {
+            "obfuscated": "com.instagram.accountlinking.model.AccountFamily",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.aistudio.creation.ugc.repository.AiProfileCreationRepository": {
+            "obfuscated": "com.instagram.aistudio.creation.ugc.repository.AiProfileCreationRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes8.dex"
+        },
+        "com.instagram.aistudio.creation.ugc.util.CreateAiAccountService": {
+            "obfuscated": "com.instagram.aistudio.creation.ugc.util.CreateAiAccountService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes8.dex"
+        },
+        "com.instagram.aistudio.yourais.YourAisRepository": {
+            "obfuscated": "com.instagram.aistudio.yourais.YourAisRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes14.dex"
+        },
+        "com.instagram.analytics.IgAnalyticsUploadEndpointBuilder": {
+            "obfuscated": "X.5qg",
+            "kind": "class",
+            "dex": "classes.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.analytics.analytics2.IgAnalytics2TaskBasedUploader": {
+            "obfuscated": "com.instagram.analytics.analytics2.IgAnalytics2TaskBasedUploader",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.api.consent.CheckAgeEligibilityApi": {
+            "obfuscated": "X.Dv3",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "checkAgeEligibilityRequest": {
+                    "obfuscated": "A2O",
+                    "signature": "(LX/2pK;III)V"
+                }
+            }
+        },
+        "com.instagram.api.consent.GetSignupConfigApi": {
+            "obfuscated": "X.KXf",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "getSignupConfigRequest": {
+                    "obfuscated": "A01",
+                    "signature": "(LX/E3L;Ljava/lang/String;)V"
+                }
+            }
+        },
+        "com.instagram.api.consent.NewUserFlowApi": {
+            "obfuscated": "X.LBE",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "newUserFlowRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(Landroid/content/Context;LX/17c;LX/1pp;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;)LX/2LZ;"
+                }
+            }
+        },
+        "com.instagram.api.consent.NewUserFlowBeginsApi": {
+            "obfuscated": "X.JTn",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "newUserFlowBeginsRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(Landroid/content/Context;LX/4br;)V"
+                }
+            }
+        },
+        "com.instagram.api.graphql.IgGraphQLRequestTask": {
+            "obfuscated": "X.6zC",
+            "kind": "class",
+            "dex": "classes2.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.api.graphql.IgSignedGraphQLRequestBuilder": {
+            "obfuscated": "X.6yX",
+            "kind": "class",
+            "dex": "classes2.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.api.schemas.CommunityNotesInfoImpl": {
+            "obfuscated": "com.instagram.api.schemas.CommunityNotesInfoImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.api.schemas.FanClubInfoDictImpl": {
+            "obfuscated": "com.instagram.api.schemas.FanClubInfoDictImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.api.signup.AccountCreateApi": {
+            "obfuscated": "X.LMf",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "createRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(Landroid/content/Context;LX/4br;Lcom/instagram/registration/model/RegFlowExtras;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;"
+                }
+            }
+        },
+        "com.instagram.api.signup.AccountCreateBusinessApi": {
+            "obfuscated": "X.O0A",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "createBusinessRequest": {
+                    "obfuscated": "run",
+                    "signature": "()V"
+                }
+            }
+        },
+        "com.instagram.api.signup.CheckConfirmationCodeApi": {
+            "obfuscated": "X.E4z",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "checkConfirmationCodeRequest": {
+                    "obfuscated": "A2L",
+                    "signature": "()V"
+                }
+            }
+        },
+        "com.instagram.api.signup.CheckPhoneNumberApi": {
+            "obfuscated": "X.I00",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "checkPhoneNumberRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(Landroid/content/Context;Landroidx/loader/app/LoaderManager;LX/2pK;LX/1pp;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Ljava/util/Set;Z)V"
+                }
+            }
+        },
+        "com.instagram.api.signup.CreateSecondaryAccountApi": {
+            "obfuscated": "X.LMh",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "createSecondaryRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(LX/4br;Lcom/instagram/registration/model/RegFlowExtras;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;"
+                }
+            }
+        },
+        "com.instagram.api.signup.FbRegFlagApi": {
+            "obfuscated": "X.NmR",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "fbRegFlagRequest": {
+                    "obfuscated": "EdW",
+                    "signature": "(Ljava/lang/String;Ljava/lang/String;)V"
+                }
+            }
+        },
+        "com.instagram.api.signup.NewAccountNuxSeenApi": {
+            "obfuscated": "X.JZv",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "newAccountNuxSeenRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(Landroid/content/Context;Lcom/instagram/common/session/UserSession;Z)LX/2LZ;"
+                }
+            }
+        },
+        "com.instagram.api.signup.ProcessContactPointSignalsApi": {
+            "obfuscated": "X.Jt9",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "processContactPointSignalsRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(Landroid/content/Context;Lcom/instagram/common/session/UserSession;Ljava/util/List;)V"
+                }
+            }
+        },
+        "com.instagram.api.signup.SendSignupSmsCodeApi": {
+            "obfuscated": "X.LUe",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "sendSignupSmsRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(Landroid/content/Context;LX/4br;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;"
+                }
+            }
+        },
+        "com.instagram.api.signup.ValidateSignupSmsCodeApi": {
+            "obfuscated": "X.LfL",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "validateSignupSmsRequest": {
+                    "obfuscated": "A01",
+                    "signature": "(Landroid/content/Context;LX/1pp;Ljava/lang/String;Ljava/lang/String;Z)V"
+                }
+            }
+        },
+        "com.instagram.api.signup.VerifyEmailCodeApi": {
+            "obfuscated": "X.Li1",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "verifyEmailCodeRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(Landroid/content/Context;LX/1pp;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;"
+                },
+                "verifySmsCodeRequest": {
+                    "obfuscated": "A09",
+                    "signature": "(Lcom/instagram/common/session/UserSession;Ljava/lang/String;Ljava/lang/String;Z)LX/2LZ;"
+                },
+                "checkUsernameRequest": {
+                    "obfuscated": "A03",
+                    "signature": "(LX/1pp;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;"
+                }
+            }
+        },
+        "com.instagram.api.signup.VettedPhoneRegLoginApi": {
+            "obfuscated": "X.Okp",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "vettedPhoneRegLoginRequest": {
+                    "obfuscated": "invoke",
+                    "signature": "()Ljava/lang/Object;"
+                }
+            }
+        },
+        "com.instagram.appreciation.giftfeed.repository.AppreciationGiftFeedDataSource": {
+            "obfuscated": "com.instagram.appreciation.giftfeed.repository.AppreciationGiftFeedDataSource",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.appreciation.gifting.repository.AppreciationGiftingDataSource": {
+            "obfuscated": "com.instagram.appreciation.gifting.repository.AppreciationGiftingDataSource",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.ar.core.discovery.minigallery.persistence.room.MiniGalleryDatabase_Impl": {
+            "obfuscated": "X.Eid",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes7.dex"
+        },
+        "com.instagram.ar.core.effectcollection.EffectCollectionService": {
+            "obfuscated": "com.instagram.ar.core.effectcollection.EffectCollectionService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.ar.core.voltron.IgArVoltronModuleLoader": {
+            "obfuscated": "com.instagram.ar.core.voltron.IgArVoltronModuleLoader",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.archive.fragment.ArchiveReelPeopleFragment": {
+            "obfuscated": "com.instagram.archive.fragment.ArchiveReelPeopleFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.arirang.ArirangAnalyticsLogger": {
+            "obfuscated": "X.MZp",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.arirang.scavengerhunt.ArirangScavengerHuntPreferencesUtil": {
+            "obfuscated": "com.instagram.arirang.scavengerhunt.ArirangScavengerHuntPreferencesUtil",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.arlink.fragment.NametagController": {
+            "obfuscated": "com.instagram.arlink.fragment.NametagController",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes13.dex"
+        },
+        "com.instagram.authenticity.IdVerificationPhotoCaptureFragment": {
+            "obfuscated": "X.E0Q",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.authenticity.uploader.AuthenticityGraphApiUploaderWithRetries": {
+            "obfuscated": "com.instagram.authenticity.uploader.AuthenticityGraphApiUploaderWithRetries",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.avatars.graphql.AvatarMutationRepository": {
+            "obfuscated": "com.instagram.avatars.graphql.AvatarMutationRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.avatars.graphql.AvatarStickerGraphQLRepository": {
+            "obfuscated": "com.instagram.avatars.graphql.AvatarStickerGraphQLRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.avatars.graphql.UserAvatarInfoGraphQLRepository": {
+            "obfuscated": "com.instagram.avatars.graphql.UserAvatarInfoGraphQLRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.avatars.privacysettings.AvatarPrivacySettingsRepository": {
+            "obfuscated": "com.instagram.avatars.privacysettings.AvatarPrivacySettingsRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.avatars.status.AvatarStatusRepository": {
+            "obfuscated": "com.instagram.avatars.status.AvatarStatusRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.instagram.avatars.unlockables.data.AvatarQuestsRepository": {
+            "obfuscated": "com.instagram.avatars.unlockables.data.AvatarQuestsRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "com.instagram.badge.api.model.UserBadgeInfoImpl": {
+            "obfuscated": "com.instagram.badge.api.model.UserBadgeInfoImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.bloks.IgBloksActionRegistry": {
+            "obfuscated": "X.Adz",
+            "kind": "class",
+            "dex": "classes5.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.bloks.hosting.BloksScreenQueryGenericContainerFragment": {
+            "obfuscated": "X.Squ",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.bloks.hosting.IgBloksBottomSheetFragment": {
+            "obfuscated": "X.RP5",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.bloks.hosting.IgBloksScreenConfig": {
+            "obfuscated": "com.instagram.bloks.hosting.IgBloksScreenConfig",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.bloks.hosting.IgBloksScreenFragment": {
+            "obfuscated": "X.R1u",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.brandedcontent.adseligibility.controller.AdsEligibilityController": {
+            "obfuscated": "com.instagram.brandedcontent.adseligibility.controller.AdsEligibilityController",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.brandedcontent.disclosure.BrandedContentDisclosureBaseViewModel": {
+            "obfuscated": "com.instagram.brandedcontent.disclosure.BrandedContentDisclosureBaseViewModel",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.brandedcontent.repository.BrandedContentApi": {
+            "obfuscated": "com.instagram.brandedcontent.repository.BrandedContentApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.brandedcontent.repository.BrandedContentSettingsRepository": {
+            "obfuscated": "com.instagram.brandedcontent.repository.BrandedContentSettingsRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.clips.audio.model.AudioPageAssetModel": {
+            "obfuscated": "com.instagram.clips.audio.model.AudioPageAssetModel",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.closefriends.CloseFriendsBadgePrefs": {
+            "obfuscated": "X.QkX",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.closefriends.CloseFriendsLeaveListController": {
+            "obfuscated": "X.2gT",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.closefriends.SetBestiesApi": {
+            "obfuscated": "X.Qe9",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.closefriends.audiencelists.api.AudienceListsApiUtil": {
+            "obfuscated": "com.instagram.closefriends.audiencelists.api.AudienceListsApiUtil",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.closefriends.audiencelists.list.AudienceListsAudiencePickerFragment": {
+            "obfuscated": "X.JJJ",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.comments.CommentListBottomsheetFragment": {
+            "obfuscated": "X.KQP",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.comments.mvvm.data.network.CommentOffensiveCheckService": {
+            "obfuscated": "com.instagram.comments.mvvm.data.network.CommentOffensiveCheckService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes8.dex"
+        },
+        "com.instagram.comments.mvvm.data.network.HideActionNetworkRequestsKt": {
+            "obfuscated": "com.instagram.comments.mvvm.data.network.HideActionNetworkRequestsKt",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes8.dex"
+        },
+        "com.instagram.comments.mvvm.data.network.MediaCommentPinUnpinNetworkRequestsKt": {
+            "obfuscated": "com.instagram.comments.mvvm.data.network.MediaCommentPinUnpinNetworkRequestsKt",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes8.dex"
+        },
+        "com.instagram.comments.request.CommentsFetcher": {
+            "obfuscated": "com.instagram.comments.request.CommentsFetcher",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.commercepage.api.UnifiedProductApi": {
+            "obfuscated": "com.instagram.commercepage.api.UnifiedProductApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.common.api.IgAuthHeaderResponseHandler": {
+            "obfuscated": "X.6je",
+            "kind": "class",
+            "dex": "classes.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.common.api.IgHeaderServiceLayer": {
+            "obfuscated": "X.5px",
+            "kind": "class",
+            "dex": "classes.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.common.bloks.BloksParseResult": {
+            "obfuscated": "com.instagram.common.bloks.BloksParseResult",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.common.device.IgDeviceIdGenerator": {
+            "obfuscated": "X.2t3",
+            "kind": "class",
+            "dex": "classes3.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.common.notifications.push.intf.PushChannelType": {
+            "obfuscated": "com.instagram.common.notifications.push.intf.PushChannelType",
+            "kind": "enum",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.common.security.IgAndroidKeyStoreManager": {
+            "obfuscated": "X.4bn",
+            "kind": "class",
+            "dex": "classes.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.common.security.IgKeystoreJweCipher": {
+            "obfuscated": "X.2h3",
+            "kind": "class",
+            "dex": "classes3.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.common.security.IgKeystoreKeyLoader": {
+            "obfuscated": "X.7VH",
+            "kind": "class",
+            "dex": "classes4.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.common.security.IgSymmetricKeystoreTransformer": {
+            "obfuscated": "X.2sq",
+            "kind": "class",
+            "dex": "classes.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.communitynotes.CommunityNotesUtil": {
+            "obfuscated": "com.instagram.communitynotes.CommunityNotesUtil",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.contentprovider.users.impl.IgLoggedInUsersContentProvider$Impl": {
+            "obfuscated": "com.instagram.contentprovider.users.impl.IgLoggedInUsersContentProvider$Impl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.instagram.creation.capture.quickcapture.storydrafts.model.StoryDraftsStore": {
+            "obfuscated": "com.instagram.creation.capture.quickcapture.storydrafts.model.StoryDraftsStore",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.creation.drafts.contentprovider.ClipsDraftProvider$Impl": {
+            "obfuscated": "com.instagram.creation.drafts.contentprovider.ClipsDraftProvider$Impl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.direct.aiagent.navigation.AiAgentThreadLauncher": {
+            "obfuscated": "com.instagram.direct.aiagent.navigation.AiAgentThreadLauncher",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.direct.channels.education.repository.ChannelsEducationRepository": {
+            "obfuscated": "com.instagram.direct.channels.education.repository.ChannelsEducationRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.direct.fragment.channels.directoryv2.model.ChannelDirectoryDataSource": {
+            "obfuscated": "com.instagram.direct.fragment.channels.directoryv2.model.ChannelDirectoryDataSource",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes8.dex"
+        },
+        "com.instagram.direct.fragment.channels.directoryv2.model.ChannelJoinRepository": {
+            "obfuscated": "com.instagram.direct.fragment.channels.directoryv2.model.ChannelJoinRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes8.dex"
+        },
+        "com.instagram.direct.fragment.thread.aichats.immersive.AiBotVoiceFragment": {
+            "obfuscated": "com.instagram.direct.fragment.thread.aichats.immersive.AiBotVoiceFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.instagram.direct.inbox.notes.data.cta.NotesCtaRepository": {
+            "obfuscated": "com.instagram.direct.inbox.notes.data.cta.CtaRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.direct.inbox.notes.data.repository.NotesRepository": {
+            "obfuscated": "com.instagram.direct.inbox.notes.data.repository.NotesRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.direct.inbox.notes.data.repository.NotesTrayApiFetcher": {
+            "obfuscated": "com.instagram.direct.inbox.notes.data.repository.NotesTrayApiFetcher",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.direct.model.protobufmodel.Message": {
+            "obfuscated": "com.instagram.direct.model.protobufmodel.Message",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.direct.model.protobufmodel.XFBIGDChannelCreatorBroadcastThreadData": {
+            "obfuscated": "com.instagram.direct.model.protobufmodel.XFBIGDChannelCreatorBroadcastThreadData",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.direct.msys.MsysMailboxActivationCallback": {
+            "obfuscated": "X.38Z",
+            "kind": "class",
+            "dex": "classes6.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.direct.notifications.armadillo.service.IgSecureMessageOverWANotificationService": {
+            "obfuscated": "com.instagram.direct.notifications.armadillo.service.IgSecureMessageOverWANotificationService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.direct.realtime.armadilloexpress.plugins.messagepersistencepostprocessor.IGMessagePersistencePostProcessorPluginImplPostmailbox": {
+            "obfuscated": "com.instagram.direct.realtime.armadilloexpress.plugins.messagepersistencepostprocessor.IGMessagePersistencePostProcessorPluginImplPostmailbox",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.direct.stella.StellaDirectMessagingService$binder$1": {
+            "obfuscated": "com.instagram.direct.stella.StellaDirectMessagingService$binder$1",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.direct.stella.StellaDirectMessagingServiceConnection": {
+            "obfuscated": "X.gev",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.explore.feed.ExploreClipsRequest": {
+            "obfuscated": "X.GBE",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.explore.feed.ExploreTopicalFeedNetworkHelper": {
+            "obfuscated": "X.8Xv",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.explore.fragment.ExploreFragment": {
+            "obfuscated": "X.3IG",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.explore.intf.ExploreFragmentConfig": {
+            "obfuscated": "com.instagram.explore.intf.ExploreFragmentConfig",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.explore.topiccluster.ExploreTopicCluster": {
+            "obfuscated": "com.instagram.explore.topiccluster.ExploreTopicCluster",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.fanclub.api.FanClubApi": {
+            "obfuscated": "com.instagram.fanclub.api.FanClubApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.favorites.FeedFavoritesHomeFragment": {
+            "obfuscated": "X.TDe",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.fbpay.paymentmethods.data.IGPaymentMethodsAPI": {
+            "obfuscated": "com.instagram.fbpay.paymentmethods.data.IGPaymentMethodsAPI",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.instagram.fbpay.w3c.ipc.IsReadyToPayServiceImpl": {
+            "obfuscated": "com.instagram.fbpay.w3c.ipc.IsReadyToPayServiceImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.feed.api.IgFeedEndpointRegistry": {
+            "obfuscated": "X.0ZN",
+            "kind": "class",
+            "dex": "classes2.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.feed.feeditem.netego.SuggestedChannels": {
+            "obfuscated": "com.instagram.feed.feeditem.netego.SuggestedChannels",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.feed.media.Media": {
+            "obfuscated": "com.instagram.feed.media.Media",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.feed.media.MediaCache": {
+            "obfuscated": "com.instagram.feed.media.MediaCache",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.friendmap.FriendMapFragment": {
+            "obfuscated": "X.T0K",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.friendmap.MapLocationManager": {
+            "obfuscated": "X.ju1",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.friendmap.data.audience.FriendMapAudienceApiImpl": {
+            "obfuscated": "com.instagram.friendmap.data.audience.FriendMapAudienceApiImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.friendmap.data.entrypoint.FriendMapEntrypointApiImpl": {
+            "obfuscated": "com.instagram.friendmap.data.entrypoint.FriendMapEntrypointApiImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.friendmap.data.locationsharing.FriendMapLocationSharingApiImpl": {
+            "obfuscated": "com.instagram.friendmap.data.locationsharing.FriendMapLocationSharingApiImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.friendmap.data.media.FriendMapMediaRepository": {
+            "obfuscated": "com.instagram.friendmap.data.media.FriendMapMediaRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.friendmap.data.presence.FriendMapPresenceApiImpl": {
+            "obfuscated": "com.instagram.friendmap.data.presence.FriendMapPresenceApiImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.friendmap.data.reactions.FriendMapReactionsApiImpl": {
+            "obfuscated": "com.instagram.friendmap.data.reactions.FriendMapReactionsApiImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.friendmap.data.settings.FriendMapSettingsApiImpl": {
+            "obfuscated": "com.instagram.friendmap.data.settings.FriendMapSettingsApiImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.fundraiser.FundraiserNudgeQuery": {
+            "obfuscated": "X.TuL",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.fundraiser.FundraiserStickerSearchController": {
+            "obfuscated": "X.SAk",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.fundraiser.ReelFundraiserDonorsListFragment": {
+            "obfuscated": "X.RZ2",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "com.instagram.fx.access.sso.FxSsoViewModel": {
+            "obfuscated": "com.instagram.fx.access.sso.FxSsoViewModel",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.genai.imageservice.api.GenAIImageQueryGraphQLApi": {
+            "obfuscated": "com.instagram.genai.imageservice.api.GenAIImageQueryGraphQLApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes13.dex"
+        },
+        "com.instagram.genai.imageservice.api.GenAIImagineQueryGraphQLApi": {
+            "obfuscated": "com.instagram.genai.imageservice.api.GenAIImagineQueryGraphQLApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes14.dex"
+        },
+        "com.instagram.genai.imageservice.service.GenAIImagineService": {
+            "obfuscated": "com.instagram.genai.imageservice.service.GenAIImagineService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.genai.voices.datasource.AIVoicesRepository": {
+            "obfuscated": "com.instagram.genai.voices.datasource.AIVoicesRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "com.instagram.genai.voices.datasource.CustomVoiceEffectRepository": {
+            "obfuscated": "com.instagram.genai.voices.datasource.CustomVoiceEffectRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "com.instagram.giphy.GiphyApiClient": {
+            "obfuscated": "X.PCW",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes13.dex"
+        },
+        "com.instagram.giphy.SavedRecentGifsApi": {
+            "obfuscated": "X.KVl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.giphy.webp.IgWebPAnimDecoder": {
+            "obfuscated": "com.instagram.giphy.webp.IgWebPAnimDecoder",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes18.dex"
+        },
+        "com.instagram.graphql.rtgql.graphqllivequeries.sdk.IGGraphQLLiveQuerySDKProvider": {
+            "obfuscated": "com.instagram.graphql.rtgql.graphqllivequeries.sdk.IGGraphQLLiveQuerySDKProvider",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.graphservice.service.pando.IGPandoGraphQLRequestDecoratorInfo": {
+            "obfuscated": "com.instagram.graphservice.service.pando.IGPandoGraphQLRequestDecoratorInfo",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.igds.components.megaphone.IgdsPrismMegaphone": {
+            "obfuscated": "com.instagram.igds.components.megaphone.IgdsPrismMegaphone",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.inappbrowser.fragments.BrowserLiteInMainProcessIGActivity": {
+            "obfuscated": "com.instagram.inappbrowser.fragments.BrowserLiteInMainProcessIGActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.instagram.inappbrowser.helper.BrowserLinkshimUrlCache": {
+            "obfuscated": "com.instagram.inappbrowser.helper.BrowserLinkshimUrlCache",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.leadads.activity.LeadAdsActivity": {
+            "obfuscated": "com.instagram.leadads.activity.LeadAdsActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.leadads.model.LeadGenFormBaseQuestion": {
+            "obfuscated": "com.instagram.leadads.model.LeadGenFormBaseQuestion",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.leadads.repository.LeadFormQuestionsRepository": {
+            "obfuscated": "com.instagram.leadads.repository.LeadFormQuestionsRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.leadads.repository.LeadFormRepository": {
+            "obfuscated": "com.instagram.leadads.repository.LeadFormRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.login.FacebookLoginHelper": {
+            "obfuscated": "X.Hy5",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.login.LoginUtil": {
+            "obfuscated": "X.464",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.login.api.IgAccountsLoginApi": {
+            "obfuscated": "X.55W",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "login": {
+                    "obfuscated": "A08",
+                    "signature": "(LX/2s4;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;I)LX/2LZ;",
+                    "static": true
+                },
+                "oneTapAppLogin": {
+                    "obfuscated": "A0D",
+                    "signature": "(Landroid/content/Context;LX/4br;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;"
+                },
+                "accountRecoveryCodeLogin": {
+                    "obfuscated": "A03",
+                    "signature": "(Landroid/content/Context;LX/4br;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;",
+                    "static": true
+                },
+                "accountRecoveryCodeVerify": {
+                    "obfuscated": "A02",
+                    "signature": "(Landroid/content/Context;LX/4br;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;",
+                    "static": true
+                },
+                "assistedAccountRecovery": {
+                    "obfuscated": "A01",
+                    "signature": "(Landroid/content/Context;LX/4br;Ljava/lang/Integer;Ljava/lang/String;)LX/2LZ;",
+                    "static": true
+                },
+                "sendPasswordReset": {
+                    "obfuscated": "A06",
+                    "signature": "(LX/4br;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;",
+                    "static": true
+                },
+                "sendRecoveryFlowEmail": {
+                    "obfuscated": "A0C",
+                    "signature": "(Landroid/content/Context;LX/4br;Ljava/lang/String;)LX/2LZ;"
+                },
+                "googleTokenUsers": {
+                    "obfuscated": "A07",
+                    "signature": "(LX/1pp;Ljava/util/List;)LX/2LZ;",
+                    "static": true
+                },
+                "facebookSignup": {
+                    "obfuscated": "A0F",
+                    "signature": "(Landroid/content/Context;LX/1pp;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZZZZZ)LX/2LZ;"
+                },
+                "nuxFbConnect": {
+                    "obfuscated": "A09",
+                    "signature": "(Lcom/instagram/common/session/UserSession;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)LX/2LZ;",
+                    "static": true
+                }
+            }
+        },
+        "com.instagram.login.api.IgLoginResponseParser": {
+            "obfuscated": "X.GHs",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.login.api.TwoFactorInfoConfig": {
+            "obfuscated": "com.instagram.login.api.TwoFactorInfoConfig",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.login.credentialmanager.CredentialManagerFetchHelper": {
+            "obfuscated": "com.instagram.login.credentialmanager.CredentialManagerFetchHelper",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.login.encryption.IgPasswordEncrypter": {
+            "obfuscated": "X.ioi",
+            "kind": "class",
+            "dex": "classes18.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "encryptPassword": {
+                    "obfuscated": "A00",
+                    "signature": "(Ljava/lang/String;)Ljava/lang/String;"
+                }
+            }
+        },
+        "com.instagram.login.encryption.IgPasswordTagSelector": {
+            "obfuscated": "X.fmF",
+            "kind": "class",
+            "dex": "classes18.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.login.fragment.CaaLoginOneTapLogOutFragment": {
+            "obfuscated": "X.EEb",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.login.fragment.LoginLandingFragment": {
+            "obfuscated": "X.E0n",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.login.fragment.LoginNotificationApproveFragment": {
+            "obfuscated": "X.Dx8",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.login.fragment.ManageSavedLoginFragment": {
+            "obfuscated": "X.HgI",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.login.loggedoutapp.usecase.IGLoggedOutAppUseCase": {
+            "obfuscated": "com.instagram.login.loggedoutapp.usecase.IGLoggedOutAppUseCase",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher",
+            "methods": {
+                "primeAppOnboardingLoginRequest": {
+                    "obfuscated": "A00",
+                    "signature": "(Landroid/app/Activity;LX/abo;)Ljava/lang/Object;"
+                }
+            }
+        },
+        "com.instagram.login.onetap.IgClientNonceStore": {
+            "obfuscated": "X.2vN",
+            "kind": "class",
+            "dex": "classes2.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.login.twofac.TwoFacLoginVerifyFragment": {
+            "obfuscated": "X.Dw5",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.login.twofac.api.IgTrustedNotificationStatusApi": {
+            "obfuscated": "X.LFd",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.login.twofac.api.IgTwoFactorLoginApi": {
+            "obfuscated": "X.LbY",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.login.twofac.api.IgTwoFactorSupportApi": {
+            "obfuscated": "X.Hd3",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.login.twofac.model.TotpSeedImpl": {
+            "obfuscated": "com.instagram.login.twofac.model.TotpSeedImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.login.twofac.model.TrustedDevice": {
+            "obfuscated": "com.instagram.login.twofac.model.TrustedDevice",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.mainfeed.network.ColdStartFeedCache": {
+            "obfuscated": "com.instagram.mainfeed.network.ColdStartFeedCache",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.mainfeed.network.FeedMediaCache": {
+            "obfuscated": "com.instagram.mainfeed.network.FeedMediaCache",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.mainfeed.network.MainFeedCacheDataSource": {
+            "obfuscated": "com.instagram.mainfeed.network.MainFeedCacheDataSource",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.metaai.location.viewmodel.AiLocationSummaryRepository": {
+            "obfuscated": "com.instagram.metaai.location.viewmodel.AiLocationSummaryRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.mobileconfig.IgMobileConfigFetcher": {
+            "obfuscated": "X.2cr",
+            "kind": "class",
+            "dex": "classes.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.model.fundraiser.NewFundraiserInfo": {
+            "obfuscated": "com.instagram.model.fundraiser.NewFundraiserInfo",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.model.people.PeopleTag": {
+            "obfuscated": "com.instagram.model.people.PeopleTag",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.monetization.api.MonetizationApi": {
+            "obfuscated": "com.instagram.monetization.api.MonetizationApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.music.api.MusicAmplitudesApiUtil": {
+            "obfuscated": "com.instagram.music.api.MusicAmplitudesApiUtil",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.music.api.OriginalSoundAudioAssetsApi": {
+            "obfuscated": "X.MI4",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.music.common.model.MusicAssetModel": {
+            "obfuscated": "com.instagram.music.common.model.MusicAssetModel",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.instagram.music.common.model.TrackSnippet": {
+            "obfuscated": "com.instagram.music.common.model.TrackSnippet",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.music.download.TrackDownloader": {
+            "obfuscated": "com.instagram.music.download.TrackDownloader",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.music.search.MusicBrowseSearchApi": {
+            "obfuscated": "X.Ady",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.music.search.MusicBrowserHomeFragment": {
+            "obfuscated": "com.instagram.music.search.MusicBrowserHomeFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.music.search.MusicResultsListController": {
+            "obfuscated": "com.instagram.music.search.MusicResultsListController",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.music.search.MusicSearchFilterRepository": {
+            "obfuscated": "com.instagram.music.search.MusicSearchFilterRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.nme.MetaVerifiedLinkFragment": {
+            "obfuscated": "X.JZI",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.nme.benefits.enhancedcontentprotection.MetaVerifiedEnhancedContentProtectionHelper": {
+            "obfuscated": "com.instagram.nme.benefits.enhancedcontentprotection.MetaVerifiedEnhancedContentProtectionHelper",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.notifications.push.ClearNotificationReceiver": {
+            "obfuscated": "com.instagram.notifications.push.ClearNotificationReceiver",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.notifications.push.fbns.IgPushSdkFbnsReceiverShim": {
+            "obfuscated": "com.instagram.notifications.push.fbns.IgPushSdkFbnsReceiverShim",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.pando.livetree.LiveTreeJNI": {
+            "obfuscated": "com.instagram.pando.livetree.LiveTreeJNI",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.pando.parsing.IgPandoApiFrameworkParserJNI": {
+            "obfuscated": "com.instagram.pando.parsing.IgPandoApiFrameworkParserJNI",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.partneranalytics.igfamilyapplastusedstates.IGFamilyAppLastUsedStatesLogWorker": {
+            "obfuscated": "com.instagram.partneranalytics.igfamilyapplastusedstates.IGFamilyAppLastUsedStatesLogWorker",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.payout.api.PayoutApi": {
+            "obfuscated": "com.instagram.payout.api.PayoutApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes8.dex"
+        },
+        "com.instagram.pendingmedia.service.IgMediaConfigureBodyBuilder": {
+            "obfuscated": "X.KgI",
+            "kind": "class",
+            "dex": "classes7.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.pendingmedia.service.IgMediaConfigureEndpointEnum": {
+            "obfuscated": "X.IwY",
+            "kind": "enum",
+            "dex": "classes7.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.pendingmedia.service.IgRuploadHttpExecutor": {
+            "obfuscated": "X.DCI",
+            "kind": "class",
+            "dex": "classes7.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.pendingmedia.service.IgRuploadRequestBuilder": {
+            "obfuscated": "X.DBu",
+            "kind": "class",
+            "dex": "classes7.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.pendingmedia.service.IgStoryConfigureEndpoint": {
+            "obfuscated": "X.Hcb",
+            "kind": "class",
+            "dex": "classes7.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.pendingmedia.service.IgUploadMediaTypeEnum": {
+            "obfuscated": "X.DBs",
+            "kind": "enum",
+            "dex": "classes7.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.pendingmedia.service.igapi.ConfigureResponseHelper": {
+            "obfuscated": "com.instagram.pendingmedia.service.igapi.ConfigureResponseHelper",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes7.dex"
+        },
+        "com.instagram.pendingmedia.service.impl.MediaUploader": {
+            "obfuscated": "com.instagram.pendingmedia.service.impl.MediaUploader",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes7.dex"
+        },
+        "com.instagram.pendingmedia.service.upload.FbUploaderUtil": {
+            "obfuscated": "com.instagram.pendingmedia.service.upload.FbUploaderUtil",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes7.dex"
+        },
+        "com.instagram.pendingmedia.store.PendingMediaStore": {
+            "obfuscated": "com.instagram.pendingmedia.store.PendingMediaStore",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.pendingmedia.store.PendingMediaStoreSerializer": {
+            "obfuscated": "com.instagram.pendingmedia.store.PendingMediaStoreSerializer",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.profile.data.AvatarProfileRepository": {
+            "obfuscated": "com.instagram.profile.data.AvatarProfileRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.instagram.profilo.IgProfiloSessionManager": {
+            "obfuscated": "com.instagram.profilo.IgProfiloSessionManager",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.quickexperiment.ExperimentParameter": {
+            "obfuscated": "X.3Bf",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.instagram.quickexperiment.QuickExperimentDebugStore": {
+            "obfuscated": "X.Qiu",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.instagram.quickexperiment.QuickExperimentInitRunnable": {
+            "obfuscated": "X.2bi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.quickexperiment.QuickExperimentParamStore": {
+            "obfuscated": "X.2fq",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.quickpromotion.intf.QuickPromotionSlot": {
+            "obfuscated": "com.instagram.quickpromotion.intf.QuickPromotionSlot",
+            "kind": "enum",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.quickpromotion.intf.QuickPromotionSurface": {
+            "obfuscated": "com.instagram.quickpromotion.intf.QuickPromotionSurface",
+            "kind": "enum",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.quickpromotion.sdk.IGSlotFetcher": {
+            "obfuscated": "com.instagram.quickpromotion.sdk.IGSlotFetcher",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.quickpromotion.sdk.InstagramQpSdkModule": {
+            "obfuscated": "com.instagram.quickpromotion.sdk.InstagramQpSdkModule",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.quicksends.QuickSendsManager": {
+            "obfuscated": "com.instagram.quicksends.QuickSendsManager",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes18.dex"
+        },
+        "com.instagram.quicksnap.data.api.QuickSnapApi": {
+            "obfuscated": "com.instagram.quicksnap.data.api.QuickSnapApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.quicksnap.data.repository.QuickSnapRepository": {
+            "obfuscated": "com.instagram.quicksnap.data.repository.QuickSnapRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.quicksnap.util.QuickSnapMediaSaver": {
+            "obfuscated": "com.instagram.quicksnap.util.QuickSnapMediaSaver",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.quicksnap.viewer.seenstate.provider.QuickSnapSeenStateProvider": {
+            "obfuscated": "com.instagram.quicksnap.viewer.seenstate.provider.QuickSnapSeenStateProvider",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.instagram.quicksnap.viewer.seenstate.provider.QuickSnapSeenStateProvider$Impl": {
+            "obfuscated": "com.instagram.quicksnap.viewer.seenstate.provider.QuickSnapSeenStateProvider$Impl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.react.modules.product.IgReactBloksNavigationModule": {
+            "obfuscated": "com.instagram.react.modules.product.IgReactBloksNavigationModule",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "com.instagram.realtimeclient.GraphQLSubscriptionID": {
+            "obfuscated": "com.instagram.realtimeclient.GraphQLSubscriptionID",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.realtimeclient.IgMqttTopicMapper": {
+            "obfuscated": "X.SRe",
+            "kind": "class",
+            "dex": "classes18.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.realtimeclient.MainRealtimeEventHandler": {
+            "obfuscated": "com.instagram.realtimeclient.MainRealtimeEventHandler",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.realtimeclient.RealtimeClientManager": {
+            "obfuscated": "com.instagram.realtimeclient.RealtimeClientManager",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.realtimeclient.RealtimeConstants": {
+            "obfuscated": "com.instagram.realtimeclient.RealtimeConstants",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes18.dex"
+        },
+        "com.instagram.realtimeclient.RealtimeMqttClientConfig": {
+            "obfuscated": "com.instagram.realtimeclient.RealtimeMqttClientConfig",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.reels.StoriesTrayControllerImpl": {
+            "obfuscated": "X.2uX",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.reels.api.IgReelApiFactory": {
+            "obfuscated": "X.4a9",
+            "kind": "class",
+            "dex": "classes.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.reels.api.IgStorySeenStateReporter": {
+            "obfuscated": "X.0tF",
+            "kind": "class",
+            "dex": "classes2.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.reels.interactive.Interactive": {
+            "obfuscated": "com.instagram.reels.interactive.Interactive",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.instagram.reels.store.ReelResponseCache": {
+            "obfuscated": "com.instagram.reels.store.ReelResponseCache",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.reels.ui.ManageHighlightsFragment": {
+            "obfuscated": "X.E3z",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.reels.ui.ReelDashboardViewersAdapter": {
+            "obfuscated": "X.D3U",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "com.instagram.reels.ui.ReelQuickReactorsListFragment": {
+            "obfuscated": "X.VOx",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "com.instagram.reels.ui.StoryRepliesListFragment": {
+            "obfuscated": "X.Rp8",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "com.instagram.registration.fragment.OnePageRegistrationFragment": {
+            "obfuscated": "X.E1z",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.registration.model.RegFlowExtras": {
+            "obfuscated": "com.instagram.registration.model.RegFlowExtras",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.registration.model.UserBirthDateImpl": {
+            "obfuscated": "com.instagram.registration.model.UserBirthDateImpl",
+            "kind": "class",
+            "dex": "classes9.dex",
+            "source": "sigmatcher"
+        },
+        "com.instagram.rtc.activity.RtcCallActivity": {
+            "obfuscated": "com.instagram.rtc.activity.RtcCallActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.rtc.activity.RtcCallIntentHandlerActivity": {
+            "obfuscated": "com.instagram.rtc.activity.RtcCallIntentHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.rtc.connectionservice.RtcConnectionService": {
+            "obfuscated": "com.instagram.rtc.connectionservice.RtcConnectionService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.rtc.presentation.participants.RtcCallParticipantCellView": {
+            "obfuscated": "com.instagram.rtc.presentation.participants.RtcCallParticipantCellView",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.rtc.rsys.models.EngineModel": {
+            "obfuscated": "com.instagram.rtc.rsys.models.EngineModel",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.rtc.rsys.models.IgCallModel": {
+            "obfuscated": "com.instagram.rtc.rsys.models.IgCallModel",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.rtc.service.OngoingCallServiceWithMic": {
+            "obfuscated": "com.instagram.rtc.service.OngoingCallServiceWithMic",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.rtc.signaling.notifications.service.RtcCallActionIntentHandlerService": {
+            "obfuscated": "com.instagram.rtc.signaling.notifications.service.RtcCallActionIntentHandlerService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.rtc.stack.impl.RtcCallStackImpl": {
+            "obfuscated": "com.instagram.rtc.stack.impl.RtcCallStackImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.instagram.save.api.CollectionsApiClient": {
+            "obfuscated": "X.Mp8",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.save.api.SavedFeedRequestBuilder": {
+            "obfuscated": "X.FWu",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.save.contextualfeed.intf.SavedContextualFeedNetworkConfig": {
+            "obfuscated": "com.instagram.save.contextualfeed.intf.SavedContextualFeedNetworkConfig",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.save.fragment.SavedMediaGridCollectionsViewModel": {
+            "obfuscated": "com.instagram.save.fragment.SavedMediaGridCollectionsViewModel",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.save.model.SavedCollection": {
+            "obfuscated": "com.instagram.save.model.SavedCollection",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.screentime.IGScreenTimeApi": {
+            "obfuscated": "com.instagram.screentime.IGScreenTimeApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.search.SearchNullStateFetcher": {
+            "obfuscated": "X.9CC",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.search.surface.BaseSerpGridFragment": {
+            "obfuscated": "X.G56",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.search.surface.CompositeSerpTabbedFragment": {
+            "obfuscated": "X.G6E",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.search.surface.SingleSearchTypeaheadTabFragment": {
+            "obfuscated": "X.D48",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.search.surface.constants.SerpEntryPointConstants": {
+            "obfuscated": "com.instagram.search.surface.constants.SerpEntryPointConstants",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.search.surface.repository.SerpRepository": {
+            "obfuscated": "com.instagram.search.surface.repository.SerpRepository$fetchFeedPage$3",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.search.surface.viewmodel.SerpChildViewModel": {
+            "obfuscated": "com.instagram.search.surface.viewmodel.SerpChildViewModel$fetchFirstPage$1",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.secondaryaccount.AccountSwitchFragment": {
+            "obfuscated": "X.ECT",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.secondaryaccount.AddAccountBottomSheetFragment": {
+            "obfuscated": "X.EDh",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.security.fragment.LoginActivityFragment": {
+            "obfuscated": "X.RYS",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "com.instagram.service.tigon.interceptors.zerorewritenative.ZeroNativeRequestInterceptor": {
+            "obfuscated": "com.instagram.service.tigon.interceptors.zerorewritenative.ZeroNativeRequestInterceptor",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.settings.activity.NotificationSettingsHandlerActivity": {
+            "obfuscated": "com.instagram.settings.activity.NotificationSettingsHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.shopping.fragment.cart.MerchantShoppingCartFragment": {
+            "obfuscated": "com.instagram.shopping.fragment.cart.MerchantShoppingCartFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.shopping.fragment.cart.ShoppingCartFragment": {
+            "obfuscated": "com.instagram.shopping.fragment.cart.ShoppingCartFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.shopping.repository.taggingfeed.ShoppingTaggingFeedRepository": {
+            "obfuscated": "com.instagram.shopping.repository.taggingfeed.ShoppingTaggingFeedRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.stickersearch.api.AvatarStickerGraphQLApi": {
+            "obfuscated": "com.instagram.stickersearch.api.AvatarStickerGraphQLApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        },
+        "com.instagram.stickersearch.api.AvatarStickerSearchRepository": {
+            "obfuscated": "com.instagram.stickersearch.api.AvatarStickerSearchRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.suggestedusers.database.SuggestedUsersDatabase": {
+            "obfuscated": "com.instagram.suggestedusers.database.SuggestedUsersDatabase",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.tagging.activity.PeopleTagListFragment": {
+            "obfuscated": "com.instagram.tagging.activity.PeopleTagListFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.tagging.activity.TaggingActivity": {
+            "obfuscated": "com.instagram.tagging.activity.TaggingActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.tagging.model.Tag": {
+            "obfuscated": "com.instagram.tagging.model.Tag",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes5.dex"
+        },
+        "com.instagram.tagging.repo.TaggingSuggestionsRepository": {
+            "obfuscated": "com.instagram.tagging.repo.TaggingSuggestionsRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.tagging.viewmodel.TaggingSuggestionsViewModel": {
+            "obfuscated": "com.instagram.tagging.viewmodel.TaggingSuggestionsViewModel",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "com.instagram.teleprompter.ui.script.TeleprompterCardScriptKt": {
+            "obfuscated": "com.instagram.teleprompter.ui.script.TeleprompterCardScriptKt",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes14.dex"
+        },
+        "com.instagram.twofac.fragment.AccountSecurityFragment": {
+            "obfuscated": "X.Hjc",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.twofac.fragment.TwoFacAuthenticatorAppSetupFragment": {
+            "obfuscated": "X.EJX",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.twofac.fragment.TwoFacLandingFragment": {
+            "obfuscated": "X.EHS",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.twofac.fragment.TwoFacTrustedDevicesFragment": {
+            "obfuscated": "X.E5P",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.urlhandlers.bloksnativehybridshell.BloksNativeHybridShellUrlHandlerActivity": {
+            "obfuscated": "com.instagram.urlhandlers.bloksnativehybridshell.BloksNativeHybridShellUrlHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.urlhandlers.communitynoteshub.CommunityNotesHubUrlHandlerActivity": {
+            "obfuscated": "com.instagram.urlhandlers.communitynoteshub.CommunityNotesHubUrlHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes10.dex"
+        },
+        "com.instagram.urlhandlers.directmetaaithread.DirectMetaAiThreadUrlHandlerActivity": {
+            "obfuscated": "com.instagram.urlhandlers.directmetaaithread.DirectMetaAiThreadUrlHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes15.dex"
+        },
+        "com.instagram.urlhandlers.familycenter.FamilyCenterUrlHandlerActivity": {
+            "obfuscated": "com.instagram.urlhandlers.familycenter.FamilyCenterUrlHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.urlhandlers.friendmap.FriendMapUrlHandlerActivity": {
+            "obfuscated": "com.instagram.urlhandlers.friendmap.FriendMapUrlHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.urlhandlers.fxcaligaccountscenter.FxCalIGAccountsCenterRedirectActivity": {
+            "obfuscated": "com.instagram.urlhandlers.fxcaligaccountscenter.FxCalIGAccountsCenterRedirectActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.urlhandlers.guardianpairing.GuardianPairingUrlHandlerActivity": {
+            "obfuscated": "com.instagram.urlhandlers.guardianpairing.GuardianPairingUrlHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes8.dex"
+        },
+        "com.instagram.urlhandlers.metasubscriptions.MetaSubscriptionsUrlHandlerActivity": {
+            "obfuscated": "com.instagram.urlhandlers.metasubscriptions.MetaSubscriptionsUrlHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.urlhandlers.metaverified.MetaVerifiedUrlHandlerActivity": {
+            "obfuscated": "com.instagram.urlhandlers.metaverified.MetaVerifiedUrlHandlerActivity",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.userpay.api.UserPayApi": {
+            "obfuscated": "com.instagram.userpay.api.UserPayApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes2.dex"
+        },
+        "com.instagram.video.live.IgLiveCaptureFragment": {
+            "obfuscated": "X.L7p",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes13.dex"
+        },
+        "com.instagram.video.live.IgLiveExploreLiveViewerFragment": {
+            "obfuscated": "X.PbJ",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes13.dex"
+        },
+        "com.instagram.video.live.mvvm.model.datasource.api.IgLiveBroadcastSettingsApi": {
+            "obfuscated": "com.instagram.video.live.mvvm.model.datasource.api.IgLiveBroadcastSettingsApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes18.dex"
+        },
+        "com.instagram.video.live.mvvm.model.datasource.api.IgLiveLikesApi": {
+            "obfuscated": "com.instagram.video.live.mvvm.model.datasource.api.IgLiveLikesApi",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes13.dex"
+        },
+        "com.instagram.video.live.mvvm.model.repository.IgLiveCobroadcastRepository": {
+            "obfuscated": "com.instagram.video.live.mvvm.model.repository.IgLiveCobroadcastRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes13.dex"
+        },
+        "com.instagram.video.live.mvvm.model.repository.IgLiveCommentsRepository": {
+            "obfuscated": "com.instagram.video.live.mvvm.model.repository.IgLiveCommentsRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes13.dex"
+        },
+        "com.instagram.video.live.streaming.IgLiveStreamingController": {
+            "obfuscated": "X.Q3l",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes13.dex"
+        },
+        "com.instagram.wellbeing.familycenter.api.SupervisionInfoGraphQLRepository": {
+            "obfuscated": "com.instagram.wellbeing.familycenter.api.SupervisionInfoGraphQLRepository",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes9.dex"
+        },
+        "com.instagram.wellbeing.timespent.fragment.TimeSpentReminderFullyBlockingFragment": {
+            "obfuscated": "com.instagram.wellbeing.timespent.fragment.TimeSpentReminderFullyBlockingFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.wellbeing.timespent.listeners.InstagramTimeSpentManagerImpl": {
+            "obfuscated": "com.instagram.wellbeing.timespent.listeners.InstagramTimeSpentManagerImpl",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.wellbeing.timetools.presenter.IGPresenterService": {
+            "obfuscated": "com.instagram.wellbeing.timetools.presenter.IGPresenterService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.wellbeing.timetools.reminder.dailylimit.DailyLimitReminder": {
+            "obfuscated": "com.instagram.wellbeing.timetools.reminder.dailylimit.DailyLimitReminder",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.wellbeing.timetools.reminder.sleepmode.sleepmodereminder.IGSleepModeReminder": {
+            "obfuscated": "com.instagram.wellbeing.timetools.reminder.sleepmode.sleepmodereminder.IGSleepModeReminder",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes17.dex"
+        },
+        "com.instagram.zero.ZeroTokenSummaryFragment": {
+            "obfuscated": "X.LMP",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes11.dex"
+        },
+        "com.instagram.zero.common.IgZeroModuleStatic": {
+            "obfuscated": "com.instagram.zero.common.IgZeroModuleStatic",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.zero.main.IgZeroMain": {
+            "obfuscated": "com.instagram.zero.main.IgZeroMain",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "com.instagram.zero.zbd.state.IgZeroBalanceStateCache": {
+            "obfuscated": "com.instagram.zero.zbd.state.IgZeroBalanceStateCache",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes.dex"
+        },
+        "instagram.features.creation.publishscreen.fragment.feed.FollowersShareFragment": {
+            "obfuscated": "instagram.features.creation.publishscreen.fragment.feed.FollowersShareFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes12.dex"
+        },
+        "instagram.features.stories.dashboard.fragment.ReelDashboardFragment": {
+            "obfuscated": "instagram.features.stories.dashboard.fragment.ReelDashboardFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes16.dex"
+        },
+        "instagram.features.stories.fragment.ReelViewerFragment": {
+            "obfuscated": "instagram.features.stories.fragment.ReelViewerFragment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes6.dex"
+        }
+    }
+}
