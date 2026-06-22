@@ -2,7 +2,7 @@
     "attestation_version": 1,
     "app": "com.example.app",
     "version_code": 30405,
-    "map_sha256": "4860f6ca9e0be921abd9b1ff381ad2b144607da1c1fddb4ecf0581b0aeaa2b6e",
+    "map_sha256": "cbe063f340919e805c7b13c0f1d8b41990ffe2b90cf02d004328b417becd3d04",
     "reproduced": true,
     "signatures_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
     "apk": {

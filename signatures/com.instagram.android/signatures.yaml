@@ -1,0 +1,2289 @@
+# Sigmatcher signatures for com.instagram.android (Instagram for Android).
+# SOURCE OF TRUTH for maps/com.instagram.android/<version_code>.json.
+#
+# Scope (authored in three rounds; provenance kept here rather than in the map
+# JSON, where free-form notes have no reader):
+#   * Round 1 (login/auth core) — the LOGIN + SIGN-UP/registration HTTP surface,
+#     client-side password encryption, device identity & request signing,
+#     keystore secure-storage crypto, realtime/MQTT + FBNS push, MSYS DM mailbox,
+#     the media upload/configure pipeline, MobileConfig feature gating, the Bloks
+#     action registry, analytics upload, and the feed/stories/reels HTTP surface.
+#     Sign-up adds account creation, phone/email confirmation, FB sign-up (folded
+#     into IgAccountsLoginApi), the age gate & new-user consent flow, and contact
+#     prefill.
+#   * Round 2 (feature-subsystem expansion) — 26 subsystems: Meta AI / AI Studio,
+#     QuickSnap, Friend Map, Direct/MSYS/E2EE, RTC, Reels/clips, Stories, Close
+#     Friends, Shopping/Commerce, Branded Content, IG Live, Live monetization,
+#     Supervision, Family Center, Wellbeing/Screen Time, Notifications, Avatars,
+#     AR effects, Payments/FBPay, Creator subscriptions, Notes, Broadcast
+#     Channels, Auth/Login, 2FA/Security, Realtime/MQTT, Comments. Members are
+#     A0x-rotated and not mapped (class-level only).
+#   * Round 3 (further expansion) — 20 more subsystems: Explore, Search, Feed
+#     ranking, Saved/Collections, Quick Experiment, Quick Promotion, Meta
+#     Verified, Account switching, Sticker/GIPHY, Music, In-app browser, Media
+#     upload, Analytics/Profilo, Zero-rating, Lead Ads, Tagging, Community Notes,
+#     Fundraisers, Bloks, Pando/GraphQL.
+# See research/com.instagram.android/docs/ for what each class does.
+#
+# Obfuscation model (see research/.../login-http-api.md):
+#   * First-party feature PACKAGES are mostly preserved
+#     (com.instagram.login.*), but the bulk of logic is flattened into a
+#     synthetic `X` package (LX/55W;, LX/ioi;, ...). Those short tokens
+#     ROTATE every release and must never be used as anchors.
+#   * String literals survive: API endpoint paths, POST field names, analytics
+#     event names, and the bundled bootstrap public key. Every class below is
+#     anchored on a string literal that was verified GLOBALLY UNIQUE across all
+#     19 dex files in this APK (rg -l count == 1), so it identifies exactly one
+#     class and survives name rotation.
+#
+# NOTE: anchors here were uniqueness-checked against v433.0.0.47.68 only.
+# Cross-version verification (the real portability test) requires a second
+# APK; see research/.../README.md.
+
+# ─────────────────────────────────────────────────────────────────────
+# Login / account API factory. One class builds every auth endpoint.
+# Anchored on the primary login path; each method re-anchored on its own
+# unique endpoint literal.
+# ─────────────────────────────────────────────────────────────────────
+- name: 'IgAccountsLoginApi'
+  package: 'com.instagram.login.api'
+  signatures:
+      - signature: '"accounts/login/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'login'
+        signatures:
+            - signature: '"accounts/login/"'
+              type: regex
+              count: 1
+      - name: 'oneTapAppLogin'
+        signatures:
+            - signature: '"accounts/one_tap_app_login/"'
+              type: regex
+              count: 1
+      # FB sign-up surface on this same factory (added by the sign-up work):
+      # create an IG account from a Facebook token, and link FB during NUX.
+      - name: 'facebookSignup'
+        signatures:
+            - signature: '"fb/facebook_signup/"'
+              type: regex
+              count: 1
+      - name: 'nuxFbConnect'
+        signatures:
+            - signature: '"fb/nux_fb_connect/"'
+              type: regex
+              count: 1
+      - name: 'accountRecoveryCodeLogin'
+        signatures:
+            - signature: '"accounts/account_recovery_code_login/"'
+              type: regex
+              count: 1
+      - name: 'accountRecoveryCodeVerify'
+        signatures:
+            - signature: '"accounts/account_recovery_code_verify/"'
+              type: regex
+              count: 1
+      - name: 'assistedAccountRecovery'
+        signatures:
+            - signature: '"accounts/assisted_account_recovery/"'
+              type: regex
+              count: 1
+      - name: 'sendPasswordReset'
+        signatures:
+            - signature: '"accounts/send_password_reset/"'
+              type: regex
+              count: 1
+      - name: 'sendRecoveryFlowEmail'
+        signatures:
+            - signature: '"accounts/send_recovery_flow_email/"'
+              type: regex
+              count: 1
+      - name: 'googleTokenUsers'
+        signatures:
+            - signature: '"accounts/google_token_users/"'
+              type: regex
+              count: 1
+
+# ─────────────────────────────────────────────────────────────────────
+# Two-factor login: code verification, trusted-notification polling,
+# support flow. Each is anchored on its own unique endpoint path.
+# ─────────────────────────────────────────────────────────────────────
+- name: 'IgTwoFactorLoginApi'
+  package: 'com.instagram.login.twofac.api'
+  signatures:
+      - signature: '"accounts/two_factor_login/"'
+        type: regex
+        count: 1
+
+- name: 'IgTrustedNotificationStatusApi'
+  package: 'com.instagram.login.twofac.api'
+  signatures:
+      - signature: '"two_factor/check_trusted_notification_status/"'
+        type: regex
+        count: 1
+
+- name: 'IgTwoFactorSupportApi'
+  package: 'com.instagram.login.twofac.api'
+  signatures:
+      - signature: '"two_factor/start_two_fac_support/"'
+        type: regex
+        count: 1
+
+# Two-factor code-entry fragment. Two independent unique anchors: the kept
+# redex original-name marker and the SMS-resend endpoint it calls.
+- name: 'TwoFacLoginVerifyFragment'
+  package: 'com.instagram.login.twofac'
+  signatures:
+      - signature: '"TwoFacLoginVerifyFragment"'
+        type: regex
+        count: 1
+      - signature: '"accounts/send_two_factor_login_sms/"'
+        type: regex
+        count: 1
+
+# ─────────────────────────────────────────────────────────────────────
+# Login response parsing. The JSON model parser for accounts/login/ —
+# routes logged_in_user / two_factor_required / checkpoint / error.
+# Anchored on a login-only error key (unique to this class).
+# ─────────────────────────────────────────────────────────────────────
+- name: 'IgLoginResponseParser'
+  package: 'com.instagram.login.api'
+  signatures:
+      - signature: '"invalid_credentials"'
+        type: regex
+        count: 1
+
+# ─────────────────────────────────────────────────────────────────────
+# Client-side password encryption (enc_password). See
+# research/.../password-encryption.md.
+# ─────────────────────────────────────────────────────────────────────
+# The encrypter: formats <tag>:<version>:<key_id>:<base64> and logs an
+# attempt. Two independent unique anchors (analytics event + transient tag).
+- name: 'IgPasswordEncrypter'
+  package: 'com.instagram.login.encryption'
+  signatures:
+      - signature: '"instagram_client_password_encryption_encrypt_attempt"'
+        type: regex
+        count: 1
+      # bootstrap/transient tag, emitted at two sites in this class
+      - signature: '"#PWD_TRANSIENT"'
+        type: regex
+        count: 2
+  methods:
+      # A00(Ljava/lang/String;)Ljava/lang/String;  plaintext -> enc_password
+      - name: 'encryptPassword'
+        signatures:
+            - signature: '"instagram_client_password_encryption_encrypt_attempt"'
+              type: regex
+              count: 1
+
+# The password-tag selector: maps an app id to #PWD_INSTAGRAM / #PWD_FB4A / …
+- name: 'IgPasswordTagSelector'
+  package: 'com.instagram.login.encryption'
+  signatures:
+      - signature: '"#PWD_WORKPLACE"'
+        type: regex
+        count: 1
+
+# ─────────────────────────────────────────────────────────────────────
+# One-tap / saved-login device nonce store (SharedPreferences-backed).
+# ─────────────────────────────────────────────────────────────────────
+- name: 'IgClientNonceStore'
+  package: 'com.instagram.login.onetap'
+  signatures:
+      - signature: '"client_nonces"'
+        type: regex
+        count: 1-2
+
+# ═════════════════════════════════════════════════════════════════════
+# DEVICE IDENTITY · REQUEST SIGNING · AUTH-TOKEN HEADERS
+# (see research/.../device-identity-and-signing.md)
+# ═════════════════════════════════════════════════════════════════════
+
+# Attaches IG request headers (X-IG-Capabilities/App-ID/Connection-Type).
+# Header NAMES are shared across many classes, so anchor on the identity tag.
+- name: 'IgHeaderServiceLayer'
+  package: 'com.instagram.common.api'
+  signatures:
+      - signature: '"InstagramSpecificHeaderServiceLayer"'
+        type: regex
+        count: 1
+
+# Builds the SIGNED GraphQL request body (signed_body=SIGNATURE.<...>).
+# signed_body / SIGNATURE.%s are shared with the REST builder, so anchor on
+# the unique GraphQL endpoint.
+- name: 'IgSignedGraphQLRequestBuilder'
+  package: 'com.instagram.api.graphql'
+  signatures:
+      - signature: '"/api/v1/wwwgraphql/ig/query/"'
+        type: regex
+        count: 1
+
+# The Callable that runs a GraphQL request and adds GraphQL headers.
+- name: 'IgGraphQLRequestTask'
+  package: 'com.instagram.api.graphql'
+  signatures:
+      - signature: '"X-FB-Friendly-Name"'
+        type: regex
+        count: 1
+
+# Generates the stable device id; rejects known-bad ANDROID_IDs.
+- name: 'IgDeviceIdGenerator'
+  package: 'com.instagram.common.device'
+  signatures:
+      - signature: '"9774d56d682e549c"'
+        type: regex
+        count: 1
+
+# Parses server *-Set-* headers (IGT auth token, MID, www-claim, U-RUR).
+- name: 'IgAuthHeaderResponseHandler'
+  package: 'com.instagram.common.api'
+  signatures:
+      - signature: '"IG-SET-IG-U-RUR"'
+        type: regex
+        count: 1
+
+# ═════════════════════════════════════════════════════════════════════
+# ON-DEVICE SECURE STORAGE / KEYSTORE CRYPTO
+# (see research/.../secure-storage.md)
+# ═════════════════════════════════════════════════════════════════════
+
+- name: 'IgAndroidKeyStoreManager'
+  package: 'com.instagram.common.security'
+  signatures:
+      - signature: '"Unable to create or load AndroidKeyStore"'
+        type: regex
+        count: 1
+
+- name: 'IgKeystoreJweCipher'
+  package: 'com.instagram.common.security'
+  signatures:
+      - signature: '"JWE format is invalid"'
+        type: regex
+        count: 1
+
+- name: 'IgSymmetricKeystoreTransformer'
+  package: 'com.instagram.common.security'
+  signatures:
+      - signature: '"SymmetricTransformer"'
+        type: regex
+        count: 2
+
+- name: 'IgKeystoreKeyLoader'
+  package: 'com.instagram.common.security'
+  signatures:
+      - signature: '"Keystore cannot load the key with ID: "'
+        type: regex
+        count: 1
+
+# ═════════════════════════════════════════════════════════════════════
+# REALTIME (MQTT) TRANSPORT + FBNS PUSH
+# (see research/.../realtime-and-push.md)
+# ═════════════════════════════════════════════════════════════════════
+
+# MQTT topic id -> topic-string mapper (SparseArray of routes).
+- name: 'IgMqttTopicMapper'
+  package: 'com.instagram.realtimeclient'
+  signatures:
+      - signature: '"/buddy_list"'
+        type: regex
+        count: 1
+
+# FBNS (Facebook push) lite health monitor ("Flytrap").
+- name: 'FbnsFlytrapHealthMonitor'
+  package: 'com.facebook.rti.push'
+  signatures:
+      - signature: '"Fbnslite_Flytrap"'
+        type: regex
+        count: 1
+
+# ═════════════════════════════════════════════════════════════════════
+# DIRECT MESSAGING (MSYS) — encrypted-mailbox activation
+# (see research/.../direct-messaging.md)
+# ═════════════════════════════════════════════════════════════════════
+
+- name: 'MsysMailboxActivationCallback'
+  package: 'com.instagram.direct.msys'
+  signatures:
+      - signature: '"Mailbox activated"'
+        type: regex
+        count: 1
+
+# ═════════════════════════════════════════════════════════════════════
+# MEDIA UPLOAD / PUBLISH PIPELINE
+# (see research/.../media-upload.md)
+# ═════════════════════════════════════════════════════════════════════
+
+# Upload media-type enum -> rupload endpoints (rupload_igphoto/_igvideo).
+- name: 'IgUploadMediaTypeEnum'
+  package: 'com.instagram.pendingmedia.service'
+  signatures:
+      - signature: '"rupload_igphoto"'
+        type: regex
+        count: 1
+
+# Resumable-upload request builder.
+- name: 'IgRuploadRequestBuilder'
+  package: 'com.instagram.pendingmedia.service'
+  signatures:
+      - signature: '"desired_upload_handler"'
+        type: regex
+        count: 1
+
+# Resumable-upload HTTP executor (rupload chunk POSTs).
+- name: 'IgRuploadHttpExecutor'
+  package: 'com.instagram.pendingmedia.service'
+  signatures:
+      - signature: '"Failed to parse debug_segment_id from rupload params"'
+        type: regex
+        count: 1
+
+# media/configure* endpoint enum (feed / sidecar / clips / story / finish).
+- name: 'IgMediaConfigureEndpointEnum'
+  package: 'com.instagram.pendingmedia.service'
+  signatures:
+      - signature: '"media/configure/"'
+        type: regex
+        count: 1
+
+# Story-specific configure endpoint subclass.
+- name: 'IgStoryConfigureEndpoint'
+  package: 'com.instagram.pendingmedia.service'
+  signatures:
+      - signature: '"media/configure_to_story/"'
+        type: regex
+        count: 1
+
+# Builds the media/configure request body (upload_id, sidecar id, etc.).
+- name: 'IgMediaConfigureBodyBuilder'
+  package: 'com.instagram.pendingmedia.service'
+  signatures:
+      - signature: '"client_sidecar_id"'
+        type: regex
+        count: 1
+
+# ═════════════════════════════════════════════════════════════════════
+# FEATURE GATING · BLOKS · ANALYTICS · FEED/STORIES/REELS HTTP
+# (see research/.../feature-gating-bloks-analytics.md and
+#  research/.../feed-stories-reels.md)
+# ═════════════════════════════════════════════════════════════════════
+
+# MobileConfig fetcher — the server-driven feature-flag / config engine
+# (implements com.facebook.mobileconfig.MobileConfigFetcher).
+- name: 'IgMobileConfigFetcher'
+  package: 'com.instagram.mobileconfig'
+  signatures:
+      - signature: '"mobileconfig_consistency"'
+        type: regex
+        count: 1
+
+# Bloks server-driven-UI action registry: maps all 1816 bk.action.* names
+# to handler ids. Anchored on one distinctive action name.
+- name: 'IgBloksActionRegistry'
+  package: 'com.instagram.bloks'
+  signatures:
+      - signature: '"bk\.action\.AsyncComponentCacheWrite"'
+        type: regex
+        count: 1
+
+# Analytics batch-upload endpoint builder (/logging_client_events | /pigeon_nest).
+- name: 'IgAnalyticsUploadEndpointBuilder'
+  package: 'com.instagram.analytics'
+  signatures:
+      - signature: '"/logging_client_events"'
+        type: regex
+        count: 1
+
+# Reel/story API factory (builds feed/reels_tray/ streaming requests).
+# Anchored on a unique log substring carrying the method name.
+- name: 'IgReelApiFactory'
+  package: 'com.instagram.reels.api'
+  signatures:
+      - signature: 'createReelsTrayStreamingRequestTask'
+        type: regex
+        count: 1
+
+# Story/reel "seen-state" reporter: POSTs watched reels to media/seen/.
+- name: 'IgStorySeenStateReporter'
+  package: 'com.instagram.reels.api'
+  signatures:
+      - signature: 'media/seen/\?reel='
+        type: regex
+        count: 1
+
+# Feed endpoint registry: static lists of feed/clips endpoint paths.
+- name: 'IgFeedEndpointRegistry'
+  package: 'com.instagram.feed.api'
+  signatures:
+      - signature: '"feed/timeline_stream/"'
+        type: regex
+        count: 1
+
+# ══════════════════════════════════════════════════════════════════
+# SIGN-UP / REGISTRATION HTTP SURFACE
+# ──────────────────────────────────────────────────────────────────
+# Account creation, phone/email confirmation, FB/one-tap sign-up, the
+# age gate & new-user consent flow, contact prefill. Complements the
+# login/auth surface above. Anchored on globally-unique server endpoint
+# path string literals (the obfuscated X. tokens rotate per release).
+# Narrative: research/com.instagram.android/docs/signup-http.md
+# ══════════════════════════════════════════════════════════════════
+
+# ─── accounts/create/  +  accounts/create_validated/ ────────────────
+# Primary account-creation request builder. Reads RegFlowExtras +
+# UserBirthDateImpl, attaches device ids / waterfall id, and (for supervised
+# accounts) the guardian consent token. Path switches create/ vs
+# create_validated/ on an Integer flag.
+- name: 'AccountCreateApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"accounts/create/"'
+        type: regex
+        count: 1
+      - signature: '"accounts/create_validated/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'createRequest'
+        signatures:
+            - signature: '"accounts/create/"'
+              type: regex
+              count: 1
+
+# ─── accounts/create_business/ (+ create_business_validated/) ────────
+# Business / professional-account creation. Carries enc_password (sealed,
+# see PasswordEncryptor), category_id, page_id, professional_signup_source_*.
+# The same builder method emits create_business/ vs create_business_validated/
+# on a flag, so create_business_validated/ is a second class-level anchor
+# (NOT a second method — both live in the one run()V).
+- name: 'AccountCreateBusinessApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"accounts/create_business/"'
+        type: regex
+        count: 1
+      - signature: '"accounts/create_business_validated/"'
+        type: regex
+        count: 1
+      - signature: '"enc_password"'
+        type: regex
+        count: 1-3
+  methods:
+      - name: 'createBusinessRequest'
+        signatures:
+            - signature: '"accounts/create_business/"'
+              type: regex
+              count: 1
+
+# ─── multiple_accounts/create_secondary_account/ (+ ..._ai_account/) ─
+# Add-account flow from an already-logged-in session. Passes
+# main_user_id / main_user_authorization_token and the should_*_to_main
+# consent/birthday-copy flags. The same builder method switches the path to
+# create_secondary_ai_account/ for the AI-character secondary-account variant,
+# so that path is a second class anchor (not a second method).
+- name: 'CreateSecondaryAccountApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"multiple_accounts/create_secondary_account/"'
+        type: regex
+        count: 1
+      - signature: '"multiple_accounts/create_secondary_ai_account/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'createSecondaryRequest'
+        signatures:
+            - signature: '"multiple_accounts/create_secondary_account/"'
+              type: regex
+              count: 1
+
+# ─── accounts/send_signup_sms_code/ (+ send_verify_email/) ──────────
+# Sends the SMS OTP (or the verification email) during phone/email reg.
+- name: 'SendSignupSmsCodeApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"accounts/send_signup_sms_code/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'sendSignupSmsRequest'
+        signatures:
+            - signature: '"accounts/send_signup_sms_code/"'
+              type: regex
+              count: 1
+
+# ─── accounts/validate_signup_sms_code/ ─────────────────────────────
+# Validates the SMS OTP; reports SMS-retriever telemetry
+# (ig_android_sms_retriever_started/_error, sms_permission_allowed).
+- name: 'ValidateSignupSmsCodeApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"accounts/validate_signup_sms_code/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'validateSignupSmsRequest'
+        signatures:
+            - signature: '"accounts/validate_signup_sms_code/"'
+              type: regex
+              count: 1
+
+# ─── accounts/check_confirmation_code/ ──────────────────────────────
+# Checks an email confirmation code; distinguishes sign-up vs recovery via
+# sign_up_email_code_confirmation / recovery_email_code_confirmation.
+- name: 'CheckConfirmationCodeApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"accounts/check_confirmation_code/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'checkConfirmationCodeRequest'
+        signatures:
+            - signature: '"accounts/check_confirmation_code/"'
+              type: regex
+              count: 1
+
+# ─── accounts/verify_email_code/ (+ verify_sms_code/, check_username/) ─
+# A multi-endpoint "verify/check" builder class: besides the email-code
+# verify it also builds accounts/verify_sms_code/ and users/check_username/,
+# each in its OWN method, so all three are distinct method entries.
+- name: 'VerifyEmailCodeApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"accounts/verify_email_code/"'
+        type: regex
+        count: 1
+      - signature: '"accounts/verify_sms_code/"'
+        type: regex
+        count: 1
+      - signature: '"users/check_username/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'verifyEmailCodeRequest'
+        signatures:
+            - signature: '"accounts/verify_email_code/"'
+              type: regex
+              count: 1
+      - name: 'verifySmsCodeRequest'
+        signatures:
+            - signature: '"accounts/verify_sms_code/"'
+              type: regex
+              count: 1
+      - name: 'checkUsernameRequest'
+        signatures:
+            - signature: '"users/check_username/"'
+              type: regex
+              count: 1
+
+# ─── accounts/check_phone_number/ (+ users/check_email/) ────────────
+# Pre-reg phone lookup; carries one-tap login_nonce_map / big_blue_token.
+# The same builder method also emits users/check_email/ (the email-availability
+# variant of the same pre-reg lookup), so that path is a second class anchor.
+- name: 'CheckPhoneNumberApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"accounts/check_phone_number/"'
+        type: regex
+        count: 1
+      - signature: '"users/check_email/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'checkPhoneNumberRequest'
+        signatures:
+            - signature: '"accounts/check_phone_number/"'
+              type: regex
+              count: 1
+
+# ─── accounts/username_suggestions/ ─────────────────────────────────
+# Suggests usernames from name/email; echoes client-side password validity
+# flags (valid_password, password_too_short, password_blacklisted).
+- name: 'ProcessContactPointSignalsApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"accounts/process_contact_point_signals/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'processContactPointSignalsRequest'
+        signatures:
+            - signature: '"accounts/process_contact_point_signals/"'
+              type: regex
+              count: 1
+
+# ─── accounts/vetted_phone_reg_login/ ───────────────────────────────
+# Phone-based "vetted" registration→login: when a phone number already
+# resolves to a vetted device, the reg flow logs straight in instead of
+# creating a new account. Builder is a Function0 lambda (the path is set in
+# its invoke()), so the request method resolves as the lambda body.
+- name: 'VettedPhoneRegLoginApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"accounts/vetted_phone_reg_login/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'vettedPhoneRegLoginRequest'
+        signatures:
+            - signature: '"accounts/vetted_phone_reg_login/"'
+              type: regex
+              count: 1
+
+# NOTE: the obfuscated class that builds accounts/one_tap_app_login/ is X.55W,
+# which the login work above already maps as `IgAccountsLoginApi`. The FB
+# sign-up methods on that same class (fb/facebook_signup/, fb/nux_fb_connect/)
+# are therefore added there as extra methods — NOT as a duplicate class here.
+
+# ─── fb/fb_reg_flag/ ────────────────────────────────────────────────
+# Reports/queries the Facebook-registration flag during the FB-linked reg
+# flow (whether this FB user already has / is creating an IG account).
+- name: 'FbRegFlagApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"fb/fb_reg_flag/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'fbRegFlagRequest'
+        signatures:
+            - signature: '"fb/fb_reg_flag/"'
+              type: regex
+              count: 1
+
+# ─── nux/new_account_nux_seen/ ──────────────────────────────────────
+# Marks that a freshly-created account has seen the new-account NUX
+# (new-user onboarding), gating post-signup education surfaces.
+- name: 'NewAccountNuxSeenApi'
+  package: 'com.instagram.api.signup'
+  signatures:
+      - signature: '"nux/new_account_nux_seen/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'newAccountNuxSeenRequest'
+        signatures:
+            - signature: '"nux/new_account_nux_seen/"'
+              type: regex
+              count: 1
+
+# ─── consent/check_age_eligibility/ ─────────────────────────────────
+# The age gate: validates the birthday entered during sign-up against the
+# minimum-age policy before account creation proceeds.
+- name: 'CheckAgeEligibilityApi'
+  package: 'com.instagram.api.consent'
+  signatures:
+      - signature: '"consent/check_age_eligibility/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'checkAgeEligibilityRequest'
+        signatures:
+            - signature: '"consent/check_age_eligibility/"'
+              type: regex
+              count: 1
+
+# ─── consent/get_signup_config/ ─────────────────────────────────────
+# Fetches the server-driven sign-up configuration (which reg steps/fields
+# this client/region must show) that parameterises the whole reg flow.
+- name: 'GetSignupConfigApi'
+  package: 'com.instagram.api.consent'
+  signatures:
+      - signature: '"consent/get_signup_config/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'getSignupConfigRequest'
+        signatures:
+            - signature: '"consent/get_signup_config/"'
+              type: regex
+              count: 1
+
+# ─── consent/new_user_flow/ ─────────────────────────────────────────
+# Drives the new-user consent flow (ToS / privacy / data-policy gates a new
+# account must clear before/around creation).
+- name: 'NewUserFlowApi'
+  package: 'com.instagram.api.consent'
+  signatures:
+      - signature: '"consent/new_user_flow/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'newUserFlowRequest'
+        signatures:
+            - signature: '"consent/new_user_flow/"'
+              type: regex
+              count: 1
+
+# ─── consent/new_user_flow_begins/ ──────────────────────────────────
+# Signals the start of the new-user consent flow (telemetry/state anchor
+# pairing with new_user_flow/ above).
+- name: 'NewUserFlowBeginsApi'
+  package: 'com.instagram.api.consent'
+  signatures:
+      - signature: '"consent/new_user_flow_begins/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'newUserFlowBeginsRequest'
+        signatures:
+            - signature: '"consent/new_user_flow_begins/"'
+              type: regex
+              count: 1
+
+# ─── Non-obfuscated reg-flow classes (names kept; useful map anchors) ─
+# These carry their real names through R8 (kept for (de)serialization or
+# reflection), so obfuscated == original. They are the data/use-cases the
+# builders above read from / drive.
+
+# Logged-out app onboarding login use-case; builds accounts/prime_app_onboarding_login/
+# (pre-warms a login session for the logged-out app shell). Class name is kept;
+# its builder method is still obfuscated, so it is mapped below.
+- name: 'IGLoggedOutAppUseCase'
+  package: 'com.instagram.login.loggedoutapp.usecase'
+  signatures:
+      - signature: '\.class[^\n]*Lcom/instagram/login/loggedoutapp/usecase/IGLoggedOutAppUseCase;'
+        type: regex
+        count: 1
+      - signature: '"accounts/prime_app_onboarding_login/"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'primeAppOnboardingLoginRequest'
+        signatures:
+            - signature: '"accounts/prime_app_onboarding_login/"'
+              type: regex
+              count: 1
+
+- name: 'RegFlowExtras'
+  package: 'com.instagram.registration.model'
+  signatures:
+      - signature: '\.class[^\n]*Lcom/instagram/registration/model/RegFlowExtras;'
+        type: regex
+        count: 1
+
+- name: 'UserBirthDateImpl'
+  package: 'com.instagram.registration.model'
+  signatures:
+      - signature: '\.class[^\n]*Lcom/instagram/registration/model/UserBirthDateImpl;'
+        type: regex
+        count: 1
+
+# ═════════════════════════════════════════════════════════════════════════════
+# FEATURE-SUBSYSTEM EXPANSION (26 subsystems / 148 classes added on this branch)
+# Meta AI/AI Studio, QuickSnap, Friend Map, Direct/MSYS/E2EE, RTC calls,
+# Reels/clips, Stories, Close Friends, Shopping/Commerce, Branded Content,
+# IG Live, Live monetization, Supervision, Family Center, Wellbeing/Screen Time,
+# Notifications, Avatars, AR effects, Payments/FBPay, Creator subscriptions,
+# Notes, Broadcast Channels, Auth/Login, 2FA/Security, Realtime/MQTT, Comments.
+# Same anchoring rules (string literals / xdt_*-xig_*-xfb_* op names / REST paths
+# / __redex_internal_original_name fields). NOTE: 6 login/2FA classes (X.55W,
+# X.GHs, X.LbY, X.LFd, X.LMf, X.Dw5) were already mapped above by the login/signup
+# work and are NOT duplicated here; X.E1z is mapped here as its authoritative
+# redex name OnePageRegistrationFragment (it carries the username_suggestions
+# endpoint inline). Every rule resolves to exactly one class on vc 383909338.
+# ═════════════════════════════════════════════════════════════════════════════
+- name: 'AiAgentThreadLauncher'
+  package: 'com.instagram.direct.aiagent.navigation'
+  signatures:
+      - signature: '"direct_v2/create_ig_meta_ai_side_chat/"'
+        type: regex
+      - signature: '"direct_v2/ig_meta_ai_side_chat_new_session/"'
+        type: regex
+
+- name: 'DirectMetaAiThreadUrlHandlerActivity'
+  package: 'com.instagram.urlhandlers.directmetaaithread'
+  signatures:
+      - signature: '"direct_meta_ai_thread_url_handler"'
+        type: regex
+
+- name: 'GenAIImagineService'
+  package: 'com.instagram.genai.imageservice.service'
+  signatures:
+      - signature: '"XFBGenAIIGImagineResultSuccess"'
+        type: regex
+
+- name: 'GenAIImagineQueryGraphQLApi'
+  package: 'com.instagram.genai.imageservice.api'
+  signatures:
+      - signature: '"return_unwatermarked"'
+        type: regex
+      - signature: '"meta_ai_access_point"'
+        type: regex
+
+- name: 'GenAIImageQueryGraphQLApi'
+  package: 'com.instagram.genai.imageservice.api'
+  signatures:
+      - signature: '"IGSharingGenAIImageQuery"'
+        type: regex
+      - signature: '"xig_ig_genai_image_query"'
+        type: regex
+
+- name: 'AIVoicesRepository'
+  package: 'com.instagram.genai.voices.datasource'
+  signatures:
+      - signature: '"IGDirectAIVoiceTransformMutation"'
+        type: regex
+      - signature: '"xig_ai_voice_styles"'
+        type: regex
+
+- name: 'CustomVoiceEffectRepository'
+  package: 'com.instagram.genai.voices.datasource'
+  signatures:
+      - signature: '"IGCreateCustomAIVoiceEffectMutation"'
+        type: regex
+      - signature: '"ig_list_custom_ai_voice_effects"'
+        type: regex
+
+- name: 'YourAisRepository'
+  package: 'com.instagram.aistudio.yourais'
+  signatures:
+      - signature: '"IGAiStudioYourAisQuery"'
+        type: regex
+      - signature: '"xfb_fetch_viewer_created_genai_personas"'
+        type: regex
+
+- name: 'AiProfileCreationRepository'
+  package: 'com.instagram.aistudio.creation.ugc.repository'
+  signatures:
+      - signature: '"AICharacterProfileCreationAiInfoQuery"'
+        type: regex
+      - signature: '"xdt_suggest_genai_persona_profile_usernames"'
+        type: regex
+
+- name: 'CreateAiAccountService'
+  package: 'com.instagram.aistudio.creation.ugc.util'
+  signatures:
+      - signature: '"Your AI has not been approved yet"'
+        type: regex
+      - signature: '" reached the maximum number of AI profiles"'
+        type: regex
+
+- name: 'AiLocationSummaryRepository'
+  package: 'com.instagram.metaai.location.viewmodel'
+  signatures:
+      - signature: '"IGAiLocationSummaryQuery"'
+        type: regex
+      - signature: '"xig_genai_location_summary"'
+        type: regex
+
+- name: 'AiBotVoiceFragment'
+  package: 'com.instagram.direct.fragment.thread.aichats.immersive'
+  signatures:
+      - signature: '"ai_bot_voice_fragment"'
+        type: regex
+
+# ════════════════ QuickSnap / QuickSends (BeReal-style dual camera) ════════════════
+- name: 'QuickSnapSeenStateProvider'
+  package: 'com.instagram.quicksnap.viewer.seenstate.provider'
+  signatures:
+      - signature: '"quick_snap_last_updated_app_id"'
+        type: regex
+
+- name: 'QuickSnapSeenStateProvider$Impl'
+  package: 'com.instagram.quicksnap.viewer.seenstate.provider'
+  signatures:
+      - signature: 'QuickSnapSeenState\] Unknown path: '
+        type: regex
+        count: 2
+
+- name: 'QuickSnapApi'
+  package: 'com.instagram.quicksnap.data.api'
+  signatures:
+      - signature: '"IGQuickSnapUpdateSeenStateMutation"'
+        type: regex
+      - signature: '"xdt_get_quick_snaps"'
+        type: regex
+
+- name: 'QuickSnapRepository'
+  package: 'com.instagram.quicksnap.data.repository'
+  signatures:
+      - signature: '"is_flash_on"'
+        type: regex
+
+- name: 'QuickSnapMediaSaver'
+  package: 'com.instagram.quicksnap.util'
+  signatures:
+      - signature: '"Failed to save video: media url is null"'
+        type: regex
+
+- name: 'QuickSendsManager'
+  package: 'com.instagram.quicksends'
+  signatures:
+      - signature: '"QuickSendsManager"'
+        type: regex
+      - signature: '"quicksends_photos"'
+        type: regex
+
+# ════════════════ Instagram Map / Friend Map (live location sharing) ════════════════
+- name: 'FriendMapFragment'
+  package: 'com.instagram.friendmap'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "FriendMapFragment"'
+        type: regex
+
+- name: 'MapLocationManager'
+  package: 'com.instagram.friendmap'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "MapLocationManager"'
+        type: regex
+
+- name: 'FriendMapPresenceApiImpl'
+  package: 'com.instagram.friendmap.data.presence'
+  signatures:
+      - signature: '"xdt_update_last_active_location"'
+        type: regex
+      - signature: '"xdt_get_all_presence_points"'
+        type: regex
+
+- name: 'FriendMapLocationSharingApiImpl'
+  package: 'com.instagram.friendmap.data.locationsharing'
+  signatures:
+      - signature: '"xdt_location_sharing_request_mutation"'
+        type: regex
+      - signature: '"xdt_remove_obsolete_location_sharing_requests_mutation"'
+        type: regex
+
+- name: 'FriendMapAudienceApiImpl'
+  package: 'com.instagram.friendmap.data.audience'
+  signatures:
+      - signature: '"xdt_update_presence_audience_list_members"'
+        type: regex
+      - signature: '"xdt_get_presence_audience_list_members"'
+        type: regex
+
+- name: 'FriendMapSettingsApiImpl'
+  package: 'com.instagram.friendmap.data.settings'
+  signatures:
+      - signature: '"xdt_update_friend_map_settings"'
+        type: regex
+      - signature: '"xig_set_location_picker_dialog_as_seen"'
+        type: regex
+
+- name: 'FriendMapEntrypointApiImpl'
+  package: 'com.instagram.friendmap.data.entrypoint'
+  signatures:
+      - signature: '"GetUserSharingInfo"'
+        type: regex
+
+- name: 'FriendMapUrlHandlerActivity'
+  package: 'com.instagram.urlhandlers.friendmap'
+  signatures:
+      - signature: '"friend_map_audience_settings"'
+        type: regex
+      - signature: '"friend_map_custom_places"'
+        type: regex
+
+- name: 'FriendMapReactionsApiImpl'
+  package: 'com.instagram.friendmap.data.reactions'
+  signatures:
+      - signature: '"xdt_friend_map_reactions_update_last_seen"'
+        type: regex
+
+- name: 'FriendMapMediaRepository'
+  package: 'com.instagram.friendmap.data.media'
+  signatures:
+      - signature: '"xdt_friend_location_highlights"'
+        type: regex
+
+# ════════════════ Direct / MSYS / E2EE messaging ════════════════
+- name: 'StellaDirectMessagingServiceConnection'
+  package: 'com.instagram.direct.stella'
+  signatures:
+      - signature: '"onServiceConnected received null or unexpected binder type: "'
+        type: regex
+
+- name: 'StellaDirectMessagingService$binder$1'
+  package: 'com.instagram.direct.stella'
+  signatures:
+      - signature: '"Unmapped package name: "'
+        type: regex
+
+- name: 'Mailbox'
+  package: 'com.facebook.msys.mca'
+  signatures:
+      - signature: '"mDatabase must be initialized in native initNativeHolder\(\) method"'
+        type: regex
+
+- name: 'IGMessagePersistencePostProcessorPluginImplPostmailbox'
+  package: 'com.instagram.direct.realtime.armadilloexpress.plugins.messagepersistencepostprocessor'
+  signatures:
+      - signature: '"persist_key_changed"'
+        type: regex
+
+- name: 'IgSecureMessageOverWANotificationService'
+  package: 'com.instagram.direct.notifications.armadillo.service'
+  signatures:
+      - signature: '"ARMADILLO_NOTIFICATIONS_STOP_SERVICE"'
+        type: regex
+
+- name: 'Message'
+  package: 'com.instagram.direct.model.protobufmodel'
+  signatures:
+      - signature: 'ARMADILLO_EXPRESS_DATA_FIELD_NUMBER'
+        type: regex
+      - signature: 'DECRYPTION_MERGE_ERROR_FIELD_NUMBER'
+        type: regex
+
+# ════════════════ RTC — video / audio calls, watch-together, screen-share ════════════════
+- name: 'RtcCallActivity'
+  package: 'com.instagram.rtc.activity'
+  signatures:
+      - signature: '"launchInternalActivity failed"'
+        type: regex
+
+- name: 'RtcCallIntentHandlerActivity'
+  package: 'com.instagram.rtc.activity'
+  signatures:
+      - signature: '"No active user session while processing intent: "'
+        type: regex
+
+- name: 'RtcConnectionService'
+  package: 'com.instagram.rtc.connectionservice'
+  signatures:
+      - signature: '"Unable to make outgoing call"'
+        type: regex
+
+- name: 'OngoingCallServiceWithMic'
+  package: 'com.instagram.rtc.service'
+  signatures:
+      - signature: '"Failed to start foreground service"'
+        type: regex
+
+- name: 'RtcCallStackImpl'
+  package: 'com.instagram.rtc.stack.impl'
+  signatures:
+      - signature: '"Call ended/left before participants models set by rsys"'
+        type: regex
+
+- name: 'IgCallModel'
+  package: 'com.instagram.rtc.rsys.models'
+  signatures:
+      - signature: 'IgCallModel\{inCallState='
+        type: regex
+
+- name: 'EngineModel'
+  package: 'com.instagram.rtc.rsys.models'
+  signatures:
+      - signature: 'EngineModel\{state='
+        type: regex
+
+- name: 'RtcCallParticipantCellView'
+  package: 'com.instagram.rtc.presentation.participants'
+  signatures:
+      - signature: '"IGVRCellScreenBlurredBackground"'
+        type: regex
+
+- name: 'RtcCallActionIntentHandlerService'
+  package: 'com.instagram.rtc.signaling.notifications.service'
+  signatures:
+      - signature: '"com.instagram.rtc.notifications.service.entity"'
+        type: regex
+      - signature: '"DISMISS_LIVE_NOTIFICATION"'
+        type: regex
+
+# ════════════════ Reels / Clips / Teleprompter / Music ════════════════
+- name: 'ClipsDraftProvider$Impl'
+  package: 'com.instagram.creation.drafts.contentprovider'
+  signatures:
+      - signature: 'No draft found for draftId: '
+        type: regex
+
+- name: 'TeleprompterCardScriptKt'
+  package: 'com.instagram.teleprompter.ui.script'
+  signatures:
+      - signature: 'com\.instagram\.teleprompter\.ui\.script\.PlaceholderScript \(TeleprompterCardScript\.kt:'
+        type: regex
+
+- name: 'MusicBrowserHomeFragment'
+  package: 'com.instagram.music.search'
+  signatures:
+      - signature: '"import_audio_postcap"'
+        type: regex
+
+- name: 'AudioPageAssetModel'
+  package: 'com.instagram.clips.audio.model'
+  signatures:
+      - signature: '"audio_page_"'
+        type: regex
+
+- name: 'FollowersShareFragment'
+  package: 'instagram.features.creation.publishscreen.fragment.feed'
+  signatures:
+      - signature: '"hashtagCountSnackbarConfig"'
+        type: regex
+
+# ════════════════════════════════════════════════════════════════════
+# ROUND 2 — 20 additional feature subsystems (Stories, Close Friends,
+# Shopping, Branded Content, IG Live, Live monetization, Supervision,
+# Family Center, Wellbeing/Screen Time, Notifications, Avatars, AR effects,
+# Payments/FBPay, Creator subscriptions, Notes, Broadcast Channels, Auth/Login,
+# 2FA/Security, Realtime/MQTT, Comments). Same anchoring rules; every rule
+# verified to resolve to exactly one class on vc 383909338.
+# ════════════════════════════════════════════════════════════════════
+
+# ─────────────── Stories ───────────────
+- name: 'ReelDashboardFragment'
+  package: 'instagram.features.stories.dashboard.fragment'
+  signatures:
+      - signature: '"XCXPIGStoryUnifiedFeedbackQuery"'
+        type: regex
+- name: 'ReelViewerFragment'
+  package: 'instagram.features.stories.fragment'
+  signatures:
+      - signature: '"StoriesMVVM\.StoriesViewerComponentCoordinator\.init"'
+        type: regex
+- name: 'StoryDraftsStore'
+  package: 'com.instagram.creation.capture.quickcapture.storydrafts.model'
+  signatures:
+      - signature: '"Failed to de-serialise story drafts"'
+        type: regex
+- name: 'ReelResponseCache'
+  package: 'com.instagram.reels.store'
+  signatures:
+      - signature: '"ReelResponseCache\.getCacheAndVend"'
+        type: regex
+- name: 'ArchiveReelPeopleFragment'
+  package: 'com.instagram.archive.fragment'
+  signatures:
+      - signature: '"archive/reel/friends_with_history/"'
+        type: regex
+- name: 'Interactive'
+  package: 'com.instagram.reels.interactive'
+  signatures:
+      - signature: '"InteractiveType: "'
+        type: regex
+- name: 'StoriesTrayControllerImpl'
+  package: 'com.instagram.reels'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "StoriesTrayControllerImpl"'
+        type: regex
+- name: 'ReelDashboardViewersAdapter'
+  package: 'com.instagram.reels.ui'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "ReelDashboardViewersAdapter"'
+        type: regex
+- name: 'StoryRepliesListFragment'
+  package: 'com.instagram.reels.ui'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "StoryRepliesListFragment"'
+        type: regex
+- name: 'ReelQuickReactorsListFragment'
+  package: 'com.instagram.reels.ui'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "ReelQuickReactorsListFragment"'
+        type: regex
+- name: 'ManageHighlightsFragment'
+  package: 'com.instagram.reels.ui'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "ManageHighlightsFragment"'
+        type: regex
+
+# ─────────────── Close Friends ───────────────
+- name: 'AudienceListsApiUtil'
+  package: 'com.instagram.closefriends.audiencelists.api'
+  signatures:
+      - signature: '"api/v1/stories/private_stories/bulk_update_members/"'
+        type: regex
+- name: 'CloseFriendsLeaveListController'
+  package: 'com.instagram.closefriends'
+  signatures:
+      - signature: '"xig_ig_leave_close_friends_list"'
+        type: regex
+- name: 'SetBestiesApi'
+  package: 'com.instagram.closefriends'
+  signatures:
+      - signature: '"friendships/set_besties/"'
+        type: regex
+- name: 'AudienceListsAudiencePickerFragment'
+  package: 'com.instagram.closefriends.audiencelists.list'
+  signatures:
+      - signature: '"request_key_audience_lists_settings_session_finished"'
+        type: regex
+- name: 'FeedFavoritesHomeFragment'
+  package: 'com.instagram.favorites'
+  signatures:
+      - signature: '"instagram_feed_favorites_exit"'
+        type: regex
+- name: 'CloseFriendsBadgePrefs'
+  package: 'com.instagram.closefriends'
+  signatures:
+      - signature: '"close_friends_badge_last_timestamp"'
+        type: regex
+
+# ─────────────── Shopping / Commerce ───────────────
+- name: 'ShoppingCartFragment'
+  package: 'com.instagram.shopping.fragment.cart'
+  signatures:
+      - signature: '"instagram_shopping_bag_index_load_success"'
+        type: regex
+- name: 'MerchantShoppingCartFragment'
+  package: 'com.instagram.shopping.fragment.cart'
+  signatures:
+      - signature: '"instagram_shopping_merchant_bag_load_success"'
+        type: regex
+- name: 'UnifiedProductApi'
+  package: 'com.instagram.commercepage.api'
+  signatures:
+      - signature: '"unified_product_info_"'
+        type: regex
+        count: 2
+- name: 'ShoppingTaggingFeedRepository'
+  package: 'com.instagram.shopping.repository.taggingfeed'
+  signatures:
+      - signature: '"ig_affiliate_deeplink_validation"'
+        type: regex
+
+# ─────────────── Branded Content ───────────────
+- name: 'BrandedContentApi'
+  package: 'com.instagram.brandedcontent.repository'
+  signatures:
+      - signature: '"business/branded_content/create_brand_approval_request/"'
+        type: regex
+- name: 'AdsEligibilityController'
+  package: 'com.instagram.brandedcontent.adseligibility.controller'
+  signatures:
+      - signature: '"media_branded_content_sponsor_igid"'
+        type: regex
+- name: 'BrandedContentSettingsRepository'
+  package: 'com.instagram.brandedcontent.repository'
+  signatures:
+      - signature: '"xfb_is_user_eligible_for_creator_dynamic_ads"'
+        type: regex
+- name: 'BrandedContentDisclosureBaseViewModel'
+  package: 'com.instagram.brandedcontent.disclosure'
+  signatures:
+      - signature: '"instagram_bc_boost_code_access_token_enable"'
+        type: regex
+
+# ─────────────── IG Live ───────────────
+- name: 'IgLiveStreamingController'
+  package: 'com.instagram.video.live.streaming'
+  signatures:
+      - signature: '"live/create/"'
+        type: regex
+      - signature: '"endBroadcastWithFailure\("'
+        type: regex
+- name: 'IgLiveCaptureFragment'
+  package: 'com.instagram.video.live'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "IgLiveCaptureFragment"'
+        type: regex
+- name: 'IgLiveExploreLiveViewerFragment'
+  package: 'com.instagram.video.live'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "IgLiveExploreLiveViewerFragment"'
+        type: regex
+- name: 'IgLiveCommentsRepository'
+  package: 'com.instagram.video.live.mvvm.model.repository'
+  signatures:
+      - signature: '"live/%s/comment/"'
+        type: regex
+- name: 'IgLiveCobroadcastRepository'
+  package: 'com.instagram.video.live.mvvm.model.repository'
+  signatures:
+      - signature: '"live/%s/broadcast_event/"'
+        type: regex
+- name: 'IgLiveLikesApi'
+  package: 'com.instagram.video.live.mvvm.model.datasource.api'
+  signatures:
+      - signature: '"live/%s/react/"'
+        type: regex
+
+# ─────────────── Live monetization ───────────────
+- name: 'AppreciationGiftingDataSource'
+  package: 'com.instagram.appreciation.gifting.repository'
+  signatures:
+      - signature: '"xig_live_stars_send"'
+        type: regex
+- name: 'AppreciationGiftFeedDataSource'
+  package: 'com.instagram.appreciation.giftfeed.repository'
+  signatures:
+      - signature: '"creators/content_appreciation/async_get_paginated_gift_feed_transactions/"'
+        type: regex
+- name: 'UserBadgeInfoImpl'
+  package: 'com.instagram.badge.api.model'
+  signatures:
+      - signature: '"XDTAccountBadgeCount"'
+        type: regex
+- name: 'IgLiveBroadcastSettingsApi'
+  package: 'com.instagram.video.live.mvvm.model.datasource.api'
+  signatures:
+      - signature: '"live/%s/badge_setting/"'
+        type: regex
+
+# ─────────────── Supervision / Parental controls ───────────────
+- name: 'SupervisionInfoGraphQLRepository'
+  package: 'com.instagram.wellbeing.familycenter.api'
+  signatures:
+      - signature: '"FetchSupervisionInfoWWW"'
+        type: regex
+- name: 'GuardianPairingUrlHandlerActivity'
+  package: 'com.instagram.urlhandlers.guardianpairing'
+  signatures:
+      - signature: '"GetIsSupervisionEnabledQuery"'
+        type: regex
+- name: 'FamilyCenterUrlHandlerActivity'
+  package: 'com.instagram.urlhandlers.familycenter'
+  signatures:
+      - signature: '"share_supervision"'
+        type: regex
+- name: 'IGSleepModeReminder'
+  package: 'com.instagram.wellbeing.timetools.reminder.sleepmode.sleepmodereminder'
+  signatures:
+      - signature: '"fail_no_sleep_mode_intervals"'
+        type: regex
+- name: 'DailyLimitReminder'
+  package: 'com.instagram.wellbeing.timetools.reminder.dailylimit'
+  signatures:
+      - signature: '"fail_supervised_blocking_daily_limit"'
+        type: regex
+
+# ─────────────── Family Center ───────────────
+- name: 'IGFamilyAppLastUsedStatesLogWorker'
+  package: 'com.instagram.partneranalytics.igfamilyapplastusedstates'
+  signatures:
+      - signature: '"ig_family_app_last_used_states_logging_background_work"'
+        type: regex
+      - signature: '"IGFamilyAppLastUsedStatesLogWorker"'
+        type: regex
+
+# ─────────────── Wellbeing / Screen Time ───────────────
+- name: 'InstagramTimeSpentManagerImpl'
+  package: 'com.instagram.wellbeing.timespent.listeners'
+  signatures:
+      - signature: '"mental_well_being/get_time_tools_settings/"'
+        type: regex
+- name: 'IGScreenTimeApi'
+  package: 'com.instagram.screentime'
+  signatures:
+      - signature: '"tia_clock_timestamp"'
+        type: regex
+- name: 'IGPresenterService'
+  package: 'com.instagram.wellbeing.timetools.presenter'
+  signatures:
+      - signature: '"showFullScreen failed after coordinator approved \("'
+        type: regex
+- name: 'TimeSpentReminderFullyBlockingFragment'
+  package: 'com.instagram.wellbeing.timespent.fragment'
+  signatures:
+      - signature: '"timespent_dashbaord_entrypoint"'
+        type: regex
+
+# ─────────────── Notifications ───────────────
+- name: 'ClearNotificationReceiver'
+  package: 'com.instagram.notifications.push'
+  signatures:
+      - signature: '"ig_notification_dismissed"'
+        type: regex
+- name: 'IgPushSdkFbnsReceiverShim'
+  package: 'com.instagram.notifications.push.fbns'
+  signatures:
+      - signature: '"IgPushSdkFbnsReceiverShim\.onReceive"'
+        type: regex
+- name: 'PushChannelType'
+  package: 'com.instagram.common.notifications.push.intf'
+  signatures:
+      - signature: '"realtime_local_notification"'
+        type: regex
+- name: 'NotificationSettingsHandlerActivity'
+  package: 'com.instagram.settings.activity'
+  signatures:
+      - signature: '"notification_settings_handler"'
+        type: regex
+
+# ─────────────── Avatars ───────────────
+- name: 'AvatarStatusRepository'
+  package: 'com.instagram.avatars.status'
+  signatures:
+      - signature: '"HasAvatarQuery"'
+        type: regex
+- name: 'UserAvatarInfoGraphQLRepository'
+  package: 'com.instagram.avatars.graphql'
+  signatures:
+      - signature: '"IGAvatarInfoQuery"'
+        type: regex
+- name: 'AvatarStickerGraphQLRepository'
+  package: 'com.instagram.avatars.graphql'
+  signatures:
+      - signature: '"IGAvatarStickersForKeysQuery"'
+        type: regex
+- name: 'AvatarMutationRepository'
+  package: 'com.instagram.avatars.graphql'
+  signatures:
+      - signature: '"IGAvatarDeleteMutation"'
+        type: regex
+- name: 'AvatarPrivacySettingsRepository'
+  package: 'com.instagram.avatars.privacysettings'
+  signatures:
+      - signature: '"xig_update_usability_avatar_privacy_setting"'
+        type: regex
+- name: 'AvatarProfileRepository'
+  package: 'com.instagram.profile.data'
+  signatures:
+      - signature: '"xig_ig_avatar_profile_pic"'
+        type: regex
+- name: 'AvatarQuestsRepository'
+  package: 'com.instagram.avatars.unlockables.data'
+  signatures:
+      - signature: '"IGAvatarUnlockableStickerQuestMutation"'
+        type: regex
+
+# ─────────────── AR effects ───────────────
+- name: 'EffectCollectionService'
+  package: 'com.instagram.ar.core.effectcollection'
+  signatures:
+      - signature: '"IGAREffectsByIdQuery"'
+        type: regex
+- name: 'MiniGalleryDatabase_Impl'
+  package: 'com.instagram.ar.core.discovery.minigallery.persistence.room'
+  signatures:
+      - signature: 'CREATE TABLE IF NOT EXISTS `mini_gallery_categories`'
+        type: regex
+- name: 'IgArVoltronModuleLoader'
+  package: 'com.instagram.ar.core.voltron'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/ar/core/voltron/IgArVoltronModuleLoader;'
+        type: regex
+- name: 'NametagController'
+  package: 'com.instagram.arlink.fragment'
+  signatures:
+      - signature: '"https://www\.instagram\.com/%s/\?r=nametag"'
+        type: regex
+- name: 'ArirangScavengerHuntPreferencesUtil'
+  package: 'com.instagram.arirang.scavengerhunt'
+  signatures:
+      - signature: '"arirang_easter_egg_completed_count"'
+        type: regex
+        count: 2
+
+# ─────────────── Payments / FBPay ───────────────
+- name: 'UserPayApi'
+  package: 'com.instagram.userpay.api'
+  signatures:
+      - signature: '"api/v1/creators/user_pay/insights/"'
+        type: regex
+- name: 'PayoutApi'
+  package: 'com.instagram.payout.api'
+  signatures:
+      - signature: '"api/v1/creators/incentive_platform/set_financial_entity_information/"'
+        type: regex
+- name: 'IsReadyToPayServiceImpl'
+  package: 'com.instagram.fbpay.w3c.ipc'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/fbpay/w3c/ipc/IsReadyToPayServiceImpl;'
+        type: regex
+- name: 'IGPaymentMethodsAPI'
+  package: 'com.instagram.fbpay.paymentmethods.data'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/fbpay/paymentmethods/data/IGPaymentMethodsAPI;'
+        type: regex
+
+# ─────────────── Creator subscriptions ───────────────
+- name: 'FanClubApi'
+  package: 'com.instagram.fanclub.api'
+  signatures:
+      - signature: '"api/v1/fan_club/creators_subscribed_to/"'
+        type: regex
+- name: 'MonetizationApi'
+  package: 'com.instagram.monetization.api'
+  signatures:
+      - signature: '"api/v1/creators/onboarding/get_monetization_products_onboarding_data/"'
+        type: regex
+- name: 'FanClubInfoDictImpl'
+  package: 'com.instagram.api.schemas'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/api/schemas/FanClubInfoDictImpl;'
+        type: regex
+
+# ─────────────── Notes ───────────────
+- name: 'NotesRepository'
+  package: 'com.instagram.direct.inbox.notes.data.repository'
+  signatures:
+      - signature: '"xdt_create_or_update_ambient_data"'
+        type: regex
+- name: 'NotesTrayApiFetcher'
+  package: 'com.instagram.direct.inbox.notes.data.repository'
+  signatures:
+      - signature: '"xdt_get_inbox_tray_items"'
+        type: regex
+      - signature: '"should_fetch_school_note_dict"'
+        type: regex
+- name: 'NotesCtaRepository'
+  package: 'com.instagram.direct.inbox.notes.data.cta'
+  signatures:
+      - signature: '"xdt_fetch_user_ctas_notes"'
+        type: regex
+
+# ─────────────── Broadcast Channels ───────────────
+- name: 'ChannelJoinRepository'
+  package: 'com.instagram.direct.fragment.channels.directoryv2.model'
+  signatures:
+      - signature: '"ChannelCategoryAddToInbox"'
+        type: regex
+- name: 'ChannelDirectoryDataSource'
+  package: 'com.instagram.direct.fragment.channels.directoryv2.model'
+  signatures:
+      - signature: '"xfb_igd_global_directory"'
+        type: regex
+- name: 'ChannelsEducationRepository'
+  package: 'com.instagram.direct.channels.education.repository'
+  signatures:
+      - signature: '"xfb_igd_channels_update_creator_education_goal_metric"'
+        type: regex
+- name: 'XFBIGDChannelCreatorBroadcastThreadData'
+  package: 'com.instagram.direct.model.protobufmodel'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/direct/model/protobufmodel/XFBIGDChannelCreatorBroadcastThreadData;'
+        type: regex
+
+# ─────────────── Realtime / MQTT / FBNS ───────────────
+- name: 'RealtimeClientManager'
+  package: 'com.instagram.realtimeclient'
+  signatures:
+      - signature: '"error serializing skywalker command"'
+        type: regex
+- name: 'RealtimeMqttClientConfig'
+  package: 'com.instagram.realtimeclient'
+  signatures:
+      - signature: '"ig_mqtt_route"'
+        type: regex
+- name: 'MainRealtimeEventHandler'
+  package: 'com.instagram.realtimeclient'
+  signatures:
+      - signature: '"error parsing realtime event from skywalker"'
+        type: regex
+- name: 'RealtimeConstants'
+  package: 'com.instagram.realtimeclient'
+  signatures:
+      - signature: 'MQTT_TOPIC_MESSAGE_STREAMING:Ljava/lang/String; = "/ig_message_streaming"'
+        type: regex
+- name: 'GraphQLSubscriptionID'
+  package: 'com.instagram.realtimeclient'
+  signatures:
+      - signature: 'LIVE_REALTIME_COMMENT_QUERY_ID:Ljava/lang/String;'
+        type: regex
+
+# ─────────────── Comments ───────────────
+- name: 'CommentsFetcher'
+  package: 'com.instagram.comments.request'
+  signatures:
+      - signature: '"ongoing_fetch_clash"'
+        type: regex
+- name: 'CommentOffensiveCheckService'
+  package: 'com.instagram.comments.mvvm.data.network'
+  signatures:
+      - signature: '"media/comment/check_offensive_comment/"'
+        type: regex
+- name: 'MediaCommentPinUnpinNetworkRequestsKt'
+  package: 'com.instagram.comments.mvvm.data.network'
+  signatures:
+      - signature: '"media/%s/pin_comment/%s/"'
+        type: regex
+- name: 'HideActionNetworkRequestsKt'
+  package: 'com.instagram.comments.mvvm.data.network'
+  signatures:
+      - signature: '"hidden_comments/%s/hide_comment/%s/"'
+        type: regex
+- name: 'CommentListBottomsheetFragment'
+  package: 'com.instagram.comments'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "CommentListBottomsheetFragment"'
+        type: regex
+
+# ─────────────── Auth / Login / CAA ───────────────
+- name: 'LoginUtil'
+  package: 'com.instagram.login'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "LoginUtil"'
+        type: regex
+- name: 'LoginLandingFragment'
+  package: 'com.instagram.login.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "LoginLandingFragment"'
+        type: regex
+- name: 'OnePageRegistrationFragment'
+  package: 'com.instagram.registration.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "OnePageRegistrationFragment"'
+        type: regex
+- name: 'CaaLoginOneTapLogOutFragment'
+  package: 'com.instagram.login.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "CaaLoginOneTapLogOutFragment"'
+        type: regex
+- name: 'LoginNotificationApproveFragment'
+  package: 'com.instagram.login.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "LoginNotificationApproveFragment"'
+        type: regex
+- name: 'ManageSavedLoginFragment'
+  package: 'com.instagram.login.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "ManageSavedLoginFragment"'
+        type: regex
+- name: 'FacebookLoginHelper'
+  package: 'com.instagram.login'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "FacebookLoginHelper"'
+        type: regex
+- name: 'CredentialManagerFetchHelper'
+  package: 'com.instagram.login.credentialmanager'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/login/credentialmanager/CredentialManagerFetchHelper;'
+        type: regex
+
+# ─────────────── 2FA / Security / Trusted devices ───────────────
+- name: 'AccountSecurityFragment'
+  package: 'com.instagram.twofac.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "AccountSecurityFragment"'
+        type: regex
+- name: 'TwoFacLandingFragment'
+  package: 'com.instagram.twofac.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "TwoFacLandingFragment"'
+        type: regex
+- name: 'TwoFacTrustedDevicesFragment'
+  package: 'com.instagram.twofac.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "TwoFacTrustedDevicesFragment"'
+        type: regex
+- name: 'TwoFacAuthenticatorAppSetupFragment'
+  package: 'com.instagram.twofac.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "TwoFacAuthenticatorAppSetupFragment"'
+        type: regex
+- name: 'LoginActivityFragment'
+  package: 'com.instagram.security.fragment'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "LoginActivityFragment"'
+        type: regex
+- name: 'TwoFactorInfoConfig'
+  package: 'com.instagram.login.api'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/login/api/TwoFactorInfoConfig;'
+        type: regex
+- name: 'TotpSeedImpl'
+  package: 'com.instagram.login.twofac.model'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/login/twofac/model/TotpSeedImpl;'
+        type: regex
+- name: 'TrustedDevice'
+  package: 'com.instagram.login.twofac.model'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/login/twofac/model/TrustedDevice;'
+        type: regex
+
+# ═════════════════════════════════════════════════════════════════════════════
+# FEATURE-SUBSYSTEM EXPANSION ROUND 3 (20 more subsystems / 112 classes)
+# Explore, Search, Main Feed & ranking, Saved/Collections, Quick Experiment,
+# Quick Promotion, Meta Verified, Account switching/Accounts Center, Sticker/GIPHY,
+# Music/audio, In-app browser, Media upload pipeline, Analytics/Profilo, Zero-rating,
+# Lead Ads, Tagging, Community Notes, Fundraisers, Bloks, Pando/GraphQL.
+# 2 classes (X.2cr MobileConfig fetcher, X.5qg analytics URL builder) already mapped
+# above are not duplicated. Every rule resolves to exactly one class on vc 383909338.
+# ═════════════════════════════════════════════════════════════════════════════
+- name: 'ExploreFragment'
+  package: 'com.instagram.explore.fragment'
+  signatures:
+      - signature: 'ExploreFragment\.setupGrid'
+        type: regex
+- name: 'ExploreTopicalFeedNetworkHelper'
+  package: 'com.instagram.explore.feed'
+  signatures:
+      - signature: '"dest_topic_cluster_debug_info"'
+        type: regex
+- name: 'ExploreFragmentConfig'
+  package: 'com.instagram.explore.intf'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/explore/intf/ExploreFragmentConfig;'
+        type: regex
+- name: 'ExploreTopicCluster'
+  package: 'com.instagram.explore.topiccluster'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/explore/topiccluster/ExploreTopicCluster;'
+        type: regex
+- name: 'ExploreClipsRequest'
+  package: 'com.instagram.explore.feed'
+  signatures:
+      - signature: '"discover/explore_clips/"'
+        type: regex
+        count: 2
+
+# ── Search ──
+- name: 'SerpRepository'
+  package: 'com.instagram.search.surface.repository'
+  signatures:
+      - signature: 'com\.instagram\.search\.surface\.repository\.SerpRepository'
+        type: regex
+- name: 'SerpChildViewModel'
+  package: 'com.instagram.search.surface.viewmodel'
+  signatures:
+      - signature: 'com\.instagram\.search\.surface\.viewmodel\.SerpChildViewModel'
+        type: regex
+- name: 'BaseSerpGridFragment'
+  package: 'com.instagram.search.surface'
+  signatures:
+      - signature: '"Expected parentFragment to be CompositeSerpTabbedFragment but was "'
+        type: regex
+- name: 'CompositeSerpTabbedFragment'
+  package: 'com.instagram.search.surface'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "CompositeSerpTabbedFragment"'
+        type: regex
+- name: 'SingleSearchTypeaheadTabFragment'
+  package: 'com.instagram.search.surface'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "SingleSearchTypeaheadTabFragment"'
+        type: regex
+- name: 'SearchNullStateFetcher'
+  package: 'com.instagram.search'
+  signatures:
+      - signature: '"SearchNullStateFetcher"'
+        type: regex
+- name: 'SerpEntryPointConstants'
+  package: 'com.instagram.search.surface.constants'
+  signatures:
+      - signature: '"Serp entrypoint must have server constant mapping"'
+        type: regex
+- name: 'SuggestedUsersDatabase'
+  package: 'com.instagram.suggestedusers.database'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/suggestedusers/database/SuggestedUsersDatabase;'
+        type: regex
+
+# ── Main Feed & ranking ──
+- name: 'MainFeedCacheDataSource'
+  package: 'com.instagram.mainfeed.network'
+  signatures:
+      - signature: '"MainFeedCacheDataSource\.coldStartCacheLoad"'
+        type: regex
+- name: 'ColdStartFeedCache'
+  package: 'com.instagram.mainfeed.network'
+  signatures:
+      - signature: '"ColdStartFeedCache\.loadFromFile"'
+        type: regex
+- name: 'FeedMediaCache'
+  package: 'com.instagram.mainfeed.network'
+  signatures:
+      - signature: '"FeedMediaCache\.getAndProcess"'
+        type: regex
+- name: 'Media'
+  package: 'com.instagram.feed.media'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/feed/media/Media;'
+        type: regex
+- name: 'MediaCache'
+  package: 'com.instagram.feed.media'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/feed/media/MediaCache;'
+        type: regex
+- name: 'SuggestedChannels'
+  package: 'com.instagram.feed.feeditem.netego'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/feed/feeditem/netego/SuggestedChannels;'
+        type: regex
+
+# ── Saved / Collections ──
+- name: 'SavedCollection'
+  package: 'com.instagram.save.model'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/save/model/SavedCollection;'
+        type: regex
+- name: 'SavedContextualFeedNetworkConfig'
+  package: 'com.instagram.save.contextualfeed.intf'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/save/contextualfeed/intf/SavedContextualFeedNetworkConfig;'
+        type: regex
+- name: 'SavedMediaGridCollectionsViewModel'
+  package: 'com.instagram.save.fragment'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/save/fragment/SavedMediaGridCollectionsViewModel;'
+        type: regex
+- name: 'CollectionsApiClient'
+  package: 'com.instagram.save.api'
+  signatures:
+      - signature: '"collections/bulk_remove/"'
+        type: regex
+- name: 'SavedFeedRequestBuilder'
+  package: 'com.instagram.save.api'
+  signatures:
+      - signature: '"feed/saved/all/"'
+        type: regex
+
+# ── Quick Experiment (QE / mobileconfig) ──
+- name: 'QuickExperimentParamStore'
+  package: 'com.instagram.quickexperiment'
+  signatures:
+      - signature: '"Caught unsupported type %d for config %s, param %s in IG consistency logging"'
+        type: regex
+- name: 'ExperimentParameter'
+  package: 'com.instagram.quickexperiment'
+  signatures:
+      - signature: '"ExperimentParameter"'
+        type: regex
+- name: 'QuickExperimentDebugStore'
+  package: 'com.instagram.quickexperiment'
+  signatures:
+      - signature: '"QuickExperimentDebugStore"'
+        type: regex
+        count: 3
+- name: 'QuickExperimentInitRunnable'
+  package: 'com.instagram.quickexperiment'
+  signatures:
+      - signature: '"QuickExperimentManagerFactoryImpl-Initialize"'
+        type: regex
+
+# ── Quick Promotion (QP) ──
+- name: 'QuickPromotionSurface'
+  package: 'com.instagram.quickpromotion.intf'
+  signatures:
+      - signature: '\.class public final enum Lcom/instagram/quickpromotion/intf/QuickPromotionSurface;'
+        type: regex
+- name: 'QuickPromotionSlot'
+  package: 'com.instagram.quickpromotion.intf'
+  signatures:
+      - signature: '\.class public final enum Lcom/instagram/quickpromotion/intf/QuickPromotionSlot;'
+        type: regex
+- name: 'InstagramQpSdkModule'
+  package: 'com.instagram.quickpromotion.sdk'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/quickpromotion/sdk/InstagramQpSdkModule;'
+        type: regex
+- name: 'IGSlotFetcher'
+  package: 'com.instagram.quickpromotion.sdk'
+  signatures:
+      - signature: '"QuickPromotionSurfaceQueryV3"'
+        type: regex
+- name: 'IgdsPrismMegaphone'
+  package: 'com.instagram.igds.components.megaphone'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/igds/components/megaphone/IgdsPrismMegaphone;'
+        type: regex
+
+# ── Meta Verified / profile verification ──
+- name: 'MetaVerifiedUrlHandlerActivity'
+  package: 'com.instagram.urlhandlers.metaverified'
+  signatures:
+      - signature: '"mv_deeplink_navigation"'
+        type: regex
+- name: 'MetaSubscriptionsUrlHandlerActivity'
+  package: 'com.instagram.urlhandlers.metasubscriptions'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/urlhandlers/metasubscriptions/MetaSubscriptionsUrlHandlerActivity;'
+        type: regex
+- name: 'MetaVerifiedEnhancedContentProtectionHelper'
+  package: 'com.instagram.nme.benefits.enhancedcontentprotection'
+  signatures:
+      - signature: '"IGNMEBenefitContentProtectionUsageCheckQuery"'
+        type: regex
+- name: 'AuthenticityGraphApiUploaderWithRetries'
+  package: 'com.instagram.authenticity.uploader'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/authenticity/uploader/AuthenticityGraphApiUploaderWithRetries;'
+        type: regex
+- name: 'IdVerificationPhotoCaptureFragment'
+  package: 'com.instagram.authenticity'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "IdVerificationPhotoCaptureFragment"'
+        type: regex
+- name: 'MetaVerifiedLinkFragment'
+  package: 'com.instagram.nme'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "MetaVerifiedLinkFragment"'
+        type: regex
+
+# ── Account switching / multi-account ──
+- name: 'IgLoggedInUsersContentProvider$Impl'
+  package: 'com.instagram.contentprovider.users.impl'
+  signatures:
+      - signature: '"is_active_user"'
+        type: regex
+- name: 'AccountSwitchFragment'
+  package: 'com.instagram.secondaryaccount'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "AccountSwitchFragment"'
+        type: regex
+- name: 'AddAccountBottomSheetFragment'
+  package: 'com.instagram.secondaryaccount'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "AddAccountBottomSheetFragment"'
+        type: regex
+- name: 'FxSsoViewModel'
+  package: 'com.instagram.fx.access.sso'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/fx/access/sso/FxSsoViewModel;'
+        type: regex
+- name: 'FxCalIGAccountsCenterRedirectActivity'
+  package: 'com.instagram.urlhandlers.fxcaligaccountscenter'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/urlhandlers/fxcaligaccountscenter/FxCalIGAccountsCenterRedirectActivity;'
+        type: regex
+- name: 'AccountFamily'
+  package: 'com.instagram.accountlinking.model'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/accountlinking/model/AccountFamily;'
+        type: regex
+- name: 'AccountLinkingMainGroupManagementFragment'
+  package: 'com.instagram.accountlinking'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "AccountLinkingMainGroupManagementFragment"'
+        type: regex
+
+# ── Sticker search / GIPHY ──
+- name: 'GiphyApiClient'
+  package: 'com.instagram.giphy'
+  signatures:
+      - signature: '"api\.giphy\.com"'
+        type: regex
+- name: 'AvatarStickerGraphQLApi'
+  package: 'com.instagram.stickersearch.api'
+  signatures:
+      - signature: '"bloks_tappable_animated_avatar_sticker_id_"'
+        type: regex
+- name: 'AvatarStickerSearchRepository'
+  package: 'com.instagram.stickersearch.api'
+  signatures:
+      - signature: '"creatives/search_avatar_sticker_pack/"'
+        type: regex
+- name: 'SavedRecentGifsApi'
+  package: 'com.instagram.giphy'
+  signatures:
+      - signature: '"xfb_recently_used_gifs_for_eimu"'
+        type: regex
+- name: 'IgWebPAnimDecoder'
+  package: 'com.instagram.giphy.webp'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/giphy/webp/IgWebPAnimDecoder;'
+        type: regex
+
+# ── Music / audio ──
+- name: 'MusicBrowseSearchApi'
+  package: 'com.instagram.music.search'
+  signatures:
+      - signature: '"music/clips_audio_browser/"'
+        type: regex
+        count: 2
+- name: 'MusicResultsListController'
+  package: 'com.instagram.music.search'
+  signatures:
+      - signature: '"MusicOverlayResultsListController"'
+        type: regex
+- name: 'MusicSearchFilterRepository'
+  package: 'com.instagram.music.search'
+  signatures:
+      - signature: '"IGAudioSearchFiltersQuery"'
+        type: regex
+- name: 'TrackDownloader'
+  package: 'com.instagram.music.download'
+  signatures:
+      - signature: '"TrackDownloader\.doDownloadTrack"'
+        type: regex
+- name: 'MusicAmplitudesApiUtil'
+  package: 'com.instagram.music.api'
+  signatures:
+      - signature: '"music/track/%s/oa_amplitudes/"'
+        type: regex
+- name: 'MusicAssetModel'
+  package: 'com.instagram.music.common.model'
+  signatures:
+      - signature: '"displayArtist is null for TrackData, id="'
+        type: regex
+- name: 'TrackSnippet'
+  package: 'com.instagram.music.common.model'
+  signatures:
+      - signature: '"TrackSnippet\[startTimeInMs="'
+        type: regex
+- name: 'OriginalSoundAudioAssetsApi'
+  package: 'com.instagram.music.api'
+  signatures:
+      - signature: '"music/original_sound_audio_assets/"'
+        type: regex
+
+# ── In-app browser (IAB) ──
+- name: 'BrowserLiteFragment'
+  package: 'com.facebook.browser.lite'
+  signatures:
+      - signature: '"BLF.createWebView_start"'
+        type: regex
+- name: 'BrowserLiteWrapperView'
+  package: 'com.facebook.browser.lite.views'
+  signatures:
+      - signature: '\.class.*Lcom/facebook/browser/lite/views/BrowserLiteWrapperView;'
+        type: regex
+- name: 'BrowserLiteInMainProcessIGActivity'
+  package: 'com.instagram.inappbrowser.fragments'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/inappbrowser/fragments/BrowserLiteInMainProcessIGActivity;'
+        type: regex
+- name: 'BrowserLinkshimUrlCache'
+  package: 'com.instagram.inappbrowser.helper'
+  signatures:
+      - signature: '"linkshim/fetch_lynx_url/"'
+        type: regex
+- name: 'IGWatchAndBrowseLiteChrome'
+  package: 'com.facebook.browser.lite.chrome.container'
+  signatures:
+      - signature: '\.class.*Lcom/facebook/browser/lite/chrome/container/IGWatchAndBrowseLiteChrome;'
+        type: regex
+- name: 'IABLaunchEvent'
+  package: 'com.facebook.iabeventlogging.model'
+  signatures:
+      - signature: '\.class public final Lcom/facebook/iabeventlogging/model/IABLaunchEvent;'
+        type: regex
+
+# ── Media upload pipeline ──
+- name: 'PendingMediaStore'
+  package: 'com.instagram.pendingmedia.store'
+  signatures:
+      - signature: '"pendingMedia.videoSessionName returned null in PendingMediaStore.videoSessionNames"'
+        type: regex
+- name: 'PendingMediaStoreSerializer'
+  package: 'com.instagram.pendingmedia.store'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/pendingmedia/store/PendingMediaStoreSerializer;'
+        type: regex
+- name: 'MediaUploader'
+  package: 'com.instagram.pendingmedia.service.impl'
+  signatures:
+      - signature: '"ig_media_ingest_start"'
+        type: regex
+- name: 'ConfigureResponseHelper'
+  package: 'com.instagram.pendingmedia.service.igapi'
+  signatures:
+      - signature: '"ConfigureResponseHelper Config returns invalid media"'
+        type: regex
+- name: 'FbUploaderUtil'
+  package: 'com.instagram.pendingmedia.service.upload'
+  signatures:
+      - signature: '"fbuploader error \(%s\)"'
+        type: regex
+
+# ── Analytics / Profilo ──
+- name: 'IgAnalytics2TaskBasedUploader'
+  package: 'com.instagram.analytics.analytics2'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/analytics/analytics2/IgAnalytics2TaskBasedUploader;'
+        type: regex
+- name: 'GooglePlayUploadService'
+  package: 'com.facebook.analytics2.logger'
+  signatures:
+      - signature: '"com.facebook.analytics2.logger.gms.TRY_SCHEDULE"'
+        type: regex
+- name: 'IgProfiloSessionManager'
+  package: 'com.instagram.profilo'
+  signatures:
+      - signature: '"No active blackbox trace was running"'
+        type: regex
+- name: 'ArirangAnalyticsLogger'
+  package: 'com.instagram.arirang'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "ArirangAnalyticsLogger"'
+        type: regex
+
+# ── Zero-rating / free data ──
+- name: 'IgZeroMain'
+  package: 'com.instagram.zero.main'
+  signatures:
+      - signature: '"zero-main-run"'
+        type: regex
+- name: 'IgZeroBalanceStateCache'
+  package: 'com.instagram.zero.zbd.state'
+  signatures:
+      - signature: '"bal_cache_save"'
+        type: regex
+- name: 'ZeroNativeRequestInterceptor'
+  package: 'com.instagram.service.tigon.interceptors.zerorewritenative'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/service/tigon/interceptors/zerorewritenative/ZeroNativeRequestInterceptor;'
+        type: regex
+- name: 'ZeroTokenSummaryFragment'
+  package: 'com.instagram.zero'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "ZeroTokenSummaryFragment"'
+        type: regex
+- name: 'IgZeroModuleStatic'
+  package: 'com.instagram.zero.common'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/zero/common/IgZeroModuleStatic;'
+        type: regex
+
+# ── Lead Ads / Lead Gen ──
+- name: 'LeadFormRepository'
+  package: 'com.instagram.leadads.repository'
+  signatures:
+      - signature: '"xfb_lead_gen_deep_link_user_info_create"'
+        type: regex
+- name: 'LeadFormQuestionsRepository'
+  package: 'com.instagram.leadads.repository'
+  signatures:
+      - signature: '"xfb_lead_gen_conditions_user_interaction"'
+        type: regex
+- name: 'LeadAdsActivity'
+  package: 'com.instagram.leadads.activity'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/leadads/activity/LeadAdsActivity;'
+        type: regex
+- name: 'LeadGenFormBaseQuestion'
+  package: 'com.instagram.leadads.model'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/leadads/model/LeadGenFormBaseQuestion;'
+        type: regex
+
+# ── Tagging ──
+- name: 'TaggingSuggestionsRepository'
+  package: 'com.instagram.tagging.repo'
+  signatures:
+      - signature: '"TaggingSuggestionsBffsQuery"'
+        type: regex
+- name: 'TaggingActivity'
+  package: 'com.instagram.tagging.activity'
+  signatures:
+      - signature: '"instagram_shopping_product_tagging_tab_impression"'
+        type: regex
+- name: 'PeopleTagListFragment'
+  package: 'com.instagram.tagging.activity'
+  signatures:
+      - signature: '"pending_collab_people"'
+        type: regex
+- name: 'TaggingSuggestionsViewModel'
+  package: 'com.instagram.tagging.viewmodel'
+  signatures:
+      - signature: '"Failed to add tag"'
+        type: regex
+- name: 'Tag'
+  package: 'com.instagram.tagging.model'
+  signatures:
+      - signature: '\.class public abstract Lcom/instagram/tagging/model/Tag;'
+        type: regex
+- name: 'PeopleTag'
+  package: 'com.instagram.model.people'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/model/people/PeopleTag;'
+        type: regex
+
+# ── Community Notes ──
+- name: 'CommunityNotesUtil'
+  package: 'com.instagram.communitynotes'
+  signatures:
+      - signature: '"com.bloks.www.community_notes.composer"'
+        type: regex
+- name: 'CommunityNotesInfoImpl'
+  package: 'com.instagram.api.schemas'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/api/schemas/CommunityNotesInfoImpl;'
+        type: regex
+- name: 'CommunityNotesHubUrlHandlerActivity'
+  package: 'com.instagram.urlhandlers.communitynoteshub'
+  signatures:
+      - signature: '\.class.*Lcom/instagram/urlhandlers/communitynoteshub/CommunityNotesHubUrlHandlerActivity;'
+        type: regex
+
+# ── Fundraisers / donations ──
+- name: 'NewFundraiserInfo'
+  package: 'com.instagram.model.fundraiser'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/model/fundraiser/NewFundraiserInfo;'
+        type: regex
+- name: 'FundraiserStickerSearchController'
+  package: 'com.instagram.fundraiser'
+  signatures:
+      - signature: '"fundraiser/story_charities_search/"'
+        type: regex
+- name: 'ReelFundraiserDonorsListFragment'
+  package: 'com.instagram.fundraiser'
+  signatures:
+      - signature: '"media/story_fundraiser_donations/"'
+        type: regex
+- name: 'FundraiserNudgeQuery'
+  package: 'com.instagram.fundraiser'
+  signatures:
+      - signature: '"IGFundraiserNudgeDecisionQuery"'
+        type: regex
+
+# ── Pando / GraphQL data layer ──
+- name: 'PandoGraphQLRequest'
+  package: 'com.facebook.pando'
+  signatures:
+      - signature: '\.class public final Lcom/facebook/pando/PandoGraphQLRequest;'
+        type: regex
+- name: 'PandoGraphQLServiceJNI'
+  package: 'com.facebook.pando'
+  signatures:
+      - signature: '\.class public final Lcom/facebook/pando/PandoGraphQLServiceJNI;'
+        type: regex
+- name: 'TreeJNI'
+  package: 'com.facebook.pando'
+  signatures:
+      - signature: '\.class public Lcom/facebook/pando/TreeJNI;'
+        type: regex
+- name: 'TreeWithGraphQL'
+  package: 'com.facebook.pando'
+  signatures:
+      - signature: '\.class public Lcom/facebook/pando/TreeWithGraphQL;'
+        type: regex
+- name: 'PandoConsistencyServiceJNI'
+  package: 'com.facebook.pando'
+  signatures:
+      - signature: '\.class public final Lcom/facebook/pando/PandoConsistencyServiceJNI;'
+        type: regex
+- name: 'LiveTreeJNI'
+  package: 'com.instagram.pando.livetree'
+  signatures:
+      - signature: '"TreeUpdaters returned null!"'
+        type: regex
+- name: 'IgPandoApiFrameworkParserJNI'
+  package: 'com.instagram.pando.parsing'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/pando/parsing/IgPandoApiFrameworkParserJNI;'
+        type: regex
+- name: 'IGPandoGraphQLRequestDecoratorInfo'
+  package: 'com.instagram.graphservice.service.pando'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/graphservice/service/pando/IGPandoGraphQLRequestDecoratorInfo;'
+        type: regex
+- name: 'IGGraphQLLiveQuerySDKProvider'
+  package: 'com.instagram.graphql.rtgql.graphqllivequeries.sdk'
+  signatures:
+      - signature: '"graphqllivequeries-sdk-provider-jni-instagram"'
+        type: regex
+
+# ── Bloks (server-driven UI) ──
+- name: 'IgBloksScreenConfig'
+  package: 'com.instagram.bloks.hosting'
+  signatures:
+      - signature: '"invalid_themed_color"'
+        type: regex
+- name: 'IgBloksScreenFragment'
+  package: 'com.instagram.bloks.hosting'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "IgBloksScreenFragment"'
+        type: regex
+- name: 'BloksParseResult'
+  package: 'com.instagram.common.bloks'
+  signatures:
+      - signature: '"ParseResultWrapper expression returned null parse result!"'
+        type: regex
+- name: 'IgReactBloksNavigationModule'
+  package: 'com.instagram.react.modules.product'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/react/modules/product/IgReactBloksNavigationModule;'
+        type: regex
+- name: 'BloksScreenQueryGenericContainerFragment'
+  package: 'com.instagram.bloks.hosting'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "BloksScreenQueryGenericContainerFragment"'
+        type: regex
+- name: 'IgBloksBottomSheetFragment'
+  package: 'com.instagram.bloks.hosting'
+  signatures:
+      - signature: '__redex_internal_original_name:Ljava/lang/String; = "IgBloksBottomSheetFragment"'
+        type: regex
+- name: 'BloksNativeHybridShellUrlHandlerActivity'
+  package: 'com.instagram.urlhandlers.bloksnativehybridshell'
+  signatures:
+      - signature: '\.class public final Lcom/instagram/urlhandlers/bloksnativehybridshell/BloksNativeHybridShellUrlHandlerActivity;'
+        type: regex

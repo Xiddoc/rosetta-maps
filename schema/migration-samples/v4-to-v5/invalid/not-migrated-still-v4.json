@@ -1,0 +1,22 @@
+{
+    "schema_version": 4,
+    "app": "com.example.app",
+    "version": "3.4.5",
+    "version_code": 30405,
+    "captured_at": "2026-05-01",
+    "sources": [
+        { "tool": "sigmatcher", "classes": 1 }
+    ],
+    "classes": {
+        "com.example.app.LoginManager": {
+            "obfuscated": "aaaa",
+            "kind": "class",
+            "methods": {
+                "authenticate": {
+                    "obfuscated": "c",
+                    "signature": "(Ljava/lang/String;)Z"
+                }
+            }
+        }
+    }
+}

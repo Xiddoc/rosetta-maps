@@ -13,6 +13,15 @@ sigmatcher dialect (see `templates/signatures.template.yaml`). It does NOT
 fetch, read, or reason about any APK — it only reads the committed YAML, so
 it preserves the no-APK invariant (Hard rule 3).
 
+It ALSO enforces a presentation rule: signatures must be written in YAML
+*block* style (one key / one list item per line), never the collapsed
+*flow* style (`- {name: ..., signatures: [{...}]}`). Flow style is valid
+YAML and parses to the same data, but it crushes a rule onto one line, which
+defeats line-by-line review and produces unreadable diffs when a single
+signature changes. The structural checks operate on the parsed data (which
+is style-agnostic), so this rule is checked separately against the YAML node
+tree via `yaml.compose`.
+
 Usage:
     lint_signatures.py FILE [FILE ...]   # lint each file; non-zero on any error
     lint_signatures.py --self-test       # run built-in accept/reject fixtures
@@ -118,15 +127,58 @@ def lint_document(doc: object) -> list[str]:
     return errors
 
 
+def block_style_errors(text: str) -> list[str]:
+    """Return errors for any flow-style (`{...}`/`[...]`) collection node.
+
+    Walks the YAML node tree (`yaml.compose`) rather than the loaded data,
+    because `safe_load` discards the flow-vs-block distinction. Every mapping
+    and sequence must be block-styled; a flow-styled one (even nested inside an
+    otherwise block document) is reported with its 1-based line number. Quoted
+    scalars that merely CONTAIN brackets (e.g. a regex `'[a-z]'`) are scalar
+    nodes, not flow collections, so they are never flagged.
+    """
+    errors: list[str] = []
+    try:
+        root = yaml.compose(text)
+    except yaml.YAMLError as exc:
+        return [f"could not parse YAML: {exc}"]
+    if root is None:
+        return errors
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, yaml.MappingNode):
+            if node.flow_style:
+                errors.append(
+                    f"line {node.start_mark.line + 1}: flow-style mapping "
+                    "(`{...}`) is not allowed — use block style (one key per "
+                    "line) so rules stay reviewable"
+                )
+            for key_node, value_node in node.value:
+                stack.append(key_node)
+                stack.append(value_node)
+        elif isinstance(node, yaml.SequenceNode):
+            if node.flow_style:
+                errors.append(
+                    f"line {node.start_mark.line + 1}: flow-style sequence "
+                    "(`[...]`) is not allowed — use block style (one item per "
+                    "line) so rules stay reviewable"
+                )
+            stack.extend(node.value)
+    return errors
+
+
 def lint_file(path: str) -> list[str]:
     try:
         with open(path, encoding="utf-8") as fh:
-            doc = yaml.safe_load(fh)
+            text = fh.read()
     except OSError as exc:
         return [f"could not read file: {exc}"]
+    try:
+        doc = yaml.safe_load(text)
     except yaml.YAMLError as exc:
         return [f"could not parse YAML: {exc}"]
-    return lint_document(doc)
+    return lint_document(doc) + block_style_errors(text)
 
 
 # --- Built-in self-test (a malformed fixture must be REJECTED) --------------
@@ -180,11 +232,26 @@ _INVALID_FIXTURES = {
     ),
 }
 
+# Flow-style fixtures: each parses to STRUCTURALLY VALID data (so
+# `lint_document` alone accepts them), and must be rejected ONLY by the
+# block-style check — pinning that rule in both directions against the
+# block-styled `_VALID_FIXTURE` above.
+_FLOW_FIXTURES = {
+    "whole rule collapsed to flow": (
+        "- {name: 'Foo', package: 'com.example.app', "
+        "signatures: [{signature: '\"x\"', type: regex}]}\n"
+    ),
+    "nested flow signatures list": (
+        "- name: 'Foo'\n  package: 'com.example.app'\n"
+        "  signatures: [{signature: '\"x\"', type: regex}]\n"
+    ),
+}
+
 
 def _self_test() -> int:
     failures = 0
     valid_doc = yaml.safe_load(_VALID_FIXTURE)
-    errs = lint_document(valid_doc)
+    errs = lint_document(valid_doc) + block_style_errors(_VALID_FIXTURE)
     if errs:
         failures += 1
         print(f"SELF-TEST FAIL: valid fixture was rejected: {errs}", file=sys.stderr)
@@ -197,6 +264,25 @@ def _self_test() -> int:
             print(f"SELF-TEST FAIL: invalid fixture accepted: {label}", file=sys.stderr)
         else:
             print(f"self-test: invalid fixture rejected ({label})")
+    # Flow-style fixtures: structurally valid, rejected ONLY by the style check.
+    for label, text in _FLOW_FIXTURES.items():
+        structural = lint_document(yaml.safe_load(text))
+        style = block_style_errors(text)
+        if structural:
+            failures += 1
+            print(
+                f"SELF-TEST FAIL: flow fixture {label!r} should be structurally "
+                f"valid but got {structural}",
+                file=sys.stderr,
+            )
+        elif not style:
+            failures += 1
+            print(
+                f"SELF-TEST FAIL: flow-style fixture accepted (style check missed it): {label}",
+                file=sys.stderr,
+            )
+        else:
+            print(f"self-test: flow-style fixture rejected ({label})")
     if failures:
         print(f"self-test: {failures} failure(s)", file=sys.stderr)
         return 1

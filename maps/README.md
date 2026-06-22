@@ -16,7 +16,7 @@ maps/<app>/<version_code>.json
 
 ## Format
 
-Strict JSON, `schema_version: 4` — a pure real→obfuscated mapping (the AIDL/Binder
+Strict JSON, `schema_version: 5` — a pure real→obfuscated mapping (the AIDL/Binder
 fields and `anchors[]` were removed in v4; finding-evidence lives in the
 signatures source). The canonical schema, field semantics, and authoring guidance
 live in `../schema/rosetta-map.schema.json` (owned here) and its

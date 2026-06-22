@@ -25,7 +25,7 @@ and are the default:
 
 This anchoring evidence is **authoring input only** — it identifies a class in
 the source, and is not copied into the published map (a pure real→obfuscated
-mapping at `schema_version: 4`).
+mapping at `schema_version: 5`).
 
 ## Two dialects, no third
 
