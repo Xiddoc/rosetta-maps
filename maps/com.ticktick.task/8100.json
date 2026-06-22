@@ -4,12 +4,12 @@
     "version": "8.1.0.0",
     "version_code": 8100,
     "captured_at": "2026-06-22",
-    "signer_sha256": "44c3bb8c7ea35b3bb11cbfa3c2f5879240df2e49e39816b4437b9856fbb29541",
+    "signer_sha256": "80efccbbbc822a799ff7e787b889d02f3376cc4b829875eaa237adf19e578196",
     "sources": [
         {
             "tool": "sigmatcher",
             "config": "signatures/com.ticktick.task/signatures.yaml",
-            "classes": 72
+            "classes": 86
         }
     ],
     "classes": {
@@ -163,6 +163,30 @@
             "source": "sigmatcher",
             "dex": "classes3.dex"
         },
+        "com.ticktick.task.data.Attachment": {
+            "obfuscated": "com.ticktick.task.data.Attachment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.ticktick.task.data.ChecklistItem": {
+            "obfuscated": "com.ticktick.task.data.ChecklistItem",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.ticktick.task.data.Comment": {
+            "obfuscated": "com.ticktick.task.data.Comment",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
+        "com.ticktick.task.data.Filter": {
+            "obfuscated": "com.ticktick.task.data.Filter",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes3.dex"
+        },
         "com.ticktick.task.data.Habit": {
             "obfuscated": "com.ticktick.task.data.Habit",
             "kind": "class",
@@ -185,13 +209,29 @@
             "obfuscated": "com.ticktick.task.data.User",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes3.dex"
+            "dex": "classes3.dex",
+            "methods": {
+                "requireDisplayName": {
+                    "obfuscated": "requireDisplayName",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "isDidaAccount": {
+                    "obfuscated": "isDidaAccount",
+                    "signature": "()Z"
+                }
+            }
         },
         "com.ticktick.task.data.UserProfile": {
             "obfuscated": "com.ticktick.task.data.UserProfile",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes3.dex"
+            "dex": "classes3.dex",
+            "methods": {
+                "toString": {
+                    "obfuscated": "toString",
+                    "signature": "()Ljava/lang/String;"
+                }
+            }
         },
         "com.ticktick.task.focus.FocusEntity": {
             "obfuscated": "com.ticktick.task.focus.FocusEntity",
@@ -449,13 +489,37 @@
             "obfuscated": "com.ticktick.task.payfor.billing.NewGoogleBillingPayUtils",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes4.dex"
+            "dex": "classes4.dex",
+            "methods": {
+                "onPurchasesUpdated": {
+                    "obfuscated": "onPurchasesUpdated",
+                    "signature": "(Landroid/app/Activity;Lcom/android/billingclient/api/g;Ljava/util/List;)V"
+                }
+            }
         },
         "com.ticktick.task.payfor.billing.NewGoogleBillingPayment": {
             "obfuscated": "com.ticktick.task.payfor.billing.NewGoogleBillingPayment",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes4.dex"
+            "dex": "classes4.dex",
+            "methods": {
+                "payFor": {
+                    "obfuscated": "payFor",
+                    "signature": "(Ljava/lang/String;Ljava/lang/String;)V"
+                },
+                "onPurchasesUpdated": {
+                    "obfuscated": "onPurchasesUpdated",
+                    "signature": "(Lcom/android/billingclient/api/g;Ljava/util/List;)V"
+                },
+                "showVerifySubscriptionResult": {
+                    "obfuscated": "showVerifySubscriptionResult",
+                    "signature": "(Lcom/android/billingclient/api/Purchase;)V"
+                },
+                "destroy": {
+                    "obfuscated": "destroy",
+                    "signature": "()V"
+                }
+            }
         },
         "com.ticktick.task.service.AttachmentService": {
             "obfuscated": "com.ticktick.task.service.AttachmentService",
@@ -465,6 +529,66 @@
         },
         "com.ticktick.task.service.AttendeeService": {
             "obfuscated": "com.ticktick.task.service.AttendeeService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.ChecklistItemService": {
+            "obfuscated": "com.ticktick.task.service.ChecklistItemService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.ColumnService": {
+            "obfuscated": "com.ticktick.task.service.ColumnService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.CommentService": {
+            "obfuscated": "com.ticktick.task.service.CommentService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.FilterService": {
+            "obfuscated": "com.ticktick.task.service.FilterService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.PomodoroService": {
+            "obfuscated": "com.ticktick.task.service.PomodoroService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.ProjectService": {
+            "obfuscated": "com.ticktick.task.service.ProjectService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.ReminderService": {
+            "obfuscated": "com.ticktick.task.service.ReminderService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.SyncStatusService": {
+            "obfuscated": "com.ticktick.task.service.SyncStatusService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.TagService": {
+            "obfuscated": "com.ticktick.task.service.TagService",
+            "kind": "class",
+            "source": "sigmatcher",
+            "dex": "classes4.dex"
+        },
+        "com.ticktick.task.service.TaskReminderService": {
+            "obfuscated": "com.ticktick.task.service.TaskReminderService",
             "kind": "class",
             "source": "sigmatcher",
             "dex": "classes4.dex"

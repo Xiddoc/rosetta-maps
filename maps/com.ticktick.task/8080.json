@@ -4,7 +4,7 @@
     "version": "8.0.8.0",
     "version_code": 8080,
     "captured_at": "2026-06-10",
-    "signer_sha256": "44c3bb8c7ea35b3bb11cbfa3c2f5879240df2e49e39816b4437b9856fbb29541",
+    "signer_sha256": "80efccbbbc822a799ff7e787b889d02f3376cc4b829875eaa237adf19e578196",
     "sources": [
         {
             "tool": "sigmatcher",

@@ -395,6 +395,19 @@
       - signature: '"\*\*\*\*@"'
         type: regex
         count: 1
+  methods:
+      # requireDisplayName()String — masks the e-mail to "****@domain" for the UI.
+      - name: 'requireDisplayName'
+        signatures:
+            - signature: '"\*\*\*\*@"'
+              type: regex
+              count: 1
+      # isDidaAccount()Z — true for the dida365 (China) account domain.
+      - name: 'isDidaAccount'
+        signatures:
+            - signature: '"ticktick"'
+              type: regex
+              count: 1
 
 # User settings entity (local).
 - name: 'UserProfile'
@@ -403,6 +416,13 @@
       - signature: '"UserProfile\{id="'
         type: regex
         count: 1
+  methods:
+      # toString()String — emits the "UserProfile{id=" debug dump of all settings.
+      - name: 'toString'
+        signatures:
+            - signature: '"UserProfile\{id="'
+              type: regex
+              count: 1
 
 # Account façade — caches current user, switches API domain on account-switch,
 # drives the sign-out wipe, merges pro/team status (saveUserStatus).
@@ -505,6 +525,31 @@
       - signature: 'payFor: '
         type: regex
         count: 1
+  methods:
+      # payFor(String,String)V — launches the Play billing flow for a SKU.
+      - name: 'payFor'
+        signatures:
+            - signature: '"payFor: "'
+              type: regex
+              count: 1
+      # onPurchasesUpdated(BillingResult,List)V — Play PurchasesUpdatedListener cb.
+      - name: 'onPurchasesUpdated'
+        signatures:
+            - signature: '"billingResult"'
+              type: regex
+              count: 1
+      # showVerifySubscriptionResult(Purchase)V — server-side verify of a purchase.
+      - name: 'showVerifySubscriptionResult'
+        signatures:
+            - signature: '"developerPayload"'
+              type: regex
+              count: 1
+      # destroy()V — closes the BillingClient connection.
+      - name: 'destroy'
+        signatures:
+            - signature: '"BillingClient can only be used once -- closing connection"'
+              type: regex
+              count: 1
 
 # Purchase/verify helper.
 - name: 'NewGoogleBillingPayUtils'
@@ -513,6 +558,14 @@
       - signature: '"queryProductDetailsAsync productId:"'
         type: regex
         count: 1
+  methods:
+      # onPurchasesUpdated(Activity,BillingResult,List)V — purchase-result handler
+      # (verify → acknowledge → grant Pro). Anchored on its responseCode log line.
+      - name: 'onPurchasesUpdated'
+        signatures:
+            - signature: '"onPurchasesUpdated: responseCode="'
+              type: regex
+              count: 1
 
 # App-level is-Pro gate + grace-period handling.
 # Kept class with kept member names; methods anchored on per-method-unique string
@@ -865,3 +918,135 @@
             - signature: '"AES"'
               type: regex
               count: 1
+
+# ════════════════════════════════════════════════════════════════════════
+# PERSISTENCE — additional GreenDAO entities + service layer (new classes)
+# All in the readable com.ticktick.task.* carve-out (resolve to themselves).
+# Plain (inner-class-free) classes are anchored on the retained SourceFile
+# ("Foo.java"), verified globally unique; classes WITH inner classes (whose
+# SourceFile string recurs across the inner-class smali) are anchored instead
+# on a business-string literal that occurs exactly once app-wide. Verified on
+# 8100; back-verify on 8080/8081 when those APKs are available.
+# ════════════════════════════════════════════════════════════════════════
+
+# ─── Data entities ───────────────────────────────────────────────────────
+
+# Attachment entity (file metadata: fileName/localPath/size; toString prefix).
+- name: 'Attachment'
+  package: 'com.ticktick.task.data'
+  signatures:
+      - signature: '"Attachment\.java"'
+        type: regex
+        count: 1
+
+# Task comment entity (collaboration).
+- name: 'Comment'
+  package: 'com.ticktick.task.data'
+  signatures:
+      - signature: '"Comment\.java"'
+        type: regex
+        count: 1
+
+# Smart-list / saved-filter entity (rule definition).
+- name: 'Filter'
+  package: 'com.ticktick.task.data'
+  signatures:
+      - signature: '"Filter\.java"'
+        type: regex
+        count: 1
+
+# Checklist (sub-)item entity. Has inner classes → anchored on the toString
+# prefix literal instead of the (ambiguous) retained SourceFile.
+- name: 'ChecklistItem'
+  package: 'com.ticktick.task.data'
+  signatures:
+      - signature: '"ChecklistItem\{id="'
+        type: regex
+        count: 1
+
+# ─── GreenDAO service layer ──────────────────────────────────────────────
+
+# Project (list) persistence service. Inner classes → anchored on a class-unique
+# SQL fragment used in its name-collation query.
+- name: 'ProjectService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: ' = \? COLLATE NOCASE'
+        type: regex
+        count: 1
+
+# Tag persistence service. Inner class → anchored on a class-unique helper-name
+# literal rather than the (recurring) SourceFile.
+- name: 'TagService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"getNormalConds2Rule"'
+        type: regex
+        count: 1
+
+# Kanban-column persistence service. Inner classes → anchored on a class-unique
+# delete-by-sid log literal.
+- name: 'ColumnService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"deleteColumnBySid projectSid: "'
+        type: regex
+        count: 1
+
+# Checklist-item persistence service (inner-class-free → SourceFile anchor).
+- name: 'ChecklistItemService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"ChecklistItemService\.java"'
+        type: regex
+        count: 1
+
+# Comment persistence service (inner-class-free → SourceFile anchor).
+- name: 'CommentService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"CommentService\.java"'
+        type: regex
+        count: 1
+
+# Filter / smart-list persistence service (inner-class-free → SourceFile anchor).
+- name: 'FilterService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"FilterService\.java"'
+        type: regex
+        count: 1
+
+# Pomodoro/focus-record persistence service (inner-class-free → SourceFile anchor).
+- name: 'PomodoroService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"PomodoroService\.java"'
+        type: regex
+        count: 1
+
+# Reminder persistence service — the central reminders read/write chokepoint
+# (inner-class-free → SourceFile anchor).
+- name: 'ReminderService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"ReminderService\.java"'
+        type: regex
+        count: 1
+
+# Task-reminder persistence service (inner-class-free → SourceFile anchor).
+- name: 'TaskReminderService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"TaskReminderService\.java"'
+        type: regex
+        count: 1
+
+# Sync-status bookkeeping service (tracks dirty entities for the next push;
+# inner-class-free → SourceFile anchor).
+- name: 'SyncStatusService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"SyncStatusService\.java"'
+        type: regex
+        count: 1
