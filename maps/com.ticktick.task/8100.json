@@ -218,6 +218,34 @@
                 "isDidaAccount": {
                     "obfuscated": "isDidaAccount",
                     "signature": "()Z"
+                },
+                "getAccessToken": {
+                    "obfuscated": "getAccessToken",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getSid": {
+                    "obfuscated": "getSid",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "isPro": {
+                    "obfuscated": "isPro",
+                    "signature": "()Z"
+                },
+                "getProType": {
+                    "obfuscated": "getProType",
+                    "signature": "()I"
+                },
+                "getApiDomain": {
+                    "obfuscated": "getApiDomain",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getInboxId": {
+                    "obfuscated": "getInboxId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getUsername": {
+                    "obfuscated": "getUsername",
+                    "signature": "()Ljava/lang/String;"
                 }
             }
         },
@@ -293,6 +321,10 @@
             "source": "sigmatcher",
             "dex": "classes4.dex",
             "methods": {
+                "isPro": {
+                    "obfuscated": "isPro",
+                    "signature": "(Lcom/ticktick/task/data/User;)Z"
+                },
                 "getSubscribeTypeName": {
                     "obfuscated": "getSubscribeTypeName",
                     "signature": "(Ljava/lang/String;)Ljava/lang/String;"
@@ -327,6 +359,22 @@
             "source": "sigmatcher",
             "dex": "classes4.dex",
             "methods": {
+                "getCurrentUser": {
+                    "obfuscated": "getCurrentUser",
+                    "signature": "()Lcom/ticktick/task/data/User;"
+                },
+                "getAccessToken": {
+                    "obfuscated": "getAccessToken",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getCurrentUserId": {
+                    "obfuscated": "getCurrentUserId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "isLocalMode": {
+                    "obfuscated": "isLocalMode",
+                    "signature": "()Z"
+                },
                 "saveUserStatus": {
                     "obfuscated": "saveUserStatus",
                     "signature": "(Ljava/lang/String;Lcom/ticktick/task/network/sync/common/model/SignUserInfo;)Z"

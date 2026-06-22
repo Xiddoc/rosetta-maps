@@ -109,26 +109,27 @@ grace-period helpers), `TickTickAccountManager` (`saveUserStatus`,
 `TickTickAuthorizeTask` (`doInBackground`), `ResponseUser` (`toString`),
 `PomodoroStateContext` (`changeDuration`), and `AESUtils` (`createKey`).
 
-### Anchoring gotcha #2 — sigmatcher matches the method *body*, not the signature line
+### Anchoring gotcha #2 — a bare descriptor fragment matches call sites too
 
-The decisive lesson of this pass. sigmatcher applies a method's regex against
-each method's **instruction body** and attributes the hit to the enclosing
-method — the `.method …(descriptor)` declaration line is **not** part of the
-searched text. Consequences:
+sigmatcher applies a method's regex against the whole method chunk (declaration
+line + body — see technique #3 for the exact split). The trap is that a **bare
+descriptor fragment** also occurs at every **call site** inside *other* method
+chunks. Consequences:
 
-- A **descriptor fragment** (e.g. `getAccessToken\(\)Ljava/lang/String;`) is a
-  bad method anchor: it does not appear in the target method's own body, but it
-  *does* appear at every **call site**, so it mis-resolves to a *caller*
-  (observed: `getAccessToken` → `getAccessTokenById`) or trips
-  "Found too many matches".
+- A fragment like `getAccessToken\(\)Ljava/lang/String;` matches both the real
+  getter's declaration AND any method whose body invokes it, so it mis-resolves
+  to a *caller* (observed: `getAccessToken` → `getAccessTokenById`) or trips
+  "Found too many matches". The fix is technique #3: pin with a leading
+  `\.method` so only the declaration line qualifies.
 - The robust anchor is a **`const-string` literal that occurs in exactly one
   method body** in the class. Every method mapped here is anchored that way.
-- Therefore methods with **no string literal in their body cannot be anchored**
-  with this dialect and were deliberately dropped rather than guessed:
-  `ProHelper.isPro(User)Z` (the gate, but stringless), `SyncService.doSync`,
-  the `AESUtils` encrypt/decrypt pairs (their only literal,
-  `"AES/ECB/PKCS5Padding"`, is shared by both byte[] variants → ambiguous), and
-  native methods on `TitleParserLib` (no body at all).
+- Stringless methods need a different anchor — see technique #3 below (which
+  later rescued most of the ones first dropped here). The genuinely
+  un-anchorable remainder: the `AESUtils` encrypt/decrypt pairs (their only
+  literal `"AES/ECB/PKCS5Padding"` is shared by both byte[] variants → ambiguous
+  even by descriptor because the two byte[] overloads share it) and native
+  methods on `TitleParserLib` (no body AND no in-class-unique declaration beyond
+  the name, which is fine — natives could be added by name if wanted).
 - Descriptors that reference a **rotating obfuscated type** were also dropped to
   avoid dangling refs — e.g. `PomodoroStateContext`'s `doBeforeUpdateState`
   worker takes the obfuscated inner state type `yb.d$h`. `changeDuration(J)V`
@@ -211,3 +212,57 @@ Billing-method descriptors reference only `com.android.billingclient.api.*`
 (kept library names) and framework types — no dangling obfuscated refs. The
 `User`/`UserProfile`/billing classes were already mapped; only `methods:` were
 added to them.
+
+## Anchoring technique #3 — declaration-line anchoring rescues stringless methods
+
+Reading `sigmatcher.analysis.MethodAnalyzer` settled the earlier open question.
+It does:
+
+```python
+raw_methods = smali.read_text().split(".method")[1:]
+methods = {".method" + m for m in raw_methods}
+```
+
+So each searched chunk is `.method <decl line>\n<body>….end method` — the
+**declaration line is included**, and multiple `signatures:` on one method are
+**AND-ed** (`set.intersection_update`). A bare descriptor fragment mis-resolves
+only because it also appears at *call sites* inside other chunks. Each chunk
+contains exactly one `.method` token (it was the split delimiter), so pinning the
+regex with a leading `\.method` targets the declaration line and nothing else:
+
+```yaml
+- name: 'getAccessToken'
+  signatures:
+    - signature: '\.method public getAccessToken\(\)Ljava/lang/String;'
+      type: regex
+      count: 1
+```
+
+This makes any method anchorable by **name + params/return**, with no in-body
+literal required — directly capturing the descriptor as identity. The crucial
+caveat: it is only robust where the **method name is stable**, i.e. the kept
+`com.ticktick.task.*` carve-out. For the renamed/obfuscated classes the name
+rotates, so those methods still need a body-string or structural anchor (a bare
+`\.method public \w+\(\)Z` would bind the rotating token and is forbidden).
+
+Two further levers exist for the hard cases, not needed yet but worth recording:
+
+- **Field reference instead of method:** map the backing field directly
+  (`fields:` capture its `name:type`), which is what a getter/setter actually
+  exposes. For kotlinx-serialized DTOs the on-wire JSON key is a string literal
+  in the generated `$serializer`, usable as a field/class anchor.
+- **Macros:** a method/field regex can interpolate an already-resolved result via
+  `${Class.fields.java}` → e.g. `Lf9/s;->a:L…;`. So a stringless method can be
+  pinned by the (resolved, possibly-obfuscated) field it reads, rather than by
+  its own name — the portable way to anchor obfuscated-class accessors.
+
+### New account / Pro methods enabled by technique #3 (12)
+
+- `User`: `getAccessToken`, `getSid`, `isPro`, `getProType`, `getApiDomain`,
+  `getInboxId`, `getUsername` (the token/identity/Pro accessors).
+- `ProHelper.isPro(User)Z` — the app-wide Pro gate, previously dropped as
+  stringless, now anchored on its declaration line.
+- `TickTickAccountManager`: `getCurrentUser`, `getAccessToken`,
+  `getCurrentUserId`, `isLocalMode`.
+
+Map totals after this pass: **86 classes, 48 methods** (8100).

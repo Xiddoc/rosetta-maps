@@ -408,6 +408,54 @@
             - signature: '"ticktick"'
               type: regex
               count: 1
+      # Stringless accessors below carry no in-body literal, so they are anchored
+      # on the .method DECLARATION line (name + descriptor). The leading `\.method`
+      # pins the match to the declaration and excludes call sites in other method
+      # bodies (each split chunk holds exactly one `.method` token). Robust ONLY
+      # because these are kept carve-out names that do not rotate; the captured
+      # descriptor is the params/return identity.
+      # getAccessToken()String — the OAuth bearer token (prime hook target).
+      - name: 'getAccessToken'
+        signatures:
+            - signature: '\.method public getAccessToken\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      # getSid()String — server-side user id.
+      - name: 'getSid'
+        signatures:
+            - signature: '\.method public getSid\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      # isPro()Z — the per-user Pro flag.
+      - name: 'isPro'
+        signatures:
+            - signature: '\.method public isPro\(\)Z'
+              type: regex
+              count: 1
+      # getProType()I — Pro tier code (1 == pro).
+      - name: 'getProType'
+        signatures:
+            - signature: '\.method public getProType\(\)I'
+              type: regex
+              count: 1
+      # getApiDomain()String — the account's API host.
+      - name: 'getApiDomain'
+        signatures:
+            - signature: '\.method public getApiDomain\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      # getInboxId()String — the account's Inbox project id.
+      - name: 'getInboxId'
+        signatures:
+            - signature: '\.method public getInboxId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      # getUsername()String — the login username.
+      - name: 'getUsername'
+        signatures:
+            - signature: '\.method public getUsername\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
 
 # User settings entity (local).
 - name: 'UserProfile'
@@ -433,6 +481,31 @@
         type: regex
         count: 1
   methods:
+      # Accessors anchored on the .method declaration line (stringless; kept names).
+      # getCurrentUser()User — the cached current account (prime hook target).
+      - name: 'getCurrentUser'
+        signatures:
+            - signature: '\.method public getCurrentUser\(\)Lcom/ticktick/task/data/User;'
+              type: regex
+              count: 1
+      # getAccessToken()String — convenience accessor for the current token.
+      - name: 'getAccessToken'
+        signatures:
+            - signature: '\.method public getAccessToken\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      # getCurrentUserId()String — current account local id.
+      - name: 'getCurrentUserId'
+        signatures:
+            - signature: '\.method public getCurrentUserId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      # isLocalMode()Z — true when running as a local (no-account) user.
+      - name: 'isLocalMode'
+        signatures:
+            - signature: '\.method public isLocalMode\(\)Z'
+              type: regex
+              count: 1
       # saveUserStatus(String,SignUserInfo)Z — merges server pro/team status into
       # the local User and broadcasts a PaymentUpdateMessage. Anchored on the
       # class-unique "PaymentUpdateMessage" literal (SignUserInfo is kept/in-tree).
@@ -579,6 +652,13 @@
         type: regex
         count: 1
   methods:
+      # isPro(User)Z — THE app-wide Pro gate. Stringless, so anchored on the
+      # .method declaration line (kept carve-out name; descriptor is the identity).
+      - name: 'isPro'
+        signatures:
+            - signature: '\.method public static final isPro\(Lcom/ticktick/task/data/User;\)Z'
+              type: regex
+              count: 1
       # getSubscribeTypeName(String)String — maps a store token to a label
       # ("Google Play" / "apple" / …). Anchored on the unique "Google Play" literal.
       - name: 'getSubscribeTypeName'
