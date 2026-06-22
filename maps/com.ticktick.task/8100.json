@@ -197,13 +197,1177 @@
             "obfuscated": "com.ticktick.task.data.Project",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes3.dex"
+            "dex": "classes3.dex",
+            "methods": {
+                "getBackground": {
+                    "obfuscated": "getBackground",
+                    "signature": "()Lcom/ticktick/task/data/ProjectBackground;"
+                },
+                "getBackgroundInfo": {
+                    "obfuscated": "getBackgroundInfo",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getBarcodeNeedAudit": {
+                    "obfuscated": "getBarcodeNeedAudit",
+                    "signature": "()Z"
+                },
+                "getClosed": {
+                    "obfuscated": "getClosed",
+                    "signature": "()Z"
+                },
+                "getColor": {
+                    "obfuscated": "getColor",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getColorInt": {
+                    "obfuscated": "getColorInt",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getCount": {
+                    "obfuscated": "getCount",
+                    "signature": "()I"
+                },
+                "getCreatedTime": {
+                    "obfuscated": "getCreatedTime",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getDefaultColumn": {
+                    "obfuscated": "getDefaultColumn",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getDefaultOption": {
+                    "obfuscated": "getDefaultOption",
+                    "signature": "()Lcom/ticktick/task/sort/SortOption;"
+                },
+                "getDefaultProject": {
+                    "obfuscated": "getDefaultProject",
+                    "signature": "()I"
+                },
+                "getDeleted": {
+                    "obfuscated": "getDeleted",
+                    "signature": "()I"
+                },
+                "getDisplayOrder": {
+                    "obfuscated": "getDisplayOrder",
+                    "signature": "()J"
+                },
+                "getEntityId": {
+                    "obfuscated": "getEntityId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getEtag": {
+                    "obfuscated": "getEtag",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getEtype": {
+                    "obfuscated": "getEtype",
+                    "signature": "()I"
+                },
+                "getFinalPermission": {
+                    "obfuscated": "getFinalPermission",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getGroup": {
+                    "obfuscated": "getGroup",
+                    "signature": "()Lcom/ticktick/task/constant/Constants$SortType;"
+                },
+                "getGroupBy": {
+                    "obfuscated": "getGroupBy",
+                    "signature": "()Lcom/ticktick/task/constant/Constants$SortType;"
+                },
+                "getId": {
+                    "obfuscated": "getId",
+                    "signature": "()Ljava/lang/Long;"
+                },
+                "getIsOwner": {
+                    "obfuscated": "getIsOwner",
+                    "signature": "()Z"
+                },
+                "getKind": {
+                    "obfuscated": "getKind",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getMode": {
+                    "obfuscated": "getMode",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getModifiedTime": {
+                    "obfuscated": "getModifiedTime",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getMuted": {
+                    "obfuscated": "getMuted",
+                    "signature": "()Z"
+                },
+                "getName": {
+                    "obfuscated": "getName",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getNeedAudit": {
+                    "obfuscated": "getNeedAudit",
+                    "signature": "()Z"
+                },
+                "getNeedPullTasks": {
+                    "obfuscated": "getNeedPullTasks",
+                    "signature": "()Z"
+                },
+                "getNotificationOptions": {
+                    "obfuscated": "getNotificationOptions",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getOpenToTeam": {
+                    "obfuscated": "getOpenToTeam",
+                    "signature": "()Z"
+                },
+                "getOrder": {
+                    "obfuscated": "getOrder",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getOrderBy": {
+                    "obfuscated": "getOrderBy",
+                    "signature": "()Lcom/ticktick/task/constant/Constants$SortType;"
+                },
+                "getPermission": {
+                    "obfuscated": "getPermission",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getProjectGroupSid": {
+                    "obfuscated": "getProjectGroupSid",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getRealTeamId": {
+                    "obfuscated": "getRealTeamId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getReminderType": {
+                    "obfuscated": "getReminderType",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getShowInAll": {
+                    "obfuscated": "getShowInAll",
+                    "signature": "()Z"
+                },
+                "getShowType": {
+                    "obfuscated": "getShowType",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getSid": {
+                    "obfuscated": "getSid",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getSort": {
+                    "obfuscated": "getSort",
+                    "signature": "()Lcom/ticktick/task/constant/Constants$SortType;"
+                },
+                "getSortOption": {
+                    "obfuscated": "getSortOption",
+                    "signature": "()Lcom/ticktick/task/sort/SortOption;"
+                },
+                "getSortOrder": {
+                    "obfuscated": "getSortOrder",
+                    "signature": "()J"
+                },
+                "getSortType": {
+                    "obfuscated": "getSortType",
+                    "signature": "()Lcom/ticktick/task/constant/Constants$SortType;"
+                },
+                "getSource": {
+                    "obfuscated": "getSource",
+                    "signature": "()I"
+                },
+                "getStatus": {
+                    "obfuscated": "getStatus",
+                    "signature": "()I"
+                },
+                "getTag": {
+                    "obfuscated": "getTag",
+                    "signature": "()Lcom/ticktick/task/tags/Tag;"
+                },
+                "getTasks": {
+                    "obfuscated": "getTasks",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getTeam": {
+                    "obfuscated": "getTeam",
+                    "signature": "()Lcom/ticktick/task/data/Team;"
+                },
+                "getTeamId": {
+                    "obfuscated": "getTeamId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getTeamMemberPermission": {
+                    "obfuscated": "getTeamMemberPermission",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getTimelineGroupBy": {
+                    "obfuscated": "getTimelineGroupBy",
+                    "signature": "()Lcom/ticktick/task/constant/Constants$SortType;"
+                },
+                "getTimelineOrderBy": {
+                    "obfuscated": "getTimelineOrderBy",
+                    "signature": "()Lcom/ticktick/task/constant/Constants$SortType;"
+                },
+                "getTimelineSortType": {
+                    "obfuscated": "getTimelineSortType",
+                    "signature": "()Lcom/ticktick/task/constant/Constants$SortType;"
+                },
+                "getUserCount": {
+                    "obfuscated": "getUserCount",
+                    "signature": "()I"
+                },
+                "getUserId": {
+                    "obfuscated": "getUserId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getViewMode": {
+                    "obfuscated": "getViewMode",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getViewModeNotEmpty": {
+                    "obfuscated": "getViewModeNotEmpty",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getViewModeWithEmpty": {
+                    "obfuscated": "getViewModeWithEmpty",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "hasProjectGroup": {
+                    "obfuscated": "hasProjectGroup",
+                    "signature": "()Z"
+                },
+                "hasSynced": {
+                    "obfuscated": "hasSynced",
+                    "signature": "()Z"
+                },
+                "isAscending": {
+                    "obfuscated": "isAscending",
+                    "signature": "()Z"
+                },
+                "isClosed": {
+                    "obfuscated": "isClosed",
+                    "signature": "()Z"
+                },
+                "isInbox": {
+                    "obfuscated": "isInbox",
+                    "signature": "()Z"
+                },
+                "isLocalAdded": {
+                    "obfuscated": "isLocalAdded",
+                    "signature": "()Z"
+                },
+                "isLocalDeleted": {
+                    "obfuscated": "isLocalDeleted",
+                    "signature": "()Z"
+                },
+                "isLocalUpdated": {
+                    "obfuscated": "isLocalUpdated",
+                    "signature": "()Z"
+                },
+                "isMove2Trash": {
+                    "obfuscated": "isMove2Trash",
+                    "signature": "()Z"
+                },
+                "isMuted": {
+                    "obfuscated": "isMuted",
+                    "signature": "()Z"
+                },
+                "isNoteProject": {
+                    "obfuscated": "isNoteProject",
+                    "signature": "()Z"
+                },
+                "isOpenToTeamProject": {
+                    "obfuscated": "isOpenToTeamProject",
+                    "signature": "()Z"
+                },
+                "isShared": {
+                    "obfuscated": "isShared",
+                    "signature": "()Z"
+                },
+                "isSharedOrOpenToTeam": {
+                    "obfuscated": "isSharedOrOpenToTeam",
+                    "signature": "()Z"
+                },
+                "isShowInAll": {
+                    "obfuscated": "isShowInAll",
+                    "signature": "()Z"
+                },
+                "isTaskProject": {
+                    "obfuscated": "isTaskProject",
+                    "signature": "()Z"
+                },
+                "isTeamProject": {
+                    "obfuscated": "isTeamProject",
+                    "signature": "()Z"
+                },
+                "isTimelineMode": {
+                    "obfuscated": "isTimelineMode",
+                    "signature": "()Z"
+                },
+                "setBackground": {
+                    "obfuscated": "setBackground",
+                    "signature": "(Lcom/ticktick/task/data/ProjectBackground;)V"
+                },
+                "setBackgroundInfo": {
+                    "obfuscated": "setBackgroundInfo",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setBarcodeNeedAudit": {
+                    "obfuscated": "setBarcodeNeedAudit",
+                    "signature": "(Z)V"
+                },
+                "setClosed": {
+                    "obfuscated": "setClosed",
+                    "signature": "(Z)V"
+                },
+                "setColor": {
+                    "obfuscated": "setColor",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setCount": {
+                    "obfuscated": "setCount",
+                    "signature": "(I)V"
+                },
+                "setCreatedTime": {
+                    "obfuscated": "setCreatedTime",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setDefaultColumn": {
+                    "obfuscated": "setDefaultColumn",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setDefaultProject": {
+                    "obfuscated": "setDefaultProject",
+                    "signature": "(I)V"
+                },
+                "setDisplayOrder": {
+                    "obfuscated": "setDisplayOrder",
+                    "signature": "(J)V"
+                },
+                "setEtag": {
+                    "obfuscated": "setEtag",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setGroupBy": {
+                    "obfuscated": "setGroupBy",
+                    "signature": "(Lcom/ticktick/task/constant/Constants$SortType;)V"
+                },
+                "setId": {
+                    "obfuscated": "setId",
+                    "signature": "(Ljava/lang/Long;)V"
+                },
+                "setIsOwner": {
+                    "obfuscated": "setIsOwner",
+                    "signature": "(Z)V"
+                },
+                "setKind": {
+                    "obfuscated": "setKind",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setModifiedTime": {
+                    "obfuscated": "setModifiedTime",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setMuted": {
+                    "obfuscated": "setMuted",
+                    "signature": "(Z)V"
+                },
+                "setName": {
+                    "obfuscated": "setName",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setNeedAudit": {
+                    "obfuscated": "setNeedAudit",
+                    "signature": "(Z)V"
+                },
+                "setNeedPullTasks": {
+                    "obfuscated": "setNeedPullTasks",
+                    "signature": "(Z)V"
+                },
+                "setNotificationOptions": {
+                    "obfuscated": "setNotificationOptions",
+                    "signature": "(Ljava/util/List;)V"
+                },
+                "setOpenToTeam": {
+                    "obfuscated": "setOpenToTeam",
+                    "signature": "(Z)V"
+                },
+                "setOrder": {
+                    "obfuscated": "setOrder",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setOrderBy": {
+                    "obfuscated": "setOrderBy",
+                    "signature": "(Lcom/ticktick/task/constant/Constants$SortType;)V"
+                },
+                "setPermission": {
+                    "obfuscated": "setPermission",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setProjectGroupSid": {
+                    "obfuscated": "setProjectGroupSid",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setReminderType": {
+                    "obfuscated": "setReminderType",
+                    "signature": "(Ljava/lang/Integer;)V"
+                },
+                "setShowInAll": {
+                    "obfuscated": "setShowInAll",
+                    "signature": "(Z)V"
+                },
+                "setShowType": {
+                    "obfuscated": "setShowType",
+                    "signature": "(Ljava/lang/Integer;)V"
+                },
+                "setSid": {
+                    "obfuscated": "setSid",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setSortOrder": {
+                    "obfuscated": "setSortOrder",
+                    "signature": "(J)V"
+                },
+                "setSortType": {
+                    "obfuscated": "setSortType",
+                    "signature": "(Lcom/ticktick/task/constant/Constants$SortType;)V"
+                },
+                "setSource": {
+                    "obfuscated": "setSource",
+                    "signature": "(I)V"
+                },
+                "setTag": {
+                    "obfuscated": "setTag",
+                    "signature": "(Lcom/ticktick/task/tags/Tag;)V"
+                },
+                "setTeamId": {
+                    "obfuscated": "setTeamId",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setTeamMemberPermission": {
+                    "obfuscated": "setTeamMemberPermission",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setTimelineGroupBy": {
+                    "obfuscated": "setTimelineGroupBy",
+                    "signature": "(Lcom/ticktick/task/constant/Constants$SortType;)V"
+                },
+                "setTimelineOrderBy": {
+                    "obfuscated": "setTimelineOrderBy",
+                    "signature": "(Lcom/ticktick/task/constant/Constants$SortType;)V"
+                },
+                "setTimelineSortType": {
+                    "obfuscated": "setTimelineSortType",
+                    "signature": "(Lcom/ticktick/task/constant/Constants$SortType;)V"
+                },
+                "setUserCount": {
+                    "obfuscated": "setUserCount",
+                    "signature": "(I)V"
+                },
+                "setUserId": {
+                    "obfuscated": "setUserId",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setViewMode": {
+                    "obfuscated": "setViewMode",
+                    "signature": "(Ljava/lang/String;)V"
+                }
+            }
         },
         "com.ticktick.task.data.Task2": {
             "obfuscated": "com.ticktick.task.data.Task2",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes3.dex"
+            "dex": "classes3.dex",
+            "methods": {
+                "getAnnoyingAlert": {
+                    "obfuscated": "getAnnoyingAlert",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getAssignee": {
+                    "obfuscated": "getAssignee",
+                    "signature": "()J"
+                },
+                "getAssigneeName": {
+                    "obfuscated": "getAssigneeName",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getAttachments": {
+                    "obfuscated": "getAttachments",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getAttendId": {
+                    "obfuscated": "getAttendId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getChecklistItems": {
+                    "obfuscated": "getChecklistItems",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getChildCount": {
+                    "obfuscated": "getChildCount",
+                    "signature": "()I"
+                },
+                "getChildIds": {
+                    "obfuscated": "getChildIds",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getCollapsed": {
+                    "obfuscated": "getCollapsed",
+                    "signature": "()Z"
+                },
+                "getColumn": {
+                    "obfuscated": "getColumn",
+                    "signature": "()Lcom/ticktick/task/data/Column;"
+                },
+                "getColumnId": {
+                    "obfuscated": "getColumnId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getColumnUid": {
+                    "obfuscated": "getColumnUid",
+                    "signature": "()Ljava/lang/Long;"
+                },
+                "getCommentCount": {
+                    "obfuscated": "getCommentCount",
+                    "signature": "()I"
+                },
+                "getCompletedTime": {
+                    "obfuscated": "getCompletedTime",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getCompletedTimeNotNull": {
+                    "obfuscated": "getCompletedTimeNotNull",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getCompletedUserId": {
+                    "obfuscated": "getCompletedUserId",
+                    "signature": "()J"
+                },
+                "getCompositeContent": {
+                    "obfuscated": "getCompositeContent",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getContent": {
+                    "obfuscated": "getContent",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getCreatedTime": {
+                    "obfuscated": "getCreatedTime",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getCreator": {
+                    "obfuscated": "getCreator",
+                    "signature": "()J"
+                },
+                "getCurrentTaskHasRecognized": {
+                    "obfuscated": "getCurrentTaskHasRecognized",
+                    "signature": "()Z"
+                },
+                "getDeleted": {
+                    "obfuscated": "getDeleted",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getDesc": {
+                    "obfuscated": "getDesc",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getDisplayLocation": {
+                    "obfuscated": "getDisplayLocation",
+                    "signature": "()Lcom/ticktick/task/data/Location;"
+                },
+                "getDueDate": {
+                    "obfuscated": "getDueDate",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getEtag": {
+                    "obfuscated": "getEtag",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getExDate": {
+                    "obfuscated": "getExDate",
+                    "signature": "()Ljava/util/Set;"
+                },
+                "getExDateValues": {
+                    "obfuscated": "getExDateValues",
+                    "signature": "()Ljava/util/Set;"
+                },
+                "getExtraData": {
+                    "obfuscated": "getExtraData",
+                    "signature": "()Lcom/ticktick/task/data/TaskExtraData;"
+                },
+                "getFixedDate": {
+                    "obfuscated": "getFixedDate",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getGlobalAnnoyingEnable": {
+                    "obfuscated": "getGlobalAnnoyingEnable",
+                    "signature": "()Z"
+                },
+                "getHasAttachment": {
+                    "obfuscated": "getHasAttachment",
+                    "signature": "()Z"
+                },
+                "getId": {
+                    "obfuscated": "getId",
+                    "signature": "()Ljava/lang/Long;"
+                },
+                "getImgMode": {
+                    "obfuscated": "getImgMode",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getIsAllDay": {
+                    "obfuscated": "getIsAllDay",
+                    "signature": "()Z"
+                },
+                "getIsFloating": {
+                    "obfuscated": "getIsFloating",
+                    "signature": "()Z"
+                },
+                "getKind": {
+                    "obfuscated": "getKind",
+                    "signature": "()Lcom/ticktick/task/constant/Constants$Kind;"
+                },
+                "getLocalUnpinned": {
+                    "obfuscated": "getLocalUnpinned",
+                    "signature": "()Z"
+                },
+                "getLocation": {
+                    "obfuscated": "getLocation",
+                    "signature": "()Lcom/ticktick/task/data/Location;"
+                },
+                "getLocationList": {
+                    "obfuscated": "getLocationList",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getModifiedTime": {
+                    "obfuscated": "getModifiedTime",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getNotionBlock": {
+                    "obfuscated": "getNotionBlock",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getOriginalAttachments": {
+                    "obfuscated": "getOriginalAttachments",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getOriginalDueDate": {
+                    "obfuscated": "getOriginalDueDate",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getParentSid": {
+                    "obfuscated": "getParentSid",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getPinnedTime": {
+                    "obfuscated": "getPinnedTime",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getPomodoroSummaries": {
+                    "obfuscated": "getPomodoroSummaries",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getPriorContent": {
+                    "obfuscated": "getPriorContent",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getPriorTitle": {
+                    "obfuscated": "getPriorTitle",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getPriority": {
+                    "obfuscated": "getPriority",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getProgress": {
+                    "obfuscated": "getProgress",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getProgressInt": {
+                    "obfuscated": "getProgressInt",
+                    "signature": "()I"
+                },
+                "getProject": {
+                    "obfuscated": "getProject",
+                    "signature": "()Lcom/ticktick/task/data/Project;"
+                },
+                "getProjectId": {
+                    "obfuscated": "getProjectId",
+                    "signature": "()Ljava/lang/Long;"
+                },
+                "getProjectSid": {
+                    "obfuscated": "getProjectSid",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getRealProgress": {
+                    "obfuscated": "getRealProgress",
+                    "signature": "()I"
+                },
+                "getReminder": {
+                    "obfuscated": "getReminder",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getReminders": {
+                    "obfuscated": "getReminders",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getRepeatFirstDate": {
+                    "obfuscated": "getRepeatFirstDate",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getRepeatFlag": {
+                    "obfuscated": "getRepeatFlag",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getRepeatFrom": {
+                    "obfuscated": "getRepeatFrom",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getRepeatReminderTime": {
+                    "obfuscated": "getRepeatReminderTime",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getRepeatTaskId": {
+                    "obfuscated": "getRepeatTaskId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getSearchComment": {
+                    "obfuscated": "getSearchComment",
+                    "signature": "()Lcom/ticktick/task/data/Comment;"
+                },
+                "getSearchCommentId": {
+                    "obfuscated": "getSearchCommentId",
+                    "signature": "()J"
+                },
+                "getServerDueDate": {
+                    "obfuscated": "getServerDueDate",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getServerStartDate": {
+                    "obfuscated": "getServerStartDate",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getSid": {
+                    "obfuscated": "getSid",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getSnoozeRemindTime": {
+                    "obfuscated": "getSnoozeRemindTime",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getSortOrder": {
+                    "obfuscated": "getSortOrder",
+                    "signature": "()Ljava/lang/Long;"
+                },
+                "getStartDate": {
+                    "obfuscated": "getStartDate",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getStatus": {
+                    "obfuscated": "getStatus",
+                    "signature": "()I"
+                },
+                "getTags": {
+                    "obfuscated": "getTags",
+                    "signature": "()Ljava/util/Set;"
+                },
+                "getTaskStatus": {
+                    "obfuscated": "getTaskStatus",
+                    "signature": "()I"
+                },
+                "getTaskType": {
+                    "obfuscated": "getTaskType",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getTimeZone": {
+                    "obfuscated": "getTimeZone",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getTitle": {
+                    "obfuscated": "getTitle",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getUserCount": {
+                    "obfuscated": "getUserCount",
+                    "signature": "()I"
+                },
+                "getUserId": {
+                    "obfuscated": "getUserId",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getValidAttachments": {
+                    "obfuscated": "getValidAttachments",
+                    "signature": "()Ljava/util/List;"
+                },
+                "getValidReminders": {
+                    "obfuscated": "getValidReminders",
+                    "signature": "()Ljava/util/List;"
+                },
+                "hasAssignee": {
+                    "obfuscated": "hasAssignee",
+                    "signature": "()Z"
+                },
+                "hasAttachment": {
+                    "obfuscated": "hasAttachment",
+                    "signature": "()Z"
+                },
+                "hasLocation": {
+                    "obfuscated": "hasLocation",
+                    "signature": "()Z"
+                },
+                "hasReminder": {
+                    "obfuscated": "hasReminder",
+                    "signature": "()Z"
+                },
+                "hasSynced": {
+                    "obfuscated": "hasSynced",
+                    "signature": "()Z"
+                },
+                "hasValidAttachment": {
+                    "obfuscated": "hasValidAttachment",
+                    "signature": "()Z"
+                },
+                "isAbandoned": {
+                    "obfuscated": "isAbandoned",
+                    "signature": "()Z"
+                },
+                "isAllDay": {
+                    "obfuscated": "isAllDay",
+                    "signature": "()Z"
+                },
+                "isChecklistMode": {
+                    "obfuscated": "isChecklistMode",
+                    "signature": "()Z"
+                },
+                "isClosed": {
+                    "obfuscated": "isClosed",
+                    "signature": "()Z"
+                },
+                "isCompleted": {
+                    "obfuscated": "isCompleted",
+                    "signature": "()Z"
+                },
+                "isCurrentTaskHasRecognized": {
+                    "obfuscated": "isCurrentTaskHasRecognized",
+                    "signature": "()Z"
+                },
+                "isDeleted": {
+                    "obfuscated": "isDeleted",
+                    "signature": "()Z"
+                },
+                "isDeletedForever": {
+                    "obfuscated": "isDeletedForever",
+                    "signature": "()Z"
+                },
+                "isLocalUnpinned": {
+                    "obfuscated": "isLocalUnpinned",
+                    "signature": "()Z"
+                },
+                "isMove2Trash": {
+                    "obfuscated": "isMove2Trash",
+                    "signature": "()Z"
+                },
+                "isNewCreateTask": {
+                    "obfuscated": "isNewCreateTask",
+                    "signature": "()Z"
+                },
+                "isNoteTask": {
+                    "obfuscated": "isNoteTask",
+                    "signature": "()Z"
+                },
+                "isOriginImageMode": {
+                    "obfuscated": "isOriginImageMode",
+                    "signature": "()Z"
+                },
+                "isPinned": {
+                    "obfuscated": "isPinned",
+                    "signature": "()Z"
+                },
+                "isPresetTask": {
+                    "obfuscated": "isPresetTask",
+                    "signature": "()Z"
+                },
+                "isRepeatByCountTask": {
+                    "obfuscated": "isRepeatByCountTask",
+                    "signature": "()Z"
+                },
+                "isRepeatTask": {
+                    "obfuscated": "isRepeatTask",
+                    "signature": "()Z"
+                },
+                "isUnCompleted": {
+                    "obfuscated": "isUnCompleted",
+                    "signature": "()Z"
+                },
+                "setAbandoned": {
+                    "obfuscated": "setAbandoned",
+                    "signature": "(Z)V"
+                },
+                "setAnnoyingAlert": {
+                    "obfuscated": "setAnnoyingAlert",
+                    "signature": "(Ljava/lang/Integer;)V"
+                },
+                "setAssignee": {
+                    "obfuscated": "setAssignee",
+                    "signature": "(J)V"
+                },
+                "setAssigneeName": {
+                    "obfuscated": "setAssigneeName",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setAttendId": {
+                    "obfuscated": "setAttendId",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setChecklistItems": {
+                    "obfuscated": "setChecklistItems",
+                    "signature": "(Ljava/util/List;)V"
+                },
+                "setChildIds": {
+                    "obfuscated": "setChildIds",
+                    "signature": "(Ljava/util/List;)V"
+                },
+                "setCollapsed": {
+                    "obfuscated": "setCollapsed",
+                    "signature": "(Z)V"
+                },
+                "setColumn": {
+                    "obfuscated": "setColumn",
+                    "signature": "(Lcom/ticktick/task/data/Column;)V"
+                },
+                "setColumnId": {
+                    "obfuscated": "setColumnId",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setColumnUid": {
+                    "obfuscated": "setColumnUid",
+                    "signature": "(Ljava/lang/Long;)V"
+                },
+                "setCompleted": {
+                    "obfuscated": "setCompleted",
+                    "signature": "(Z)V"
+                },
+                "setCompletedTime": {
+                    "obfuscated": "setCompletedTime",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setCompletedUserId": {
+                    "obfuscated": "setCompletedUserId",
+                    "signature": "(J)V"
+                },
+                "setContent": {
+                    "obfuscated": "setContent",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setContentByItemsInner": {
+                    "obfuscated": "setContentByItemsInner",
+                    "signature": "()V"
+                },
+                "setCreatedTime": {
+                    "obfuscated": "setCreatedTime",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setCreator": {
+                    "obfuscated": "setCreator",
+                    "signature": "(J)V"
+                },
+                "setCurrentTaskHasRecognized": {
+                    "obfuscated": "setCurrentTaskHasRecognized",
+                    "signature": "(Z)V"
+                },
+                "setDeleted": {
+                    "obfuscated": "setDeleted",
+                    "signature": "(Ljava/lang/Integer;)V"
+                },
+                "setDesc": {
+                    "obfuscated": "setDesc",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setDisplayLocation": {
+                    "obfuscated": "setDisplayLocation",
+                    "signature": "(Lcom/ticktick/task/data/Location;)V"
+                },
+                "setDueDate": {
+                    "obfuscated": "setDueDate",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setEtag": {
+                    "obfuscated": "setEtag",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setExDate": {
+                    "obfuscated": "setExDate",
+                    "signature": "(Ljava/util/Set;)V"
+                },
+                "setExtraData": {
+                    "obfuscated": "setExtraData",
+                    "signature": "(Lcom/ticktick/task/data/TaskExtraData;)V"
+                },
+                "setHasAttachment": {
+                    "obfuscated": "setHasAttachment",
+                    "signature": "(Z)V"
+                },
+                "setId": {
+                    "obfuscated": "setId",
+                    "signature": "(Ljava/lang/Long;)V"
+                },
+                "setImgMode": {
+                    "obfuscated": "setImgMode",
+                    "signature": "(Ljava/lang/Integer;)V"
+                },
+                "setIsAllDay": {
+                    "obfuscated": "setIsAllDay",
+                    "signature": "(Z)V"
+                },
+                "setIsFloating": {
+                    "obfuscated": "setIsFloating",
+                    "signature": "(Z)V"
+                },
+                "setKind": {
+                    "obfuscated": "setKind",
+                    "signature": "(Lcom/ticktick/task/constant/Constants$Kind;)V"
+                },
+                "setLocalUnpinned": {
+                    "obfuscated": "setLocalUnpinned",
+                    "signature": "(Z)V"
+                },
+                "setModifiedTime": {
+                    "obfuscated": "setModifiedTime",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setNotionBlock": {
+                    "obfuscated": "setNotionBlock",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setOriginalAttachments": {
+                    "obfuscated": "setOriginalAttachments",
+                    "signature": "(Ljava/util/List;)V"
+                },
+                "setParentSid": {
+                    "obfuscated": "setParentSid",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setPinnedTime": {
+                    "obfuscated": "setPinnedTime",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setPomodoroSummaries": {
+                    "obfuscated": "setPomodoroSummaries",
+                    "signature": "(Ljava/util/List;)V"
+                },
+                "setPriorContent": {
+                    "obfuscated": "setPriorContent",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setPriorTitle": {
+                    "obfuscated": "setPriorTitle",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setPriority": {
+                    "obfuscated": "setPriority",
+                    "signature": "(Ljava/lang/Integer;)V"
+                },
+                "setProgress": {
+                    "obfuscated": "setProgress",
+                    "signature": "(Ljava/lang/Integer;)V"
+                },
+                "setProject": {
+                    "obfuscated": "setProject",
+                    "signature": "(Lcom/ticktick/task/data/Project;)V"
+                },
+                "setProjectId": {
+                    "obfuscated": "setProjectId",
+                    "signature": "(Ljava/lang/Long;)V"
+                },
+                "setProjectSid": {
+                    "obfuscated": "setProjectSid",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setReminder": {
+                    "obfuscated": "setReminder",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setReminders": {
+                    "obfuscated": "setReminders",
+                    "signature": "(Ljava/util/List;)V"
+                },
+                "setRepeatFirstDate": {
+                    "obfuscated": "setRepeatFirstDate",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setRepeatFlag": {
+                    "obfuscated": "setRepeatFlag",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setRepeatFrom": {
+                    "obfuscated": "setRepeatFrom",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setRepeatReminderTime": {
+                    "obfuscated": "setRepeatReminderTime",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setRepeatTaskId": {
+                    "obfuscated": "setRepeatTaskId",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setSearchComment": {
+                    "obfuscated": "setSearchComment",
+                    "signature": "(Lcom/ticktick/task/data/Comment;)V"
+                },
+                "setServerDueDate": {
+                    "obfuscated": "setServerDueDate",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setServerStartDate": {
+                    "obfuscated": "setServerStartDate",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setSid": {
+                    "obfuscated": "setSid",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setSnoozeRemindTime": {
+                    "obfuscated": "setSnoozeRemindTime",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setSortOrder": {
+                    "obfuscated": "setSortOrder",
+                    "signature": "(Ljava/lang/Long;)V"
+                },
+                "setStartDate": {
+                    "obfuscated": "setStartDate",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setTagsInner": {
+                    "obfuscated": "setTagsInner",
+                    "signature": "()V"
+                },
+                "setTaskStatus": {
+                    "obfuscated": "setTaskStatus",
+                    "signature": "(I)V"
+                },
+                "setTaskType": {
+                    "obfuscated": "setTaskType",
+                    "signature": "(Ljava/lang/Integer;)V"
+                },
+                "setTimeZone": {
+                    "obfuscated": "setTimeZone",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setTitle": {
+                    "obfuscated": "setTitle",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setUserCount": {
+                    "obfuscated": "setUserCount",
+                    "signature": "(I)V"
+                },
+                "setUserId": {
+                    "obfuscated": "setUserId",
+                    "signature": "(Ljava/lang/String;)V"
+                }
+            }
         },
         "com.ticktick.task.data.User": {
             "obfuscated": "com.ticktick.task.data.User",
@@ -246,6 +1410,382 @@
                 "getUsername": {
                     "obfuscated": "getUsername",
                     "signature": "()Ljava/lang/String;"
+                },
+                "getAccountType": {
+                    "obfuscated": "getAccountType",
+                    "signature": "()I"
+                },
+                "getActiveTeamUser": {
+                    "obfuscated": "getActiveTeamUser",
+                    "signature": "()Z"
+                },
+                "getActivity": {
+                    "obfuscated": "getActivity",
+                    "signature": "()I"
+                },
+                "getAvatar": {
+                    "obfuscated": "getAvatar",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getCheckpoint": {
+                    "obfuscated": "getCheckpoint",
+                    "signature": "()J"
+                },
+                "getColumnCheckPoint": {
+                    "obfuscated": "getColumnCheckPoint",
+                    "signature": "()J"
+                },
+                "getCreatedTime": {
+                    "obfuscated": "getCreatedTime",
+                    "signature": "()J"
+                },
+                "getDeleted": {
+                    "obfuscated": "getDeleted",
+                    "signature": "()I"
+                },
+                "getDisabled": {
+                    "obfuscated": "getDisabled",
+                    "signature": "()I"
+                },
+                "getDisplayName": {
+                    "obfuscated": "getDisplayName",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getDomain": {
+                    "obfuscated": "getDomain",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getErrorType": {
+                    "obfuscated": "getErrorType",
+                    "signature": "()Ljava/lang/Integer;"
+                },
+                "getFilledPassword": {
+                    "obfuscated": "getFilledPassword",
+                    "signature": "()Z"
+                },
+                "getFreeUserType": {
+                    "obfuscated": "getFreeUserType",
+                    "signature": "()I"
+                },
+                "getGracePeriod": {
+                    "obfuscated": "getGracePeriod",
+                    "signature": "()Z"
+                },
+                "getIsDisabled": {
+                    "obfuscated": "getIsDisabled",
+                    "signature": "()I"
+                },
+                "getListBackupPoint": {
+                    "obfuscated": "getListBackupPoint",
+                    "signature": "()J"
+                },
+                "getModifiedTime": {
+                    "obfuscated": "getModifiedTime",
+                    "signature": "()J"
+                },
+                "getMosaicPhone": {
+                    "obfuscated": "getMosaicPhone",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getName": {
+                    "obfuscated": "getName",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getNeedSubscribe": {
+                    "obfuscated": "getNeedSubscribe",
+                    "signature": "()Z"
+                },
+                "getNickName": {
+                    "obfuscated": "getNickName",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getNoGraceDate": {
+                    "obfuscated": "getNoGraceDate",
+                    "signature": "()Ljava/util/Date;"
+                },
+                "getPassword": {
+                    "obfuscated": "getPassword",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getPhone": {
+                    "obfuscated": "getPhone",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getProEndTime": {
+                    "obfuscated": "getProEndTime",
+                    "signature": "()J"
+                },
+                "getProStartTime": {
+                    "obfuscated": "getProStartTime",
+                    "signature": "()J"
+                },
+                "getProTypeForFake": {
+                    "obfuscated": "getProTypeForFake",
+                    "signature": "()I"
+                },
+                "getRequestToken": {
+                    "obfuscated": "getRequestToken",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getSettingsBackupPoint": {
+                    "obfuscated": "getSettingsBackupPoint",
+                    "signature": "()J"
+                },
+                "getSubscribeFreq": {
+                    "obfuscated": "getSubscribeFreq",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getSubscribeType": {
+                    "obfuscated": "getSubscribeType",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getTaskBackupPoint": {
+                    "obfuscated": "getTaskBackupPoint",
+                    "signature": "()J"
+                },
+                "getTeamPro": {
+                    "obfuscated": "getTeamPro",
+                    "signature": "()Z"
+                },
+                "getTeamUser": {
+                    "obfuscated": "getTeamUser",
+                    "signature": "()Z"
+                },
+                "getUserCode": {
+                    "obfuscated": "getUserCode",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "getVerifyEmail": {
+                    "obfuscated": "getVerifyEmail",
+                    "signature": "()Z"
+                },
+                "getWake": {
+                    "obfuscated": "getWake",
+                    "signature": "()I"
+                },
+                "get_id": {
+                    "obfuscated": "get_id",
+                    "signature": "()Ljava/lang/String;"
+                },
+                "isActiveTeamUser": {
+                    "obfuscated": "isActiveTeamUser",
+                    "signature": "()Z"
+                },
+                "isActivity": {
+                    "obfuscated": "isActivity",
+                    "signature": "()Z"
+                },
+                "isBindEmailOrPhone": {
+                    "obfuscated": "isBindEmailOrPhone",
+                    "signature": "()Z"
+                },
+                "isDisabled": {
+                    "obfuscated": "isDisabled",
+                    "signature": "()Z"
+                },
+                "isDuplicateSubscribeError": {
+                    "obfuscated": "isDuplicateSubscribeError",
+                    "signature": "()Z"
+                },
+                "isEmailVerified": {
+                    "obfuscated": "isEmailVerified",
+                    "signature": "()Z"
+                },
+                "isFakeEmail": {
+                    "obfuscated": "isFakeEmail",
+                    "signature": "()Z"
+                },
+                "isFilledPassword": {
+                    "obfuscated": "isFilledPassword",
+                    "signature": "()Z"
+                },
+                "isLocalMode": {
+                    "obfuscated": "isLocalMode",
+                    "signature": "()Z"
+                },
+                "isNeedSubscribe": {
+                    "obfuscated": "isNeedSubscribe",
+                    "signature": "()Z"
+                },
+                "isSubscriptionRenewalFailed": {
+                    "obfuscated": "isSubscriptionRenewalFailed",
+                    "signature": "()Z"
+                },
+                "isTeamUser": {
+                    "obfuscated": "isTeamUser",
+                    "signature": "()Z"
+                },
+                "isTencentAccount": {
+                    "obfuscated": "isTencentAccount",
+                    "signature": "()Z"
+                },
+                "isWeiXinAccount": {
+                    "obfuscated": "isWeiXinAccount",
+                    "signature": "()Z"
+                },
+                "isWeiboAccount": {
+                    "obfuscated": "isWeiboAccount",
+                    "signature": "()Z"
+                },
+                "setAccessToken": {
+                    "obfuscated": "setAccessToken",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setAccountType": {
+                    "obfuscated": "setAccountType",
+                    "signature": "(I)V"
+                },
+                "setActiveTeamUser": {
+                    "obfuscated": "setActiveTeamUser",
+                    "signature": "(Z)V"
+                },
+                "setActivity": {
+                    "obfuscated": "setActivity",
+                    "signature": "(I)V"
+                },
+                "setAvatar": {
+                    "obfuscated": "setAvatar",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setCheckpoint": {
+                    "obfuscated": "setCheckpoint",
+                    "signature": "(J)V"
+                },
+                "setColumnCheckPoint": {
+                    "obfuscated": "setColumnCheckPoint",
+                    "signature": "(J)V"
+                },
+                "setCreatedTime": {
+                    "obfuscated": "setCreatedTime",
+                    "signature": "(J)V"
+                },
+                "setDeleted": {
+                    "obfuscated": "setDeleted",
+                    "signature": "(I)V"
+                },
+                "setDisable": {
+                    "obfuscated": "setDisable",
+                    "signature": "(I)V"
+                },
+                "setDomain": {
+                    "obfuscated": "setDomain",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setErrorType": {
+                    "obfuscated": "setErrorType",
+                    "signature": "(Ljava/lang/Integer;)V"
+                },
+                "setFakeEmail": {
+                    "obfuscated": "setFakeEmail",
+                    "signature": "(Ljava/lang/Boolean;)V"
+                },
+                "setFilledPassword": {
+                    "obfuscated": "setFilledPassword",
+                    "signature": "(Z)V"
+                },
+                "setGracePeriod": {
+                    "obfuscated": "setGracePeriod",
+                    "signature": "(Z)V"
+                },
+                "setInboxId": {
+                    "obfuscated": "setInboxId",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setIsDisabled": {
+                    "obfuscated": "setIsDisabled",
+                    "signature": "(I)V"
+                },
+                "setListBackupPoint": {
+                    "obfuscated": "setListBackupPoint",
+                    "signature": "(J)V"
+                },
+                "setModifiedTime": {
+                    "obfuscated": "setModifiedTime",
+                    "signature": "(J)V"
+                },
+                "setName": {
+                    "obfuscated": "setName",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setNeedSubscribe": {
+                    "obfuscated": "setNeedSubscribe",
+                    "signature": "(Z)V"
+                },
+                "setNoGraceDate": {
+                    "obfuscated": "setNoGraceDate",
+                    "signature": "(Ljava/util/Date;)V"
+                },
+                "setPassword": {
+                    "obfuscated": "setPassword",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setPhone": {
+                    "obfuscated": "setPhone",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setProEndTime": {
+                    "obfuscated": "setProEndTime",
+                    "signature": "(J)V"
+                },
+                "setProStartTime": {
+                    "obfuscated": "setProStartTime",
+                    "signature": "(J)V"
+                },
+                "setProType": {
+                    "obfuscated": "setProType",
+                    "signature": "(I)V"
+                },
+                "setRequestToken": {
+                    "obfuscated": "setRequestToken",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setSettingsBackupPoint": {
+                    "obfuscated": "setSettingsBackupPoint",
+                    "signature": "(J)V"
+                },
+                "setSid": {
+                    "obfuscated": "setSid",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setSubscribeFreq": {
+                    "obfuscated": "setSubscribeFreq",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setSubscribeType": {
+                    "obfuscated": "setSubscribeType",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setTaskBackupPoint": {
+                    "obfuscated": "setTaskBackupPoint",
+                    "signature": "(J)V"
+                },
+                "setTeamPro": {
+                    "obfuscated": "setTeamPro",
+                    "signature": "(Z)V"
+                },
+                "setTeamUser": {
+                    "obfuscated": "setTeamUser",
+                    "signature": "(Z)V"
+                },
+                "setUserCode": {
+                    "obfuscated": "setUserCode",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setUsername": {
+                    "obfuscated": "setUsername",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "setVerifyEmail": {
+                    "obfuscated": "setVerifyEmail",
+                    "signature": "(Z)V"
+                },
+                "setWake": {
+                    "obfuscated": "setWake",
+                    "signature": "(I)V"
+                },
+                "set_id": {
+                    "obfuscated": "set_id",
+                    "signature": "(Ljava/lang/String;)V"
                 }
             }
         },

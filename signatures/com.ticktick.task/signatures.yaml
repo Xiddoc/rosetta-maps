@@ -456,6 +456,477 @@
             - signature: '\.method public getUsername\(\)Ljava/lang/String;'
               type: regex
               count: 1
+      # ── Remaining User accessors (decl-line anchored; see note above) ──
+      - name: 'getAccountType'
+        signatures:
+            - signature: '\.method [^\n]* getAccountType\(\)I'
+              type: regex
+              count: 1
+      - name: 'getActiveTeamUser'
+        signatures:
+            - signature: '\.method [^\n]* getActiveTeamUser\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getActivity'
+        signatures:
+            - signature: '\.method [^\n]* getActivity\(\)I'
+              type: regex
+              count: 1
+      - name: 'getAvatar'
+        signatures:
+            - signature: '\.method [^\n]* getAvatar\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getCheckpoint'
+        signatures:
+            - signature: '\.method [^\n]* getCheckpoint\(\)J'
+              type: regex
+              count: 1
+      - name: 'getColumnCheckPoint'
+        signatures:
+            - signature: '\.method [^\n]* getColumnCheckPoint\(\)J'
+              type: regex
+              count: 1
+      - name: 'getCreatedTime'
+        signatures:
+            - signature: '\.method [^\n]* getCreatedTime\(\)J'
+              type: regex
+              count: 1
+      - name: 'getDeleted'
+        signatures:
+            - signature: '\.method [^\n]* getDeleted\(\)I'
+              type: regex
+              count: 1
+      - name: 'getDisabled'
+        signatures:
+            - signature: '\.method [^\n]* getDisabled\(\)I'
+              type: regex
+              count: 1
+      - name: 'getDisplayName'
+        signatures:
+            - signature: '\.method [^\n]* getDisplayName\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getDomain'
+        signatures:
+            - signature: '\.method [^\n]* getDomain\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getErrorType'
+        signatures:
+            - signature: '\.method [^\n]* getErrorType\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getFilledPassword'
+        signatures:
+            - signature: '\.method [^\n]* getFilledPassword\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getFreeUserType'
+        signatures:
+            - signature: '\.method [^\n]* getFreeUserType\(\)I'
+              type: regex
+              count: 1
+      - name: 'getGracePeriod'
+        signatures:
+            - signature: '\.method [^\n]* getGracePeriod\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getIsDisabled'
+        signatures:
+            - signature: '\.method [^\n]* getIsDisabled\(\)I'
+              type: regex
+              count: 1
+      - name: 'getListBackupPoint'
+        signatures:
+            - signature: '\.method [^\n]* getListBackupPoint\(\)J'
+              type: regex
+              count: 1
+      - name: 'getModifiedTime'
+        signatures:
+            - signature: '\.method [^\n]* getModifiedTime\(\)J'
+              type: regex
+              count: 1
+      - name: 'getMosaicPhone'
+        signatures:
+            - signature: '\.method [^\n]* getMosaicPhone\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getName'
+        signatures:
+            - signature: '\.method [^\n]* getName\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getNeedSubscribe'
+        signatures:
+            - signature: '\.method [^\n]* getNeedSubscribe\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getNickName'
+        signatures:
+            - signature: '\.method [^\n]* getNickName\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getNoGraceDate'
+        signatures:
+            - signature: '\.method [^\n]* getNoGraceDate\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getPassword'
+        signatures:
+            - signature: '\.method [^\n]* getPassword\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getPhone'
+        signatures:
+            - signature: '\.method [^\n]* getPhone\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getProEndTime'
+        signatures:
+            - signature: '\.method [^\n]* getProEndTime\(\)J'
+              type: regex
+              count: 1
+      - name: 'getProStartTime'
+        signatures:
+            - signature: '\.method [^\n]* getProStartTime\(\)J'
+              type: regex
+              count: 1
+      - name: 'getProTypeForFake'
+        signatures:
+            - signature: '\.method [^\n]* getProTypeForFake\(\)I'
+              type: regex
+              count: 1
+      - name: 'getRequestToken'
+        signatures:
+            - signature: '\.method [^\n]* getRequestToken\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getSettingsBackupPoint'
+        signatures:
+            - signature: '\.method [^\n]* getSettingsBackupPoint\(\)J'
+              type: regex
+              count: 1
+      - name: 'getSubscribeFreq'
+        signatures:
+            - signature: '\.method [^\n]* getSubscribeFreq\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getSubscribeType'
+        signatures:
+            - signature: '\.method [^\n]* getSubscribeType\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getTaskBackupPoint'
+        signatures:
+            - signature: '\.method [^\n]* getTaskBackupPoint\(\)J'
+              type: regex
+              count: 1
+      - name: 'getTeamPro'
+        signatures:
+            - signature: '\.method [^\n]* getTeamPro\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getTeamUser'
+        signatures:
+            - signature: '\.method [^\n]* getTeamUser\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getUserCode'
+        signatures:
+            - signature: '\.method [^\n]* getUserCode\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getVerifyEmail'
+        signatures:
+            - signature: '\.method [^\n]* getVerifyEmail\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getWake'
+        signatures:
+            - signature: '\.method [^\n]* getWake\(\)I'
+              type: regex
+              count: 1
+      - name: 'get_id'
+        signatures:
+            - signature: '\.method [^\n]* get_id\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'isActiveTeamUser'
+        signatures:
+            - signature: '\.method [^\n]* isActiveTeamUser\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isActivity'
+        signatures:
+            - signature: '\.method [^\n]* isActivity\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isBindEmailOrPhone'
+        signatures:
+            - signature: '\.method [^\n]* isBindEmailOrPhone\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isDisabled'
+        signatures:
+            - signature: '\.method [^\n]* isDisabled\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isDuplicateSubscribeError'
+        signatures:
+            - signature: '\.method [^\n]* isDuplicateSubscribeError\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isEmailVerified'
+        signatures:
+            - signature: '\.method [^\n]* isEmailVerified\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isFakeEmail'
+        signatures:
+            - signature: '\.method [^\n]* isFakeEmail\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isFilledPassword'
+        signatures:
+            - signature: '\.method [^\n]* isFilledPassword\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isLocalMode'
+        signatures:
+            - signature: '\.method [^\n]* isLocalMode\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isNeedSubscribe'
+        signatures:
+            - signature: '\.method [^\n]* isNeedSubscribe\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isSubscriptionRenewalFailed'
+        signatures:
+            - signature: '\.method [^\n]* isSubscriptionRenewalFailed\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isTeamUser'
+        signatures:
+            - signature: '\.method [^\n]* isTeamUser\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isTencentAccount'
+        signatures:
+            - signature: '\.method [^\n]* isTencentAccount\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isWeiXinAccount'
+        signatures:
+            - signature: '\.method [^\n]* isWeiXinAccount\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isWeiboAccount'
+        signatures:
+            - signature: '\.method [^\n]* isWeiboAccount\(\)Z'
+              type: regex
+              count: 1
+      - name: 'setAccessToken'
+        signatures:
+            - signature: '\.method [^\n]* setAccessToken\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setAccountType'
+        signatures:
+            - signature: '\.method [^\n]* setAccountType\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setActiveTeamUser'
+        signatures:
+            - signature: '\.method [^\n]* setActiveTeamUser\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setActivity'
+        signatures:
+            - signature: '\.method [^\n]* setActivity\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setAvatar'
+        signatures:
+            - signature: '\.method [^\n]* setAvatar\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setCheckpoint'
+        signatures:
+            - signature: '\.method [^\n]* setCheckpoint\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setColumnCheckPoint'
+        signatures:
+            - signature: '\.method [^\n]* setColumnCheckPoint\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setCreatedTime'
+        signatures:
+            - signature: '\.method [^\n]* setCreatedTime\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setDeleted'
+        signatures:
+            - signature: '\.method [^\n]* setDeleted\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setDisable'
+        signatures:
+            - signature: '\.method [^\n]* setDisable\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setDomain'
+        signatures:
+            - signature: '\.method [^\n]* setDomain\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setErrorType'
+        signatures:
+            - signature: '\.method [^\n]* setErrorType\(Ljava/lang/Integer;\)V'
+              type: regex
+              count: 1
+      - name: 'setFakeEmail'
+        signatures:
+            - signature: '\.method [^\n]* setFakeEmail\(Ljava/lang/Boolean;\)V'
+              type: regex
+              count: 1
+      - name: 'setFilledPassword'
+        signatures:
+            - signature: '\.method [^\n]* setFilledPassword\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setGracePeriod'
+        signatures:
+            - signature: '\.method [^\n]* setGracePeriod\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setInboxId'
+        signatures:
+            - signature: '\.method [^\n]* setInboxId\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setIsDisabled'
+        signatures:
+            - signature: '\.method [^\n]* setIsDisabled\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setListBackupPoint'
+        signatures:
+            - signature: '\.method [^\n]* setListBackupPoint\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setModifiedTime'
+        signatures:
+            - signature: '\.method [^\n]* setModifiedTime\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setName'
+        signatures:
+            - signature: '\.method [^\n]* setName\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setNeedSubscribe'
+        signatures:
+            - signature: '\.method [^\n]* setNeedSubscribe\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setNoGraceDate'
+        signatures:
+            - signature: '\.method [^\n]* setNoGraceDate\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setPassword'
+        signatures:
+            - signature: '\.method [^\n]* setPassword\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setPhone'
+        signatures:
+            - signature: '\.method [^\n]* setPhone\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setProEndTime'
+        signatures:
+            - signature: '\.method [^\n]* setProEndTime\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setProStartTime'
+        signatures:
+            - signature: '\.method [^\n]* setProStartTime\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setProType'
+        signatures:
+            - signature: '\.method [^\n]* setProType\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setRequestToken'
+        signatures:
+            - signature: '\.method [^\n]* setRequestToken\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setSettingsBackupPoint'
+        signatures:
+            - signature: '\.method [^\n]* setSettingsBackupPoint\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setSid'
+        signatures:
+            - signature: '\.method [^\n]* setSid\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setSubscribeFreq'
+        signatures:
+            - signature: '\.method [^\n]* setSubscribeFreq\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setSubscribeType'
+        signatures:
+            - signature: '\.method [^\n]* setSubscribeType\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setTaskBackupPoint'
+        signatures:
+            - signature: '\.method [^\n]* setTaskBackupPoint\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setTeamPro'
+        signatures:
+            - signature: '\.method [^\n]* setTeamPro\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setTeamUser'
+        signatures:
+            - signature: '\.method [^\n]* setTeamUser\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setUserCode'
+        signatures:
+            - signature: '\.method [^\n]* setUserCode\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setUsername'
+        signatures:
+            - signature: '\.method [^\n]* setUsername\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setVerifyEmail'
+        signatures:
+            - signature: '\.method [^\n]* setVerifyEmail\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setWake'
+        signatures:
+            - signature: '\.method [^\n]* setWake\(I\)V'
+              type: regex
+              count: 1
+      - name: 'set_id'
+        signatures:
+            - signature: '\.method [^\n]* set_id\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
 
 # User settings entity (local).
 - name: 'UserProfile'
@@ -735,6 +1206,873 @@
       - signature: '"Task2\.java"'
         type: regex
         count: 1
+  methods:
+      # Accessors (get*/set*/is*) anchored on the .method DECLARATION line — the
+      # name + descriptor IS the identity. Stable for the kept com.ticktick.task.*
+      # carve-out (names don't rotate); the leading `\.method` excludes call
+      # sites. Auto-derived from 8100, each verified to resolve count==1.
+      # Overloaded-name setters (e.g. setStatus) are omitted (sigmatcher keys a
+      # method definition by name, so same-name overloads can't coexist).
+      - name: 'getAnnoyingAlert'
+        signatures:
+            - signature: '\.method [^\n]* getAnnoyingAlert\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getAssignee'
+        signatures:
+            - signature: '\.method [^\n]* getAssignee\(\)J'
+              type: regex
+              count: 1
+      - name: 'getAssigneeName'
+        signatures:
+            - signature: '\.method [^\n]* getAssigneeName\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getAttachments'
+        signatures:
+            - signature: '\.method [^\n]* getAttachments\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getAttendId'
+        signatures:
+            - signature: '\.method [^\n]* getAttendId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getChecklistItems'
+        signatures:
+            - signature: '\.method [^\n]* getChecklistItems\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getChildCount'
+        signatures:
+            - signature: '\.method [^\n]* getChildCount\(\)I'
+              type: regex
+              count: 1
+      - name: 'getChildIds'
+        signatures:
+            - signature: '\.method [^\n]* getChildIds\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getCollapsed'
+        signatures:
+            - signature: '\.method [^\n]* getCollapsed\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getColumn'
+        signatures:
+            - signature: '\.method [^\n]* getColumn\(\)Lcom/ticktick/task/data/Column;'
+              type: regex
+              count: 1
+      - name: 'getColumnId'
+        signatures:
+            - signature: '\.method [^\n]* getColumnId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getColumnUid'
+        signatures:
+            - signature: '\.method [^\n]* getColumnUid\(\)Ljava/lang/Long;'
+              type: regex
+              count: 1
+      - name: 'getCommentCount'
+        signatures:
+            - signature: '\.method [^\n]* getCommentCount\(\)I'
+              type: regex
+              count: 1
+      - name: 'getCompletedTime'
+        signatures:
+            - signature: '\.method [^\n]* getCompletedTime\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getCompletedTimeNotNull'
+        signatures:
+            - signature: '\.method [^\n]* getCompletedTimeNotNull\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getCompletedUserId'
+        signatures:
+            - signature: '\.method [^\n]* getCompletedUserId\(\)J'
+              type: regex
+              count: 1
+      - name: 'getCompositeContent'
+        signatures:
+            - signature: '\.method [^\n]* getCompositeContent\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getContent'
+        signatures:
+            - signature: '\.method [^\n]* getContent\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getCreatedTime'
+        signatures:
+            - signature: '\.method [^\n]* getCreatedTime\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getCreator'
+        signatures:
+            - signature: '\.method [^\n]* getCreator\(\)J'
+              type: regex
+              count: 1
+      - name: 'getCurrentTaskHasRecognized'
+        signatures:
+            - signature: '\.method [^\n]* getCurrentTaskHasRecognized\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getDeleted'
+        signatures:
+            - signature: '\.method [^\n]* getDeleted\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getDesc'
+        signatures:
+            - signature: '\.method [^\n]* getDesc\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getDisplayLocation'
+        signatures:
+            - signature: '\.method [^\n]* getDisplayLocation\(\)Lcom/ticktick/task/data/Location;'
+              type: regex
+              count: 1
+      - name: 'getDueDate'
+        signatures:
+            - signature: '\.method [^\n]* getDueDate\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getEtag'
+        signatures:
+            - signature: '\.method [^\n]* getEtag\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getExDate'
+        signatures:
+            - signature: '\.method [^\n]* getExDate\(\)Ljava/util/Set;'
+              type: regex
+              count: 1
+      - name: 'getExDateValues'
+        signatures:
+            - signature: '\.method [^\n]* getExDateValues\(\)Ljava/util/Set;'
+              type: regex
+              count: 1
+      - name: 'getExtraData'
+        signatures:
+            - signature: '\.method [^\n]* getExtraData\(\)Lcom/ticktick/task/data/TaskExtraData;'
+              type: regex
+              count: 1
+      - name: 'getFixedDate'
+        signatures:
+            - signature: '\.method [^\n]* getFixedDate\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getGlobalAnnoyingEnable'
+        signatures:
+            - signature: '\.method [^\n]* getGlobalAnnoyingEnable\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getHasAttachment'
+        signatures:
+            - signature: '\.method [^\n]* getHasAttachment\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getId'
+        signatures:
+            - signature: '\.method [^\n]* getId\(\)Ljava/lang/Long;'
+              type: regex
+              count: 1
+      - name: 'getImgMode'
+        signatures:
+            - signature: '\.method [^\n]* getImgMode\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getIsAllDay'
+        signatures:
+            - signature: '\.method [^\n]* getIsAllDay\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getIsFloating'
+        signatures:
+            - signature: '\.method [^\n]* getIsFloating\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getKind'
+        signatures:
+            - signature: '\.method [^\n]* getKind\(\)Lcom/ticktick/task/constant/Constants\$Kind;'
+              type: regex
+              count: 1
+      - name: 'getLocalUnpinned'
+        signatures:
+            - signature: '\.method [^\n]* getLocalUnpinned\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getLocation'
+        signatures:
+            - signature: '\.method [^\n]* getLocation\(\)Lcom/ticktick/task/data/Location;'
+              type: regex
+              count: 1
+      - name: 'getLocationList'
+        signatures:
+            - signature: '\.method [^\n]* getLocationList\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getModifiedTime'
+        signatures:
+            - signature: '\.method [^\n]* getModifiedTime\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getNotionBlock'
+        signatures:
+            - signature: '\.method [^\n]* getNotionBlock\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getOriginalAttachments'
+        signatures:
+            - signature: '\.method [^\n]* getOriginalAttachments\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getOriginalDueDate'
+        signatures:
+            - signature: '\.method [^\n]* getOriginalDueDate\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getParentSid'
+        signatures:
+            - signature: '\.method [^\n]* getParentSid\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getPinnedTime'
+        signatures:
+            - signature: '\.method [^\n]* getPinnedTime\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getPomodoroSummaries'
+        signatures:
+            - signature: '\.method [^\n]* getPomodoroSummaries\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getPriorContent'
+        signatures:
+            - signature: '\.method [^\n]* getPriorContent\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getPriorTitle'
+        signatures:
+            - signature: '\.method [^\n]* getPriorTitle\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getPriority'
+        signatures:
+            - signature: '\.method [^\n]* getPriority\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getProgress'
+        signatures:
+            - signature: '\.method [^\n]* getProgress\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getProgressInt'
+        signatures:
+            - signature: '\.method [^\n]* getProgressInt\(\)I'
+              type: regex
+              count: 1
+      - name: 'getProject'
+        signatures:
+            - signature: '\.method [^\n]* getProject\(\)Lcom/ticktick/task/data/Project;'
+              type: regex
+              count: 1
+      - name: 'getProjectId'
+        signatures:
+            - signature: '\.method [^\n]* getProjectId\(\)Ljava/lang/Long;'
+              type: regex
+              count: 1
+      - name: 'getProjectSid'
+        signatures:
+            - signature: '\.method [^\n]* getProjectSid\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getRealProgress'
+        signatures:
+            - signature: '\.method [^\n]* getRealProgress\(\)I'
+              type: regex
+              count: 1
+      - name: 'getReminder'
+        signatures:
+            - signature: '\.method [^\n]* getReminder\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getReminders'
+        signatures:
+            - signature: '\.method [^\n]* getReminders\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getRepeatFirstDate'
+        signatures:
+            - signature: '\.method [^\n]* getRepeatFirstDate\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getRepeatFlag'
+        signatures:
+            - signature: '\.method [^\n]* getRepeatFlag\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getRepeatFrom'
+        signatures:
+            - signature: '\.method [^\n]* getRepeatFrom\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getRepeatReminderTime'
+        signatures:
+            - signature: '\.method [^\n]* getRepeatReminderTime\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getRepeatTaskId'
+        signatures:
+            - signature: '\.method [^\n]* getRepeatTaskId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getSearchComment'
+        signatures:
+            - signature: '\.method [^\n]* getSearchComment\(\)Lcom/ticktick/task/data/Comment;'
+              type: regex
+              count: 1
+      - name: 'getSearchCommentId'
+        signatures:
+            - signature: '\.method [^\n]* getSearchCommentId\(\)J'
+              type: regex
+              count: 1
+      - name: 'getServerDueDate'
+        signatures:
+            - signature: '\.method [^\n]* getServerDueDate\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getServerStartDate'
+        signatures:
+            - signature: '\.method [^\n]* getServerStartDate\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getSid'
+        signatures:
+            - signature: '\.method [^\n]* getSid\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getSnoozeRemindTime'
+        signatures:
+            - signature: '\.method [^\n]* getSnoozeRemindTime\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getSortOrder'
+        signatures:
+            - signature: '\.method [^\n]* getSortOrder\(\)Ljava/lang/Long;'
+              type: regex
+              count: 1
+      - name: 'getStartDate'
+        signatures:
+            - signature: '\.method [^\n]* getStartDate\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getStatus'
+        signatures:
+            - signature: '\.method [^\n]* getStatus\(\)I'
+              type: regex
+              count: 1
+      - name: 'getTags'
+        signatures:
+            - signature: '\.method [^\n]* getTags\(\)Ljava/util/Set;'
+              type: regex
+              count: 1
+      - name: 'getTaskStatus'
+        signatures:
+            - signature: '\.method [^\n]* getTaskStatus\(\)I'
+              type: regex
+              count: 1
+      - name: 'getTaskType'
+        signatures:
+            - signature: '\.method [^\n]* getTaskType\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getTimeZone'
+        signatures:
+            - signature: '\.method [^\n]* getTimeZone\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getTitle'
+        signatures:
+            - signature: '\.method [^\n]* getTitle\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getUserCount'
+        signatures:
+            - signature: '\.method [^\n]* getUserCount\(\)I'
+              type: regex
+              count: 1
+      - name: 'getUserId'
+        signatures:
+            - signature: '\.method [^\n]* getUserId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getValidAttachments'
+        signatures:
+            - signature: '\.method [^\n]* getValidAttachments\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getValidReminders'
+        signatures:
+            - signature: '\.method [^\n]* getValidReminders\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'hasAssignee'
+        signatures:
+            - signature: '\.method [^\n]* hasAssignee\(\)Z'
+              type: regex
+              count: 1
+      - name: 'hasAttachment'
+        signatures:
+            - signature: '\.method [^\n]* hasAttachment\(\)Z'
+              type: regex
+              count: 1
+      - name: 'hasLocation'
+        signatures:
+            - signature: '\.method [^\n]* hasLocation\(\)Z'
+              type: regex
+              count: 1
+      - name: 'hasReminder'
+        signatures:
+            - signature: '\.method [^\n]* hasReminder\(\)Z'
+              type: regex
+              count: 1
+      - name: 'hasSynced'
+        signatures:
+            - signature: '\.method [^\n]* hasSynced\(\)Z'
+              type: regex
+              count: 1
+      - name: 'hasValidAttachment'
+        signatures:
+            - signature: '\.method [^\n]* hasValidAttachment\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isAbandoned'
+        signatures:
+            - signature: '\.method [^\n]* isAbandoned\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isAllDay'
+        signatures:
+            - signature: '\.method [^\n]* isAllDay\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isChecklistMode'
+        signatures:
+            - signature: '\.method [^\n]* isChecklistMode\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isClosed'
+        signatures:
+            - signature: '\.method [^\n]* isClosed\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isCompleted'
+        signatures:
+            - signature: '\.method [^\n]* isCompleted\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isCurrentTaskHasRecognized'
+        signatures:
+            - signature: '\.method [^\n]* isCurrentTaskHasRecognized\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isDeleted'
+        signatures:
+            - signature: '\.method [^\n]* isDeleted\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isDeletedForever'
+        signatures:
+            - signature: '\.method [^\n]* isDeletedForever\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isLocalUnpinned'
+        signatures:
+            - signature: '\.method [^\n]* isLocalUnpinned\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isMove2Trash'
+        signatures:
+            - signature: '\.method [^\n]* isMove2Trash\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isNewCreateTask'
+        signatures:
+            - signature: '\.method [^\n]* isNewCreateTask\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isNoteTask'
+        signatures:
+            - signature: '\.method [^\n]* isNoteTask\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isOriginImageMode'
+        signatures:
+            - signature: '\.method [^\n]* isOriginImageMode\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isPinned'
+        signatures:
+            - signature: '\.method [^\n]* isPinned\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isPresetTask'
+        signatures:
+            - signature: '\.method [^\n]* isPresetTask\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isRepeatByCountTask'
+        signatures:
+            - signature: '\.method [^\n]* isRepeatByCountTask\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isRepeatTask'
+        signatures:
+            - signature: '\.method [^\n]* isRepeatTask\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isUnCompleted'
+        signatures:
+            - signature: '\.method [^\n]* isUnCompleted\(\)Z'
+              type: regex
+              count: 1
+      - name: 'setAbandoned'
+        signatures:
+            - signature: '\.method [^\n]* setAbandoned\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setAnnoyingAlert'
+        signatures:
+            - signature: '\.method [^\n]* setAnnoyingAlert\(Ljava/lang/Integer;\)V'
+              type: regex
+              count: 1
+      - name: 'setAssignee'
+        signatures:
+            - signature: '\.method [^\n]* setAssignee\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setAssigneeName'
+        signatures:
+            - signature: '\.method [^\n]* setAssigneeName\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setAttendId'
+        signatures:
+            - signature: '\.method [^\n]* setAttendId\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setChecklistItems'
+        signatures:
+            - signature: '\.method [^\n]* setChecklistItems\(Ljava/util/List;\)V'
+              type: regex
+              count: 1
+      - name: 'setChildIds'
+        signatures:
+            - signature: '\.method [^\n]* setChildIds\(Ljava/util/List;\)V'
+              type: regex
+              count: 1
+      - name: 'setCollapsed'
+        signatures:
+            - signature: '\.method [^\n]* setCollapsed\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setColumn'
+        signatures:
+            - signature: '\.method [^\n]* setColumn\(Lcom/ticktick/task/data/Column;\)V'
+              type: regex
+              count: 1
+      - name: 'setColumnId'
+        signatures:
+            - signature: '\.method [^\n]* setColumnId\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setColumnUid'
+        signatures:
+            - signature: '\.method [^\n]* setColumnUid\(Ljava/lang/Long;\)V'
+              type: regex
+              count: 1
+      - name: 'setCompleted'
+        signatures:
+            - signature: '\.method [^\n]* setCompleted\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setCompletedTime'
+        signatures:
+            - signature: '\.method [^\n]* setCompletedTime\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setCompletedUserId'
+        signatures:
+            - signature: '\.method [^\n]* setCompletedUserId\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setContent'
+        signatures:
+            - signature: '\.method [^\n]* setContent\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setContentByItemsInner'
+        signatures:
+            - signature: '\.method [^\n]* setContentByItemsInner\(\)V'
+              type: regex
+              count: 1
+      - name: 'setCreatedTime'
+        signatures:
+            - signature: '\.method [^\n]* setCreatedTime\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setCreator'
+        signatures:
+            - signature: '\.method [^\n]* setCreator\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setCurrentTaskHasRecognized'
+        signatures:
+            - signature: '\.method [^\n]* setCurrentTaskHasRecognized\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setDeleted'
+        signatures:
+            - signature: '\.method [^\n]* setDeleted\(Ljava/lang/Integer;\)V'
+              type: regex
+              count: 1
+      - name: 'setDesc'
+        signatures:
+            - signature: '\.method [^\n]* setDesc\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setDisplayLocation'
+        signatures:
+            - signature: '\.method [^\n]* setDisplayLocation\(Lcom/ticktick/task/data/Location;\)V'
+              type: regex
+              count: 1
+      - name: 'setDueDate'
+        signatures:
+            - signature: '\.method [^\n]* setDueDate\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setEtag'
+        signatures:
+            - signature: '\.method [^\n]* setEtag\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setExDate'
+        signatures:
+            - signature: '\.method [^\n]* setExDate\(Ljava/util/Set;\)V'
+              type: regex
+              count: 1
+      - name: 'setExtraData'
+        signatures:
+            - signature: '\.method [^\n]* setExtraData\(Lcom/ticktick/task/data/TaskExtraData;\)V'
+              type: regex
+              count: 1
+      - name: 'setHasAttachment'
+        signatures:
+            - signature: '\.method [^\n]* setHasAttachment\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setId'
+        signatures:
+            - signature: '\.method [^\n]* setId\(Ljava/lang/Long;\)V'
+              type: regex
+              count: 1
+      - name: 'setImgMode'
+        signatures:
+            - signature: '\.method [^\n]* setImgMode\(Ljava/lang/Integer;\)V'
+              type: regex
+              count: 1
+      - name: 'setIsAllDay'
+        signatures:
+            - signature: '\.method [^\n]* setIsAllDay\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setIsFloating'
+        signatures:
+            - signature: '\.method [^\n]* setIsFloating\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setKind'
+        signatures:
+            - signature: '\.method [^\n]* setKind\(Lcom/ticktick/task/constant/Constants\$Kind;\)V'
+              type: regex
+              count: 1
+      - name: 'setLocalUnpinned'
+        signatures:
+            - signature: '\.method [^\n]* setLocalUnpinned\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setModifiedTime'
+        signatures:
+            - signature: '\.method [^\n]* setModifiedTime\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setNotionBlock'
+        signatures:
+            - signature: '\.method [^\n]* setNotionBlock\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setOriginalAttachments'
+        signatures:
+            - signature: '\.method [^\n]* setOriginalAttachments\(Ljava/util/List;\)V'
+              type: regex
+              count: 1
+      - name: 'setParentSid'
+        signatures:
+            - signature: '\.method [^\n]* setParentSid\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setPinnedTime'
+        signatures:
+            - signature: '\.method [^\n]* setPinnedTime\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setPomodoroSummaries'
+        signatures:
+            - signature: '\.method [^\n]* setPomodoroSummaries\(Ljava/util/List;\)V'
+              type: regex
+              count: 1
+      - name: 'setPriorContent'
+        signatures:
+            - signature: '\.method [^\n]* setPriorContent\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setPriorTitle'
+        signatures:
+            - signature: '\.method [^\n]* setPriorTitle\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setPriority'
+        signatures:
+            - signature: '\.method [^\n]* setPriority\(Ljava/lang/Integer;\)V'
+              type: regex
+              count: 1
+      - name: 'setProgress'
+        signatures:
+            - signature: '\.method [^\n]* setProgress\(Ljava/lang/Integer;\)V'
+              type: regex
+              count: 1
+      - name: 'setProject'
+        signatures:
+            - signature: '\.method [^\n]* setProject\(Lcom/ticktick/task/data/Project;\)V'
+              type: regex
+              count: 1
+      - name: 'setProjectId'
+        signatures:
+            - signature: '\.method [^\n]* setProjectId\(Ljava/lang/Long;\)V'
+              type: regex
+              count: 1
+      - name: 'setProjectSid'
+        signatures:
+            - signature: '\.method [^\n]* setProjectSid\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setReminder'
+        signatures:
+            - signature: '\.method [^\n]* setReminder\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setReminders'
+        signatures:
+            - signature: '\.method [^\n]* setReminders\(Ljava/util/List;\)V'
+              type: regex
+              count: 1
+      - name: 'setRepeatFirstDate'
+        signatures:
+            - signature: '\.method [^\n]* setRepeatFirstDate\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setRepeatFlag'
+        signatures:
+            - signature: '\.method [^\n]* setRepeatFlag\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setRepeatFrom'
+        signatures:
+            - signature: '\.method [^\n]* setRepeatFrom\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setRepeatReminderTime'
+        signatures:
+            - signature: '\.method [^\n]* setRepeatReminderTime\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setRepeatTaskId'
+        signatures:
+            - signature: '\.method [^\n]* setRepeatTaskId\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setSearchComment'
+        signatures:
+            - signature: '\.method [^\n]* setSearchComment\(Lcom/ticktick/task/data/Comment;\)V'
+              type: regex
+              count: 1
+      - name: 'setServerDueDate'
+        signatures:
+            - signature: '\.method [^\n]* setServerDueDate\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setServerStartDate'
+        signatures:
+            - signature: '\.method [^\n]* setServerStartDate\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setSid'
+        signatures:
+            - signature: '\.method [^\n]* setSid\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setSnoozeRemindTime'
+        signatures:
+            - signature: '\.method [^\n]* setSnoozeRemindTime\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setSortOrder'
+        signatures:
+            - signature: '\.method [^\n]* setSortOrder\(Ljava/lang/Long;\)V'
+              type: regex
+              count: 1
+      - name: 'setStartDate'
+        signatures:
+            - signature: '\.method [^\n]* setStartDate\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setTagsInner'
+        signatures:
+            - signature: '\.method [^\n]* setTagsInner\(\)V'
+              type: regex
+              count: 1
+      - name: 'setTaskStatus'
+        signatures:
+            - signature: '\.method [^\n]* setTaskStatus\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setTaskType'
+        signatures:
+            - signature: '\.method [^\n]* setTaskType\(Ljava/lang/Integer;\)V'
+              type: regex
+              count: 1
+      - name: 'setTimeZone'
+        signatures:
+            - signature: '\.method [^\n]* setTimeZone\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setTitle'
+        signatures:
+            - signature: '\.method [^\n]* setTitle\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setUserCount'
+        signatures:
+            - signature: '\.method [^\n]* setUserCount\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setUserId'
+        signatures:
+            - signature: '\.method [^\n]* setUserId\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
 
 # Project (list) entity.
 - name: 'Project'
@@ -743,6 +2081,603 @@
       - signature: '"Project\.java"'
         type: regex
         count: 1
+  methods:
+      # Accessors (get*/set*/is*) anchored on the .method DECLARATION line — the
+      # name + descriptor IS the identity. Stable for the kept com.ticktick.task.*
+      # carve-out (names don't rotate); the leading `\.method` excludes call
+      # sites. Auto-derived from 8100, each verified to resolve count==1.
+      # Overloaded-name setters (e.g. setStatus) are omitted (sigmatcher keys a
+      # method definition by name, so same-name overloads can't coexist).
+      - name: 'getBackground'
+        signatures:
+            - signature: '\.method [^\n]* getBackground\(\)Lcom/ticktick/task/data/ProjectBackground;'
+              type: regex
+              count: 1
+      - name: 'getBackgroundInfo'
+        signatures:
+            - signature: '\.method [^\n]* getBackgroundInfo\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getBarcodeNeedAudit'
+        signatures:
+            - signature: '\.method [^\n]* getBarcodeNeedAudit\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getClosed'
+        signatures:
+            - signature: '\.method [^\n]* getClosed\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getColor'
+        signatures:
+            - signature: '\.method [^\n]* getColor\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getColorInt'
+        signatures:
+            - signature: '\.method [^\n]* getColorInt\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getCount'
+        signatures:
+            - signature: '\.method [^\n]* getCount\(\)I'
+              type: regex
+              count: 1
+      - name: 'getCreatedTime'
+        signatures:
+            - signature: '\.method [^\n]* getCreatedTime\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getDefaultColumn'
+        signatures:
+            - signature: '\.method [^\n]* getDefaultColumn\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getDefaultOption'
+        signatures:
+            - signature: '\.method [^\n]* getDefaultOption\(\)Lcom/ticktick/task/sort/SortOption;'
+              type: regex
+              count: 1
+      - name: 'getDefaultProject'
+        signatures:
+            - signature: '\.method [^\n]* getDefaultProject\(\)I'
+              type: regex
+              count: 1
+      - name: 'getDeleted'
+        signatures:
+            - signature: '\.method [^\n]* getDeleted\(\)I'
+              type: regex
+              count: 1
+      - name: 'getDisplayOrder'
+        signatures:
+            - signature: '\.method [^\n]* getDisplayOrder\(\)J'
+              type: regex
+              count: 1
+      - name: 'getEntityId'
+        signatures:
+            - signature: '\.method [^\n]* getEntityId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getEtag'
+        signatures:
+            - signature: '\.method [^\n]* getEtag\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getEtype'
+        signatures:
+            - signature: '\.method [^\n]* getEtype\(\)I'
+              type: regex
+              count: 1
+      - name: 'getFinalPermission'
+        signatures:
+            - signature: '\.method [^\n]* getFinalPermission\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getGroup'
+        signatures:
+            - signature: '\.method [^\n]* getGroup\(\)Lcom/ticktick/task/constant/Constants\$SortType;'
+              type: regex
+              count: 1
+      - name: 'getGroupBy'
+        signatures:
+            - signature: '\.method [^\n]* getGroupBy\(\)Lcom/ticktick/task/constant/Constants\$SortType;'
+              type: regex
+              count: 1
+      - name: 'getId'
+        signatures:
+            - signature: '\.method [^\n]* getId\(\)Ljava/lang/Long;'
+              type: regex
+              count: 1
+      - name: 'getIsOwner'
+        signatures:
+            - signature: '\.method [^\n]* getIsOwner\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getKind'
+        signatures:
+            - signature: '\.method [^\n]* getKind\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getMode'
+        signatures:
+            - signature: '\.method [^\n]* getMode\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getModifiedTime'
+        signatures:
+            - signature: '\.method [^\n]* getModifiedTime\(\)Ljava/util/Date;'
+              type: regex
+              count: 1
+      - name: 'getMuted'
+        signatures:
+            - signature: '\.method [^\n]* getMuted\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getName'
+        signatures:
+            - signature: '\.method [^\n]* getName\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getNeedAudit'
+        signatures:
+            - signature: '\.method [^\n]* getNeedAudit\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getNeedPullTasks'
+        signatures:
+            - signature: '\.method [^\n]* getNeedPullTasks\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getNotificationOptions'
+        signatures:
+            - signature: '\.method [^\n]* getNotificationOptions\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getOpenToTeam'
+        signatures:
+            - signature: '\.method [^\n]* getOpenToTeam\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getOrder'
+        signatures:
+            - signature: '\.method [^\n]* getOrder\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getOrderBy'
+        signatures:
+            - signature: '\.method [^\n]* getOrderBy\(\)Lcom/ticktick/task/constant/Constants\$SortType;'
+              type: regex
+              count: 1
+      - name: 'getPermission'
+        signatures:
+            - signature: '\.method [^\n]* getPermission\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getProjectGroupSid'
+        signatures:
+            - signature: '\.method [^\n]* getProjectGroupSid\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getRealTeamId'
+        signatures:
+            - signature: '\.method [^\n]* getRealTeamId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getReminderType'
+        signatures:
+            - signature: '\.method [^\n]* getReminderType\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getShowInAll'
+        signatures:
+            - signature: '\.method [^\n]* getShowInAll\(\)Z'
+              type: regex
+              count: 1
+      - name: 'getShowType'
+        signatures:
+            - signature: '\.method [^\n]* getShowType\(\)Ljava/lang/Integer;'
+              type: regex
+              count: 1
+      - name: 'getSid'
+        signatures:
+            - signature: '\.method [^\n]* getSid\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getSort'
+        signatures:
+            - signature: '\.method [^\n]* getSort\(\)Lcom/ticktick/task/constant/Constants\$SortType;'
+              type: regex
+              count: 1
+      - name: 'getSortOption'
+        signatures:
+            - signature: '\.method [^\n]* getSortOption\(\)Lcom/ticktick/task/sort/SortOption;'
+              type: regex
+              count: 1
+      - name: 'getSortOrder'
+        signatures:
+            - signature: '\.method [^\n]* getSortOrder\(\)J'
+              type: regex
+              count: 1
+      - name: 'getSortType'
+        signatures:
+            - signature: '\.method [^\n]* getSortType\(\)Lcom/ticktick/task/constant/Constants\$SortType;'
+              type: regex
+              count: 1
+      - name: 'getSource'
+        signatures:
+            - signature: '\.method [^\n]* getSource\(\)I'
+              type: regex
+              count: 1
+      - name: 'getStatus'
+        signatures:
+            - signature: '\.method [^\n]* getStatus\(\)I'
+              type: regex
+              count: 1
+      - name: 'getTag'
+        signatures:
+            - signature: '\.method [^\n]* getTag\(\)Lcom/ticktick/task/tags/Tag;'
+              type: regex
+              count: 1
+      - name: 'getTasks'
+        signatures:
+            - signature: '\.method [^\n]* getTasks\(\)Ljava/util/List;'
+              type: regex
+              count: 1
+      - name: 'getTeam'
+        signatures:
+            - signature: '\.method [^\n]* getTeam\(\)Lcom/ticktick/task/data/Team;'
+              type: regex
+              count: 1
+      - name: 'getTeamId'
+        signatures:
+            - signature: '\.method [^\n]* getTeamId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getTeamMemberPermission'
+        signatures:
+            - signature: '\.method [^\n]* getTeamMemberPermission\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getTimelineGroupBy'
+        signatures:
+            - signature: '\.method [^\n]* getTimelineGroupBy\(\)Lcom/ticktick/task/constant/Constants\$SortType;'
+              type: regex
+              count: 1
+      - name: 'getTimelineOrderBy'
+        signatures:
+            - signature: '\.method [^\n]* getTimelineOrderBy\(\)Lcom/ticktick/task/constant/Constants\$SortType;'
+              type: regex
+              count: 1
+      - name: 'getTimelineSortType'
+        signatures:
+            - signature: '\.method [^\n]* getTimelineSortType\(\)Lcom/ticktick/task/constant/Constants\$SortType;'
+              type: regex
+              count: 1
+      - name: 'getUserCount'
+        signatures:
+            - signature: '\.method [^\n]* getUserCount\(\)I'
+              type: regex
+              count: 1
+      - name: 'getUserId'
+        signatures:
+            - signature: '\.method [^\n]* getUserId\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getViewMode'
+        signatures:
+            - signature: '\.method [^\n]* getViewMode\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getViewModeNotEmpty'
+        signatures:
+            - signature: '\.method [^\n]* getViewModeNotEmpty\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'getViewModeWithEmpty'
+        signatures:
+            - signature: '\.method [^\n]* getViewModeWithEmpty\(\)Ljava/lang/String;'
+              type: regex
+              count: 1
+      - name: 'hasProjectGroup'
+        signatures:
+            - signature: '\.method [^\n]* hasProjectGroup\(\)Z'
+              type: regex
+              count: 1
+      - name: 'hasSynced'
+        signatures:
+            - signature: '\.method [^\n]* hasSynced\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isAscending'
+        signatures:
+            - signature: '\.method [^\n]* isAscending\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isClosed'
+        signatures:
+            - signature: '\.method [^\n]* isClosed\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isInbox'
+        signatures:
+            - signature: '\.method [^\n]* isInbox\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isLocalAdded'
+        signatures:
+            - signature: '\.method [^\n]* isLocalAdded\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isLocalDeleted'
+        signatures:
+            - signature: '\.method [^\n]* isLocalDeleted\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isLocalUpdated'
+        signatures:
+            - signature: '\.method [^\n]* isLocalUpdated\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isMove2Trash'
+        signatures:
+            - signature: '\.method [^\n]* isMove2Trash\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isMuted'
+        signatures:
+            - signature: '\.method [^\n]* isMuted\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isNoteProject'
+        signatures:
+            - signature: '\.method [^\n]* isNoteProject\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isOpenToTeamProject'
+        signatures:
+            - signature: '\.method [^\n]* isOpenToTeamProject\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isShared'
+        signatures:
+            - signature: '\.method [^\n]* isShared\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isSharedOrOpenToTeam'
+        signatures:
+            - signature: '\.method [^\n]* isSharedOrOpenToTeam\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isShowInAll'
+        signatures:
+            - signature: '\.method [^\n]* isShowInAll\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isTaskProject'
+        signatures:
+            - signature: '\.method [^\n]* isTaskProject\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isTeamProject'
+        signatures:
+            - signature: '\.method [^\n]* isTeamProject\(\)Z'
+              type: regex
+              count: 1
+      - name: 'isTimelineMode'
+        signatures:
+            - signature: '\.method [^\n]* isTimelineMode\(\)Z'
+              type: regex
+              count: 1
+      - name: 'setBackground'
+        signatures:
+            - signature: '\.method [^\n]* setBackground\(Lcom/ticktick/task/data/ProjectBackground;\)V'
+              type: regex
+              count: 1
+      - name: 'setBackgroundInfo'
+        signatures:
+            - signature: '\.method [^\n]* setBackgroundInfo\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setBarcodeNeedAudit'
+        signatures:
+            - signature: '\.method [^\n]* setBarcodeNeedAudit\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setClosed'
+        signatures:
+            - signature: '\.method [^\n]* setClosed\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setColor'
+        signatures:
+            - signature: '\.method [^\n]* setColor\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setCount'
+        signatures:
+            - signature: '\.method [^\n]* setCount\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setCreatedTime'
+        signatures:
+            - signature: '\.method [^\n]* setCreatedTime\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setDefaultColumn'
+        signatures:
+            - signature: '\.method [^\n]* setDefaultColumn\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setDefaultProject'
+        signatures:
+            - signature: '\.method [^\n]* setDefaultProject\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setDisplayOrder'
+        signatures:
+            - signature: '\.method [^\n]* setDisplayOrder\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setEtag'
+        signatures:
+            - signature: '\.method [^\n]* setEtag\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setGroupBy'
+        signatures:
+            - signature: '\.method [^\n]* setGroupBy\(Lcom/ticktick/task/constant/Constants\$SortType;\)V'
+              type: regex
+              count: 1
+      - name: 'setId'
+        signatures:
+            - signature: '\.method [^\n]* setId\(Ljava/lang/Long;\)V'
+              type: regex
+              count: 1
+      - name: 'setIsOwner'
+        signatures:
+            - signature: '\.method [^\n]* setIsOwner\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setKind'
+        signatures:
+            - signature: '\.method [^\n]* setKind\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setModifiedTime'
+        signatures:
+            - signature: '\.method [^\n]* setModifiedTime\(Ljava/util/Date;\)V'
+              type: regex
+              count: 1
+      - name: 'setMuted'
+        signatures:
+            - signature: '\.method [^\n]* setMuted\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setName'
+        signatures:
+            - signature: '\.method [^\n]* setName\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setNeedAudit'
+        signatures:
+            - signature: '\.method [^\n]* setNeedAudit\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setNeedPullTasks'
+        signatures:
+            - signature: '\.method [^\n]* setNeedPullTasks\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setNotificationOptions'
+        signatures:
+            - signature: '\.method [^\n]* setNotificationOptions\(Ljava/util/List;\)V'
+              type: regex
+              count: 1
+      - name: 'setOpenToTeam'
+        signatures:
+            - signature: '\.method [^\n]* setOpenToTeam\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setOrder'
+        signatures:
+            - signature: '\.method [^\n]* setOrder\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setOrderBy'
+        signatures:
+            - signature: '\.method [^\n]* setOrderBy\(Lcom/ticktick/task/constant/Constants\$SortType;\)V'
+              type: regex
+              count: 1
+      - name: 'setPermission'
+        signatures:
+            - signature: '\.method [^\n]* setPermission\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setProjectGroupSid'
+        signatures:
+            - signature: '\.method [^\n]* setProjectGroupSid\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setReminderType'
+        signatures:
+            - signature: '\.method [^\n]* setReminderType\(Ljava/lang/Integer;\)V'
+              type: regex
+              count: 1
+      - name: 'setShowInAll'
+        signatures:
+            - signature: '\.method [^\n]* setShowInAll\(Z\)V'
+              type: regex
+              count: 1
+      - name: 'setShowType'
+        signatures:
+            - signature: '\.method [^\n]* setShowType\(Ljava/lang/Integer;\)V'
+              type: regex
+              count: 1
+      - name: 'setSid'
+        signatures:
+            - signature: '\.method [^\n]* setSid\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setSortOrder'
+        signatures:
+            - signature: '\.method [^\n]* setSortOrder\(J\)V'
+              type: regex
+              count: 1
+      - name: 'setSortType'
+        signatures:
+            - signature: '\.method [^\n]* setSortType\(Lcom/ticktick/task/constant/Constants\$SortType;\)V'
+              type: regex
+              count: 1
+      - name: 'setSource'
+        signatures:
+            - signature: '\.method [^\n]* setSource\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setTag'
+        signatures:
+            - signature: '\.method [^\n]* setTag\(Lcom/ticktick/task/tags/Tag;\)V'
+              type: regex
+              count: 1
+      - name: 'setTeamId'
+        signatures:
+            - signature: '\.method [^\n]* setTeamId\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setTeamMemberPermission'
+        signatures:
+            - signature: '\.method [^\n]* setTeamMemberPermission\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setTimelineGroupBy'
+        signatures:
+            - signature: '\.method [^\n]* setTimelineGroupBy\(Lcom/ticktick/task/constant/Constants\$SortType;\)V'
+              type: regex
+              count: 1
+      - name: 'setTimelineOrderBy'
+        signatures:
+            - signature: '\.method [^\n]* setTimelineOrderBy\(Lcom/ticktick/task/constant/Constants\$SortType;\)V'
+              type: regex
+              count: 1
+      - name: 'setTimelineSortType'
+        signatures:
+            - signature: '\.method [^\n]* setTimelineSortType\(Lcom/ticktick/task/constant/Constants\$SortType;\)V'
+              type: regex
+              count: 1
+      - name: 'setUserCount'
+        signatures:
+            - signature: '\.method [^\n]* setUserCount\(I\)V'
+              type: regex
+              count: 1
+      - name: 'setUserId'
+        signatures:
+            - signature: '\.method [^\n]* setUserId\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
+      - name: 'setViewMode'
+        signatures:
+            - signature: '\.method [^\n]* setViewMode\(Ljava/lang/String;\)V'
+              type: regex
+              count: 1
 
 # Habit entity.
 - name: 'Habit'

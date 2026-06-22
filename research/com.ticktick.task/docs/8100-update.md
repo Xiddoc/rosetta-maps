@@ -266,3 +266,23 @@ Two further levers exist for the hard cases, not needed yet but worth recording:
   `getCurrentUserId`, `isLocalMode`.
 
 Map totals after this pass: **86 classes, 48 methods** (8100).
+
+### Entity-accessor expansion via technique #3 (User / Task2 / Project)
+
+With method-name stability assumed for the carve-out, the full public accessor
+surface (`get*`/`set*`/`is*`) of the three core entities was added by
+declaration-line anchoring, auto-derived from 8100 and each verified
+`count == 1`:
+
+- `User` +94 (now 103 methods total — incl. `setAccessToken`, `getProEndDate`, …)
+- `Task2` +172
+- `Project` +118
+
+Overloaded-name setters (`Task2.setStatus`/`setTags`/`setCommentCount`,
+`Project.setStatus`/`setDeleted`) are omitted: sigmatcher keys a method
+definition by its `name`, so two same-name overloads can't coexist in the
+signature set (and the map keys methods by name too). They can be added later as
+the schema's array-valued method form if a specific overload is needed.
+
+Map totals after this pass: **86 classes, 432 methods** (8100), 89 KB (well
+under the 1 MiB CI ceiling).
