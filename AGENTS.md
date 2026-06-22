@@ -27,9 +27,33 @@ automation is PR-gated validation.
 rosetta-maps/
 ├── maps/<app>/<version_code>.json     ← generated, published, consumed
 ├── signatures/<app>/signatures.yaml   ← source of truth (sigmatcher dialect)
+├── research/<app>/docs/*.md           ← human findings: what the code does
 ├── schema/rosetta-map.schema.json     ← CANONICAL schema (this repo owns it)
 └── templates/                         ← copy these to start a contribution
 ```
+
+**Layout is artifact-first (group by kind, then `<app>`), not app-first.**
+The per-app trees are separate top-level dirs — each repeating the package
+name — on purpose; don't reorganise into `<app>/{maps,signatures,research}/`:
+
+- **`maps/` is the only consumed surface.** Clients (rosetta-frida,
+  rosetta-xposed, via the planned `rosetta pull`) sync `maps/` and nothing
+  else. Keeping it its own tree means the published "API" is one directory,
+  not scattered across N app folders interleaved with source and notes.
+- **The three trees have different natures and tooling.** `maps/` is strictly
+  validated (schema + semantics + attestation sidecar), `signatures/` is
+  lint-validated source, `research/` is unvalidated human prose — CI globs and
+  review scrutiny differ per tree, so grouping by kind matches how they're
+  processed.
+- **`maps/<app>/<version_code>.json` is a path contract** (Hard rule 1 / RFC
+  0001 Decision 3) — it can't move without touching CI, the validators, and
+  both client repos. Don't half-migrate the other trees app-first either; a
+  mixed layout is worse than a consistent one.
+
+App-first would give nicer per-app co-location, but this is a *consumed
+database*, not a per-app plugin repo — `rg`/your editor cover the
+"everything about one app" case. (`research/<app>/` is human-only notes; it
+is **not** consumed and has no schema — see `research/<app>/README.md`.)
 
 ## Hard rules
 
