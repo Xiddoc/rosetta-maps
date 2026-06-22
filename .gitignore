@@ -3,7 +3,9 @@ node_modules/
 .rosetta-frida/
 
 # Editor + OS
-.claude/
+# Ignore local Claude state, but TRACK committed skills (.claude/skills/).
+.claude/*
+!.claude/skills/
 .workspace
 .DS_Store
 .idea/
