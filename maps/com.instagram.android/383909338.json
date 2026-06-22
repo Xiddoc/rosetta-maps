@@ -1,5 +1,5 @@
 {
-    "schema_version": 4,
+    "schema_version": 5,
     "app": "com.instagram.android",
     "version": "433.0.0.47.68",
     "version_code": 383909338,
@@ -9,20 +9,17 @@
         {
             "tool": "sigmatcher",
             "config": "signatures/com.instagram.android/signatures.yaml",
-            "classes": 53,
-            "notes": "Login/auth + SIGN-UP/registration HTTP surface, password encryption, device identity & request signing, keystore secure-storage crypto, realtime/MQTT + FBNS push, MSYS DM mailbox, media upload/configure pipeline, MobileConfig feature gating, Bloks action registry, analytics upload, and the feed/stories/reels HTTP surface. Sign-up adds account creation, phone/email confirmation, FB sign-up (folded into IgAccountsLoginApi), the age gate & new-user consent flow, and contact prefill. Every class pinned on a string literal verified globally unique in v433.0.0.47.68; not yet cross-version verified."
+            "classes": 53
         },
         {
             "tool": "sigmatcher",
             "config": "signatures/com.instagram.android/signatures.yaml",
-            "classes": 149,
-            "notes": "Feature-subsystem expansion: 26 subsystems (Meta AI/AI Studio, QuickSnap, Friend Map, Direct/MSYS/E2EE, RTC, Reels/clips, Stories, Close Friends, Shopping/Commerce, Branded Content, IG Live, Live monetization, Supervision, Family Center, Wellbeing/Screen Time, Notifications, Avatars, AR effects, Payments/FBPay, Creator subscriptions, Notes, Broadcast Channels, Auth/Login, 2FA/Security, Realtime/MQTT, Comments). Every signature resolves to exactly one class on this APK; members are A0x-rotated and not mapped."
+            "classes": 149
         },
         {
             "tool": "sigmatcher",
             "config": "signatures/com.instagram.android/signatures.yaml",
-            "classes": 112,
-            "notes": "Round-3 feature expansion: 20 more subsystems (Explore, Search, Feed ranking, Saved/Collections, Quick Experiment, Quick Promotion, Meta Verified, Account switching, Sticker/GIPHY, Music, In-app browser, Media upload, Analytics/Profilo, Zero-rating, Lead Ads, Tagging, Community Notes, Fundraisers, Bloks, Pando/GraphQL)."
+            "classes": 112
         }
     ],
     "classes": {
