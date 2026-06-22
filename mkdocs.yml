@@ -1,6 +1,6 @@
 site_name: rosetta-maps
 site_description: The community knowledge base of Android obfuscation maps — a shared, searchable database of obfuscated app internals.
-site_url: https://Xiddoc.github.io/rosetta-maps/
+site_url: https://iliketo.party/rosetta-maps/
 repo_name: Xiddoc/rosetta-maps
 repo_url: https://github.com/Xiddoc/rosetta-maps
 edit_uri: edit/master/docs/
