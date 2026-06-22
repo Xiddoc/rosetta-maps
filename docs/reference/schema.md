@@ -108,7 +108,7 @@ class:
 This describes the *authoring* evidence, not on-disk schema fields — the format
 itself is defined only here in `schema/rosetta-map.schema.json` (this section
 adds no fields). See `templates/signatures.template.yaml` and
-[CONTRIBUTING.md](../../CONTRIBUTING.md) for the worked authoring flow.
+[Contributing](../contributing.md) for the worked authoring flow.
 
 ## Input bounds and key safety
 
