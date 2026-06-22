@@ -3,15 +3,27 @@
 # Offline / host dialect: human-readable regex-over-smali, multi-version.
 #
 # INTRODUCTORY mapping — authored against version_code 8081 / versionName
-# 8.0.8.1, then MULTI-VERSION-HARDENED: all 66 rules verified to resolve with
-# zero failures on BOTH version_code 8081 (8.0.8.1) and 8080 (8.0.8.0) — which
-# is why there is a map per version under maps/com.ticktick.task/. The test
-# bit: 5 renamed helpers ROTATED their obfuscated tokens between the two
-# releases (AiComplete q9.x0->q9.w0, LoginHandler j8.m->j8.n, RequestUser
-# h8.l->h8.n, ResponseUser h8.m->h8.o, TwoFactorLoginHandler j8.n->j8.o) and
-# the anchors below tracked every one. Note j8.n is LoginHandler in 8081 but
-# TwoFactorLoginHandler in 8080 — proof the obfuscated name is worthless across
-# versions and the anchor IS the identity.
+# 8.0.8.1, then MULTI-VERSION-HARDENED: the original 66 rules verified to
+# resolve with zero failures on version_code 8081 (8.0.8.1), 8080 (8.0.8.0)
+# AND 8100 (8.1.0.0) — which is why there is a map per version under
+# maps/com.ticktick.task/. The test bit: 5 renamed helpers ROTATED their
+# obfuscated tokens between 8080 and 8081 (AiComplete q9.x0->q9.w0, LoginHandler
+# j8.m->j8.n, RequestUser h8.l->h8.n, ResponseUser h8.m->h8.o,
+# TwoFactorLoginHandler j8.n->j8.o) and the anchors below tracked every one.
+# Note j8.n is LoginHandler in 8081 but TwoFactorLoginHandler in 8080 — proof
+# the obfuscated name is worthless across versions and the anchor IS the
+# identity. The 8081->8100 jump rotated 6 more (ApiFactoryBase w7.b->w7.a,
+# GsonApiFactory w7.c->w7.b, LoginHandler j8.m->j8.l, TwoFactorLoginHandler
+# j8.n->j8.m, TickTickAuthorizeTask cf.g->cf.h, AiComplete q9.x0->q9.t0) —
+# again every anchor tracked the rotation.
+#
+# 8100 also ADDED 6 rules (see the "APP CORE / SERVICE LAYER / CRYPTO" section
+# at the bottom): high-value hook targets in the readable com.ticktick.task.*
+# carve-out (the app singleton, the central prefs store, three GreenDAO service
+# classes, and the local AES helper). These are kept-name classes anchored on a
+# rotation-stable in-body literal; verified globally unique on 8100 only (the
+# only release on hand when they were authored) — back-verify against 8080/8081
+# when those APKs are next available.
 #
 # Obfuscation profile (see research/com.ticktick.task/docs/orientation.md):
 # TickTick is R8-minified with a WIDE carve-out — the whole
@@ -579,5 +591,72 @@
   package: 'com.ticktick.task.utils'
   signatures:
       - signature: '"native_parser"'
+        type: regex
+        count: 1
+
+# ════════════════════════════════════════════════════════════════════════
+# APP CORE / SERVICE LAYER / CRYPTO — added in the 8100 pass
+# All in the readable com.ticktick.task.* carve-out (resolve to themselves on
+# 8100); high-value hook anchors the map now certifies. Each is anchored on a
+# rotation-stable in-body literal that occurs exactly once in the class — NOT
+# on the retained SourceFile, because every one of these classes has inner
+# classes that share the SourceFile string (so a `"Foo.java"` anchor would be
+# ambiguous), except AESUtils which has none. Verified globally unique on 8100.
+# ════════════════════════════════════════════════════════════════════════
+
+# The app singleton (extends android.app.Application) — getInstance() is the
+# process-wide entry point to TaskManager/AccountManager/sync; THE attach-time
+# hook target. Abstract base; the concrete app subclasses it. Anchored on a
+# widget-broadcast log literal unique to the base (the TAG literal recurs as
+# both a .field constant and a const-string, so it is not count==1).
+- name: 'TickTickApplicationBase'
+  package: 'com.ticktick.task'
+  signatures:
+      - signature: '"already send widget update broadcast"'
+        type: regex
+        count: 1
+
+# Central SharedPreferences façade (implements OnSharedPreferenceChangeListener)
+# — every app-wide toggle/flag read-and-write funnels through here.
+- name: 'SettingsPreferencesHelper'
+  package: 'com.ticktick.task.helper'
+  signatures:
+      - signature: '"SettingsPreferencesHelper"'
+        type: regex
+        count: 1
+
+# GreenDAO service layer for the core Task2 entity (create/update/delete/query,
+# assignee + team-project checks). The read/write chokepoint for tasks.
+- name: 'TaskService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"checkIfAssignee: project is not open to team project"'
+        type: regex
+        count: 1
+
+# Attachment persistence service (local file ↔ Attachment entity, invalid-file
+# cleanup, upload/download bookkeeping).
+- name: 'AttachmentService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"clean attachments, count = "'
+        type: regex
+        count: 1
+
+# Attendee (task-sharing / collaboration) persistence service.
+- name: 'AttendeeService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"deleteAttendee json exception:"'
+        type: regex
+        count: 1
+
+# Local AES helper (AES/ECB/PKCS5Padding, key right-padded to 32 bytes) used for
+# at-rest value encryption — a prime hook point for reading plaintext. No inner
+# classes, so the retained SourceFile is a safe count==1 anchor.
+- name: 'AESUtils'
+  package: 'com.ticktick.task.utils'
+  signatures:
+      - signature: '"AESUtils\.java"'
         type: regex
         count: 1
