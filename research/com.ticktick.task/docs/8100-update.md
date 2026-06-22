@@ -87,3 +87,74 @@ literal that is genuinely used once.
   authored). They should be back-verified against 8080/8081 when those APKs are
   available; being kept-name classes anchored on stable literals, they are
   expected to resolve to themselves there too.
+
+## Member-level pass — 28 method mappings across 9 classes (8100)
+
+A follow-up pass added `methods:` to nine classes already mapped at 8100,
+selecting genuinely useful hook points (CRUD chokepoints, the sync commit
+steps, the AI/SSE endpoint triggers, the pro/grace-period helpers, crypto key
+derivation). All resolve under `sigmatcher analyze` against 8100 with zero
+errors; the authoritative obfuscated names + descriptors are in
+`maps/com.ticktick.task/8100.json`.
+
+Classes touched: `AiComplete` (4 SSE endpoint triggers — decomposition /
+improve / advice / scene), `SyncService` (6 per-entity `commit*` push steps),
+`TaskService` (6 task CRUD / sort-order ops), `ProHelper` (5 subscription /
+grace-period helpers), `TickTickAccountManager` (`saveUserStatus`,
+`isInBilling`, `updateTagListShow`), plus one method each on
+`TickTickAuthorizeTask` (`doInBackground`), `ResponseUser` (`toString`),
+`PomodoroStateContext` (`changeDuration`), and `AESUtils` (`createKey`).
+
+### Anchoring gotcha #2 — sigmatcher matches the method *body*, not the signature line
+
+The decisive lesson of this pass. sigmatcher applies a method's regex against
+each method's **instruction body** and attributes the hit to the enclosing
+method — the `.method …(descriptor)` declaration line is **not** part of the
+searched text. Consequences:
+
+- A **descriptor fragment** (e.g. `getAccessToken\(\)Ljava/lang/String;`) is a
+  bad method anchor: it does not appear in the target method's own body, but it
+  *does* appear at every **call site**, so it mis-resolves to a *caller*
+  (observed: `getAccessToken` → `getAccessTokenById`) or trips
+  "Found too many matches".
+- The robust anchor is a **`const-string` literal that occurs in exactly one
+  method body** in the class. Every method mapped here is anchored that way.
+- Therefore methods with **no string literal in their body cannot be anchored**
+  with this dialect and were deliberately dropped rather than guessed:
+  `ProHelper.isPro(User)Z` (the gate, but stringless), `SyncService.doSync`,
+  the `AESUtils` encrypt/decrypt pairs (their only literal,
+  `"AES/ECB/PKCS5Padding"`, is shared by both byte[] variants → ambiguous), and
+  native methods on `TitleParserLib` (no body at all).
+- Descriptors that reference a **rotating obfuscated type** were also dropped to
+  avoid dangling refs — e.g. `PomodoroStateContext`'s `doBeforeUpdateState`
+  worker takes the obfuscated inner state type `yb.d$h`. `changeDuration(J)V`
+  was mapped instead.
+
+## Signer SHA-256 finding — the value in the maps is a RE-BUNDLED key, not TickTick's
+
+The 8100 APK analysed in this pass was **re-signed with a private key** (not the
+official TickTick release cert). Its signing cert SHA-256 is
+`44c3bb8c…b29541` — i.e. **identical to the `signer_sha256` already committed in
+all three maps** (8080/8081/8100). That confirms the stored value is the
+re-bundling key, **not** Google Play's TickTick signing certificate, so any
+client checking a Play-Store-installed TickTick against this map would fail the
+signer guard.
+
+`signer_sha256` is a functional version/authenticity guard, not derivable from a
+re-signed sample, so it was **left untouched** by this pass (deriving it from the
+re-bundled APK would re-commit the wrong value). It must be replaced with the
+real release cert hash, read from a device that has the official build installed:
+
+```
+adb shell pm dump <package> | sed -n '/signatures:/,/^[^ ]/p'
+```
+
+(Equivalently, `pm dump com.ticktick.task | grep -A2 -i 'signatures\|signing'`.)
+On modern Android (API 28+) the most precise form is:
+
+```
+adb shell dumpsys package <package> | grep -iE 'signing|sha-?256|cert'
+```
+
+Both print the cert digest for the installed package; normalise to bare
+lowercase 64-hex (no colons) before putting it in `signer_sha256`.

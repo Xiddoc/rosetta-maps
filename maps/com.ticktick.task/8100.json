@@ -35,7 +35,25 @@
             "obfuscated": "q9.t0",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes3.dex"
+            "dex": "classes3.dex",
+            "methods": {
+                "requestTaskDecomposition": {
+                    "obfuscated": "d",
+                    "signature": "()V"
+                },
+                "requestTaskImprove": {
+                    "obfuscated": "e",
+                    "signature": "(Lq9/t0;Ljava/lang/String;Ljava/lang/String;I)V"
+                },
+                "requestTaskAdvice": {
+                    "obfuscated": "g",
+                    "signature": "(Lq9/t0;Ljava/lang/String;Ljava/lang/String;I)V"
+                },
+                "requestTaskScene": {
+                    "obfuscated": "j",
+                    "signature": "(Lcom/ticktick/task/ai/complete/AiCompleteRequestBean;)V"
+                }
+            }
         },
         "com.ticktick.task.ApiFactoryBase": {
             "obfuscated": "w7.a",
@@ -77,7 +95,13 @@
             "obfuscated": "yb.d",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes.dex"
+            "dex": "classes.dex",
+            "methods": {
+                "changeDuration": {
+                    "obfuscated": "b",
+                    "signature": "(J)V"
+                }
+            }
         },
         "com.ticktick.task.RequestUser": {
             "obfuscated": "h8.l",
@@ -89,7 +113,13 @@
             "obfuscated": "h8.m",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes.dex"
+            "dex": "classes.dex",
+            "methods": {
+                "toString": {
+                    "obfuscated": "toString",
+                    "signature": "()Ljava/lang/String;"
+                }
+            }
         },
         "com.ticktick.task.TickTickApplicationBase": {
             "obfuscated": "com.ticktick.task.TickTickApplicationBase",
@@ -101,7 +131,13 @@
             "obfuscated": "cf.h",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes4.dex"
+            "dex": "classes4.dex",
+            "methods": {
+                "doInBackground": {
+                    "obfuscated": "doInBackground",
+                    "signature": "()Ljava/lang/Object;"
+                }
+            }
         },
         "com.ticktick.task.TwoFactorLoginHandler": {
             "obfuscated": "j8.m",
@@ -215,7 +251,29 @@
             "obfuscated": "com.ticktick.task.helper.pro.ProHelper",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes4.dex"
+            "dex": "classes4.dex",
+            "methods": {
+                "getSubscribeTypeName": {
+                    "obfuscated": "getSubscribeTypeName",
+                    "signature": "(Ljava/lang/String;)Ljava/lang/String;"
+                },
+                "showEnterGracePeriodWarnDialog": {
+                    "obfuscated": "showEnterGracePeriodWarnDialog",
+                    "signature": "(Lcom/ticktick/task/data/User;Landroidx/fragment/app/FragmentManager;)Z"
+                },
+                "getProOverUseDay": {
+                    "obfuscated": "getProOverUseDay",
+                    "signature": "(Ljava/util/Date;Ljava/util/Date;)Ljava/lang/Integer;"
+                },
+                "getGracePeriodUrl": {
+                    "obfuscated": "getGracePeriodUrl",
+                    "signature": "(Z)Ljava/lang/String;"
+                },
+                "getSubscribeFreqName": {
+                    "obfuscated": "getSubscribeFreqName",
+                    "signature": "(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;"
+                }
+            }
         },
         "com.ticktick.task.manager.AccountSignOutHelper": {
             "obfuscated": "com.ticktick.task.manager.AccountSignOutHelper",
@@ -227,7 +285,21 @@
             "obfuscated": "com.ticktick.task.manager.TickTickAccountManager",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes4.dex"
+            "dex": "classes4.dex",
+            "methods": {
+                "saveUserStatus": {
+                    "obfuscated": "saveUserStatus",
+                    "signature": "(Ljava/lang/String;Lcom/ticktick/task/network/sync/common/model/SignUserInfo;)Z"
+                },
+                "isInBilling": {
+                    "obfuscated": "isInBilling",
+                    "signature": "()Z"
+                },
+                "updateTagListShow": {
+                    "obfuscated": "updateTagListShow",
+                    "signature": "()V"
+                }
+            }
         },
         "com.ticktick.task.network.api.AiApiInterface": {
             "obfuscated": "com.ticktick.task.network.api.AiApiInterface",
@@ -401,7 +473,33 @@
             "obfuscated": "com.ticktick.task.service.TaskService",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes4.dex"
+            "dex": "classes4.dex",
+            "methods": {
+                "createTask": {
+                    "obfuscated": "createTask",
+                    "signature": "(Lcom/ticktick/task/data/Task2;ZZ)Z"
+                },
+                "moveTask": {
+                    "obfuscated": "moveTask",
+                    "signature": "(Ljava/lang/String;Ljava/lang/String;Lcom/ticktick/task/data/Project;ZLjava/lang/String;)V"
+                },
+                "checkOrRemoveParentTask": {
+                    "obfuscated": "checkOrRemoveParentTask",
+                    "signature": "(Lcom/ticktick/task/data/Task2;)V"
+                },
+                "saveMergedChecklistItems": {
+                    "obfuscated": "saveMergedChecklistItems",
+                    "signature": "(Lcom/ticktick/task/data/Task2;)V"
+                },
+                "getNewTaskSortOrderInProjectAtTop": {
+                    "obfuscated": "getNewTaskSortOrderInProjectAtTop",
+                    "signature": "(J)Ljava/lang/Long;"
+                },
+                "getNewTaskSortOrderInProjectAtBottom": {
+                    "obfuscated": "getNewTaskSortOrderInProjectAtBottom",
+                    "signature": "(J)Ljava/lang/Long;"
+                }
+            }
         },
         "com.ticktick.task.service.UserProfileService": {
             "obfuscated": "com.ticktick.task.service.UserProfileService",
@@ -419,7 +517,33 @@
             "obfuscated": "com.ticktick.task.sync.sync.SyncService",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes4.dex"
+            "dex": "classes4.dex",
+            "methods": {
+                "commitAddAndUpdateProject": {
+                    "obfuscated": "commitAddAndUpdateProject",
+                    "signature": "(Z)V"
+                },
+                "commitAssignTask": {
+                    "obfuscated": "commitAssignTask",
+                    "signature": "(Z)V"
+                },
+                "commitDeleteForever": {
+                    "obfuscated": "commitDeleteForever",
+                    "signature": "(Z)V"
+                },
+                "commitDeleteProject": {
+                    "obfuscated": "commitDeleteProject",
+                    "signature": "(Z)V"
+                },
+                "commitFilter": {
+                    "obfuscated": "commitFilter",
+                    "signature": "(Z)V"
+                },
+                "commitDelayReminders": {
+                    "obfuscated": "commitDelayReminders",
+                    "signature": "()V"
+                }
+            }
         },
         "com.ticktick.task.sync.sync.UserSettingsSyncService": {
             "obfuscated": "com.ticktick.task.sync.sync.UserSettingsSyncService",
@@ -437,7 +561,13 @@
             "obfuscated": "com.ticktick.task.utils.AESUtils",
             "kind": "class",
             "source": "sigmatcher",
-            "dex": "classes4.dex"
+            "dex": "classes4.dex",
+            "methods": {
+                "createKey": {
+                    "obfuscated": "createKey",
+                    "signature": "(Ljava/lang/String;)Ljavax/crypto/spec/SecretKeySpec;"
+                }
+            }
         },
         "com.ticktick.task.utils.TitleParserLib": {
             "obfuscated": "com.ticktick.task.utils.TitleParserLib",

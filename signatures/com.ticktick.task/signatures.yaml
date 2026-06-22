@@ -321,11 +321,20 @@
 
 # Re-authorize task (replays signon/signOAuth2 by accountType — no refresh ep).
 - name: 'TickTickAuthorizeTask'
-  package: 'com.ticktick.task'         # obf: cf.g
+  package: 'com.ticktick.task'         # obf: cf.g->cf.h
   signatures:
       - signature: '"TickTickAuthorizeTask\.java"'
         type: regex
         count: 1
+  methods:
+      # AsyncTask.doInBackground()Object — the re-authorize worker; branches on
+      # accountType via the facebook.com / google.com provider-domain literals.
+      # Anchored on the (class-unique) "facebook.com" literal; ()Object descriptor.
+      - name: 'doInBackground'
+        signatures:
+            - signature: '"facebook\.com"'
+              type: regex
+              count: 1
 
 # Transient login result (toString prefix).
 - name: 'ResponseUser'
@@ -334,6 +343,13 @@
       - signature: '"ResponseUser\{userType="'
         type: regex
         count: 1
+  methods:
+      # toString()String — emits the "ResponseUser{userType=" debug prefix.
+      - name: 'toString'
+        signatures:
+            - signature: '"ResponseUser\{userType="'
+              type: regex
+              count: 1
 
 # Login request DTO.
 - name: 'RequestUser'
@@ -396,6 +412,27 @@
       - signature: '"user isPro= "'
         type: regex
         count: 1
+  methods:
+      # saveUserStatus(String,SignUserInfo)Z — merges server pro/team status into
+      # the local User and broadcasts a PaymentUpdateMessage. Anchored on the
+      # class-unique "PaymentUpdateMessage" literal (SignUserInfo is kept/in-tree).
+      - name: 'saveUserStatus'
+        signatures:
+            - signature: '"PaymentUpdateMessage"'
+              type: regex
+              count: 1
+      # isInBilling()Z — true while a purchase/order is mid-flight.
+      - name: 'isInBilling'
+        signatures:
+            - signature: '"order"'
+              type: regex
+              count: 1
+      # updateTagListShow()V — refreshes the special "_special_id_tags" smart list.
+      - name: 'updateTagListShow'
+        signatures:
+            - signature: '"_special_id_tags"'
+              type: regex
+              count: 1
 
 # GreenDAO service layer for User / UserProfile.
 - name: 'UserService'
@@ -478,12 +515,48 @@
         count: 1
 
 # App-level is-Pro gate + grace-period handling.
+# Kept class with kept member names; methods anchored on per-method-unique string
+# literals (NOT descriptors) so the anchor stays robust. isPro(User)Z is the gate
+# but is intentionally NOT mapped — it carries no string literal in its body, so
+# there is no rotation-stable per-method anchor (per the drop-rather-than-guess rule).
 - name: 'ProHelper'
   package: 'com.ticktick.task.helper.pro'
   signatures:
       - signature: '"showEnterGracePeriodWarnDialog needShowDialog FALSE"'
         type: regex
         count: 1
+  methods:
+      # getSubscribeTypeName(String)String — maps a store token to a label
+      # ("Google Play" / "apple" / …). Anchored on the unique "Google Play" literal.
+      - name: 'getSubscribeTypeName'
+        signatures:
+            - signature: '"Google Play"'
+              type: regex
+              count: 1
+      # showEnterGracePeriodWarnDialog(User,FragmentManager)Z — grace-period warn.
+      - name: 'showEnterGracePeriodWarnDialog'
+        signatures:
+            - signature: '"showEnterGracePeriodWarnDialog ShowConfig: "'
+              type: regex
+              count: 1
+      # getProOverUseDay(Date,Date)Integer — days a Pro sub has been over-used.
+      - name: 'getProOverUseDay'
+        signatures:
+            - signature: '"currentDate"'
+              type: regex
+              count: 1
+      # getGracePeriodUrl(boolean)String — picks the store help URL (Apple/Google).
+      - name: 'getGracePeriodUrl'
+        signatures:
+            - signature: '"https://support\.apple\.com/en-us/108095"'
+              type: regex
+              count: 1
+      # getSubscribeFreqName(Context,String)String — "year"/"month" label resolver.
+      - name: 'getSubscribeFreqName'
+        signatures:
+            - signature: '"subscribeFreq"'
+              type: regex
+              count: 1
 
 # SKU specification model (only two literal SKUs ship in-APK).
 - name: 'SubscriptionSpecification'
@@ -547,12 +620,52 @@
         count: 1
 
 # Cross-platform sync engine entry (doSync + per-entity commit* batches).
+# Members below are the per-entity commit* push steps, each anchored on its own
+# class-unique "<name>:" log literal — high-value sync hook points. doSync(int)V
+# itself is NOT mapped (no per-method string anchor in its body).
 - name: 'SyncService'
   package: 'com.ticktick.task.sync.sync'
   signatures:
       - signature: '"commitPomodoro brief error conflict  = "'
         type: regex
         count: 1
+  methods:
+      # commitAddAndUpdateProject(boolean)V — pushes created/updated projects.
+      - name: 'commitAddAndUpdateProject'
+        signatures:
+            - signature: '"commitAddAndUpdateProject:"'
+              type: regex
+              count: 1
+      # commitAssignTask(boolean)V — pushes task assignee changes.
+      - name: 'commitAssignTask'
+        signatures:
+            - signature: '"commitAssignTask:"'
+              type: regex
+              count: 1
+      # commitDeleteForever(boolean)V — pushes permanent task deletions.
+      - name: 'commitDeleteForever'
+        signatures:
+            - signature: '"commitDeleteForever:"'
+              type: regex
+              count: 1
+      # commitDeleteProject(boolean)V — pushes project deletions.
+      - name: 'commitDeleteProject'
+        signatures:
+            - signature: '"commitDeleteProject:"'
+              type: regex
+              count: 1
+      # commitFilter(boolean)V — pushes smart-list/filter changes.
+      - name: 'commitFilter'
+        signatures:
+            - signature: '"commitFilter:"'
+              type: regex
+              count: 1
+      # commitDelayReminders()V — pushes snoozed/delayed reminders.
+      - name: 'commitDelayReminders'
+        signatures:
+            - signature: '"commitDelayReminders: "'
+              type: regex
+              count: 1
 
 # Pomodoro foreground timer controller.
 - name: 'PomodoroControlService'
@@ -569,6 +682,17 @@
       - signature: '"doBeforeUpdateState "'
         type: regex
         count: 1
+  methods:
+      # changeDuration(long)V — adjusts the running focus duration; anchored on
+      # the class-unique "changeDuration" log literal. (J)V descriptor is
+      # validator-safe (the doBeforeUpdateState worker f(...) is intentionally
+      # NOT mapped: its descriptor references the obfuscated inner state type
+      # yb.d$h, which rotates and is not in this map).
+      - name: 'changeDuration'
+        signatures:
+            - signature: '"changeDuration"'
+              type: regex
+              count: 1
 
 # Focus-target data holder.
 - name: 'FocusEntity'
@@ -578,13 +702,44 @@
         type: regex
         count: 1
 
-# Streaming (SSE) AI assistant transport (obf: q9.x0).
+# Streaming (SSE) AI assistant transport (obf: q9.x0->q9.t0).
+# Members: the four SSE endpoint triggers, each anchored on its own unique
+# endpoint URL literal (the same kind of rotation-stable anchor as the class).
+# Logical names are behaviour-derived from the endpoint each method POSTs to
+# (HIGH confidence — the URL names the action). Descriptors are validator-safe:
+# the two static helpers take the AiComplete instance (q9.t0, in this map) and
+# `scene` takes the kept com.ticktick.task.ai.complete.AiCompleteRequestBean.
 - name: 'AiComplete'
   package: 'com.ticktick.task'
   signatures:
       - signature: '"/ai/api/v2/task/decomposition\?stream=true"'
         type: regex
         count: 1
+  methods:
+      # POST /ai/api/v2/task/decomposition (subtask suggestions) — instance d()V.
+      - name: 'requestTaskDecomposition'
+        signatures:
+            - signature: '"/ai/api/v2/task/decomposition\?stream=true"'
+              type: regex
+              count: 1
+      # POST /ai/api/v2/task/improve — static e(AiComplete,String,String,int)V.
+      - name: 'requestTaskImprove'
+        signatures:
+            - signature: '"/ai/api/v2/task/improve\?stream=true"'
+              type: regex
+              count: 1
+      # POST /ai/api/v2/task/advice — static g(AiComplete,String,String,int)V.
+      - name: 'requestTaskAdvice'
+        signatures:
+            - signature: '"/ai/api/v2/task/advice\?stream=true"'
+              type: regex
+              count: 1
+      # POST /ai/api/v2/task/scene — instance j(AiCompleteRequestBean)V.
+      - name: 'requestTaskScene'
+        signatures:
+            - signature: '"/ai/api/v2/task/scene\?stream=true"'
+              type: regex
+              count: 1
 
 # JNI binding to libnative_parser.so (the NL quick-add parser).
 - name: 'TitleParserLib'
@@ -627,12 +782,51 @@
 
 # GreenDAO service layer for the core Task2 entity (create/update/delete/query,
 # assignee + team-project checks). The read/write chokepoint for tasks.
+# Members anchored on per-method-unique log literals; descriptors reference only
+# the kept com.ticktick.task.data.* entities (Task2/Project) + framework types.
 - name: 'TaskService'
   package: 'com.ticktick.task.service'
   signatures:
       - signature: '"checkIfAssignee: project is not open to team project"'
         type: regex
         count: 1
+  methods:
+      # createTask(Task2,boolean,boolean)Z — low-level task insert.
+      - name: 'createTask'
+        signatures:
+            - signature: '"createTask: failed"'
+              type: regex
+              count: 1
+      # moveTask(String,String,Project,boolean,String)V — move task across projects.
+      - name: 'moveTask'
+        signatures:
+            - signature: '"moveTask: parentTask is null"'
+              type: regex
+              count: 1
+      # checkOrRemoveParentTask(Task2)V — fixes up parent linkage on change.
+      - name: 'checkOrRemoveParentTask'
+        signatures:
+            - signature: '"checkOrRemoveParentTask parentTask = "'
+              type: regex
+              count: 1
+      # saveMergedChecklistItems(Task2)V — dedupes/persists merged checklist items.
+      - name: 'saveMergedChecklistItems'
+        signatures:
+            - signature: '"#saveMergedChecklistItems, duplicate Sid = "'
+              type: regex
+              count: 1
+      # getNewTaskSortOrderInProjectAtTop(long)Long — sort-order allocator (top).
+      - name: 'getNewTaskSortOrderInProjectAtTop'
+        signatures:
+            - signature: '"getNewTaskSortOrderInProjectAtTop, room is too small"'
+              type: regex
+              count: 1
+      # getNewTaskSortOrderInProjectAtBottom(long)Long — sort-order allocator (bottom).
+      - name: 'getNewTaskSortOrderInProjectAtBottom'
+        signatures:
+            - signature: '"getNewTaskSortOrderInProjectAtBottom, room is too small"'
+              type: regex
+              count: 1
 
 # Attachment persistence service (local file ↔ Attachment entity, invalid-file
 # cleanup, upload/download bookkeeping).
@@ -660,3 +854,14 @@
       - signature: '"AESUtils\.java"'
         type: regex
         count: 1
+  methods:
+      # createKey(String)SecretKeySpec — derives the AES key (right-pads/truncates
+      # to 32 bytes, "AES" algorithm). Anchored on the class-unique bare "AES"
+      # algorithm literal. The encrypt/decrypt pairs are intentionally NOT mapped:
+      # the two byte[] variants share the same "AES/ECB/PKCS5Padding" literal and
+      # carry no per-method-unique anchor (would be ambiguous within the class).
+      - name: 'createKey'
+        signatures:
+            - signature: '"AES"'
+              type: regex
+              count: 1
