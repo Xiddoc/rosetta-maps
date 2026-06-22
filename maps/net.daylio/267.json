@@ -1,5 +1,5 @@
 {
-    "schema_version": 4,
+    "schema_version": 5,
     "app": "net.daylio",
     "version": "1.65.5",
     "version_code": 267,
@@ -8,8 +8,7 @@
         {
             "tool": "sigmatcher",
             "config": "signatures/net.daylio/signatures.yaml",
-            "classes": 28,
-            "notes": "Multi-version-hardened signatures, verified to resolve on both version_code 252 and 267; this map is the resolution for 267."
+            "classes": 28
         }
     ],
     "classes": {

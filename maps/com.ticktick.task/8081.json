@@ -1,5 +1,5 @@
 {
-    "schema_version": 4,
+    "schema_version": 5,
     "app": "com.ticktick.task",
     "version": "8.0.8.1",
     "version_code": 8081,
@@ -9,8 +9,7 @@
         {
             "tool": "sigmatcher",
             "config": "signatures/com.ticktick.task/signatures.yaml",
-            "classes": 66,
-            "notes": "Introductory map for version_code 8081 (8.0.8.1). TickTick is R8-minified with a wide carve-out: most com.ticktick.task.* classes keep their names and resolve to themselves; the renamed HTTP-stack / login-handler / state-machine helpers (y7.*, w7.*, j8.*, cf.*, h8.*, vd.*, yb.*, q9.*) are the rotation-prone entries. Class-level only; anchored on globally-unique string literals / retained SourceFile strings."
+            "classes": 66
         }
     ],
     "classes": {

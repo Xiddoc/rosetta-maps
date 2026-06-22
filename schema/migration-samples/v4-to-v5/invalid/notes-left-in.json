@@ -1,0 +1,26 @@
+{
+    "schema_version": 5,
+    "app": "com.example.app",
+    "version": "3.4.5",
+    "version_code": 30405,
+    "captured_at": "2026-05-01",
+    "sources": [
+        {
+            "tool": "hand-authored",
+            "classes": 1,
+            "notes": "verified via Frida runtime trace on emulator"
+        }
+    ],
+    "classes": {
+        "com.example.app.LoginManager": {
+            "obfuscated": "aaaa",
+            "kind": "class",
+            "methods": {
+                "authenticate": {
+                    "obfuscated": "c",
+                    "signature": "(Ljava/lang/String;)Z"
+                }
+            }
+        }
+    }
+}

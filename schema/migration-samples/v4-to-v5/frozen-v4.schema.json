@@ -1,13 +1,13 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "https://github.com/Xiddoc/rosetta-maps/schema/rosetta-map.schema.json",
-    "title": "Rosetta map (schema_version 5)",
-    "description": "Canonical, language-neutral schema for the `schema_version: 5` map format. This repo (rosetta-maps) OWNS this schema: it is the single source of truth for the format that the maps here are stored in, and the rosetta-frida (TS/Zod) and rosetta-xposed (Kotlin) adapters are clients that must track it. CI validates every map against this file; editors can point at it for autocompletion. Changing the format means bumping this schema first, then updating the client adapters. v5 removes the free-form `sources[].notes` string: the published map is a PURE real->obfuscated mapping consumed by a resolver, and human provenance prose (why/how an entry was authored) has no reader in the artifact — it belongs in a `signatures/<app>/signatures.yaml` comment, never in the emitted JSON (a field only belongs here when a resolver reads it). v4 made the same move for the AIDL/Binder-specific fields (`aidl_descriptor`, `aidl_txn`, the `aidl_stub`/`aidl_callback` kinds) and the descriptive `anchors[]` array.",
+    "title": "Rosetta map (schema_version 4)",
+    "description": "Canonical, language-neutral schema for the `schema_version: 4` map format. This repo (rosetta-maps) OWNS this schema: it is the single source of truth for the format that the maps here are stored in, and the rosetta-frida (TS/Zod) and rosetta-xposed (Kotlin) adapters are clients that must track it. CI validates every map against this file; editors can point at it for autocompletion. Changing the format means bumping this schema first, then updating the client adapters. v4 makes the published map a PURE real->obfuscated mapping: the AIDL/Binder-specific fields (`aidl_descriptor`, `aidl_txn`, the `aidl_stub`/`aidl_callback` kinds) and the descriptive `anchors[]` array were removed. Finding-evidence like string literals or an AIDL descriptor is authoring input that lives in `signatures/<app>/signatures.yaml`, never in the emitted artifact (a field only belongs here when a resolver reads it).",
     "type": "object",
     "additionalProperties": false,
     "required": ["schema_version", "app", "version", "version_code", "classes"],
     "properties": {
-        "schema_version": { "const": 5 },
+        "schema_version": { "const": 4 },
         "app": {
             "type": "string",
             "minLength": 1,
@@ -86,7 +86,8 @@
             "properties": {
                 "tool": { "type": "string", "minLength": 1, "maxLength": 4096, "description": "Provenance of these entries. The canonical, client-neutral vocabulary is `sigmatcher`, `hand-authored`, and `rosetta-runtime-discovered` (the runtime-discovery token is framework-neutral on purpose — do NOT use a framework-specific spelling like `rosetta-frida-runtime-discovered`). Free-form values are permitted for other tools.", "examples": ["sigmatcher", "hand-authored", "rosetta-runtime-discovered"] },
                 "config": { "type": "string", "maxLength": 4096 },
-                "classes": { "type": "integer", "minimum": 0 }
+                "classes": { "type": "integer", "minimum": 0 },
+                "notes": { "type": "string", "maxLength": 4096 }
             }
         },
         "methodEntry": {
