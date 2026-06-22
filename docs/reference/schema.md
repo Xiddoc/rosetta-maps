@@ -1,7 +1,7 @@
 # Map schema
 
 `schema/rosetta-map.schema.json` is the **canonical** JSON Schema (draft-07) for
-the `schema_version: 4` map format. It is the single, language-neutral source of
+the `schema_version: 5` map format. It is the single, language-neutral source of
 truth for the format — this repo owns it because this repo owns the data it
 describes.
 
@@ -53,8 +53,10 @@ byte-faithful with the maps rosetta-frida emits.
 
 Record provenance on the map itself rather than in free text:
 
-- `sources[]` — which tool(s) produced which entries (`tool`, `config`, `classes`,
-  `notes`).
+- `sources[]` — which tool(s) produced which entries (`tool`, `config`,
+  `classes`). Free-form provenance prose (a `notes` string) was removed in v5:
+  it has no reader in the published artifact, so it belongs in a
+  `signatures/<app>/signatures.yaml` comment, not the map.
 - per-class `source`.
 - `signer_sha256` — the lowercase-hex SHA-256 of the signing certificate(s), if
   you read them. This pins publisher authenticity and detects repacks.

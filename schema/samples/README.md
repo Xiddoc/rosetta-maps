@@ -13,8 +13,8 @@ through:
   one enforced constraint. The set pins, in both directions, every enforced
   constraint of the canonical schema:
     - empty `obfuscated` → `minLength: 1` (`empty-{class,method,field}-obfuscated`)
-    - wrong `schema_version` → the `const: 4` hard gate (`wrong-schema-version`,
-      now a `schema_version: 3` map — the previous version is rejected)
+    - wrong `schema_version` → the `const: 5` hard gate (`wrong-schema-version`,
+      now a `schema_version: 4` map — the previous version is rejected)
     - missing `version_code` (`missing-version-code`)
     - negative `version_code` → `minimum: 0` (`negative-version-code`)
     - over-2^53 `version_code` → `maximum: 9007199254740991` (`version-code-too-large`),
@@ -62,6 +62,9 @@ through:
       method (`aidl-txn-removed`), an `anchors` array on a class
       (`anchors-removed`), and a `kind: aidl_stub` (`aidl-kind-removed`, pinning
       that the `aidl_stub`/`aidl_callback` kinds were dropped from the enum)
+    - the removed `sources[].notes` field (v5): free-form provenance prose has
+      no reader in the published map, so a `notes` on a `sources[]` entry is now
+      rejected by `additionalProperties: false` (`notes-source-removed`)
     - a reserved `classes` key → `propertyNames` rejects `__proto__` /
       `constructor` / `prototype` (`reserved-class-key`)
     - a method missing its required `signature` (`method-missing-signature`)
@@ -106,7 +109,7 @@ rosetta-frida `tests/conformance/fixtures/bounds.json` and rosetta-xposed
 keeps the maps samples tiny while still guarding against drift:
 
 - **`maxLength` caps** on string fields (`app` 256, `version` 256,
-  `obfuscated` 512, `signature`/`type`/`notes`/etc. 4096) — a reject
+  `obfuscated` 512, `signature`/`type`/etc. 4096) — a reject
   sample would need a multi-kilobyte string literal.
 - **Cardinality caps** — `classes.maxProperties` (50000),
   `methods`/`fields.maxProperties` (5000), `sources.maxItems` (100),
@@ -124,7 +127,7 @@ The `check-jsonschema` step in `.github/workflows/validate.yml` enforces
 both directions. The rosetta-frida (Zod) and rosetta-xposed (Kotlin)
 client validators assert the same verdicts in their shared conformance
 `validation.json` fixture, so the three hand-maintained copies of the
-`schema_version: 4` format stay in lockstep. (Note: the `signer_sha256`
+`schema_version: 5` format stay in lockstep. (Note: the `signer_sha256`
 format is enforced by the full schema and by the Frida Zod / Xposed
 `SignerGuard` paths, but NOT by the Xposed `:core` `MapLoader.validate`
 that the shared `validation.json` fixture runs through — so the signer

@@ -45,7 +45,10 @@ holds the map whose `"version_code": 30405`. CI enforces this.
 3. **Record provenance** on the map. Use the existing schema fields rather
    than free text where possible:
    - `sources[]` — which tool(s) produced which entries (`tool`, `config`,
-     `classes`, `notes`).
+     `classes`). Provenance *prose* does not go in the map (the `notes` string
+     was removed in v5 — a field only belongs in the artifact when a resolver
+     reads it); put any "why/how I authored this" narrative in a comment at the
+     top of `signatures/<app>/signatures.yaml` instead.
    - per-class `source`.
    - `signer_sha256` — the lowercase-hex SHA-256 of the signing
      certificate(s), if you read them (a single string, or an array when an

@@ -1,7 +1,7 @@
 # schema/
 
 `rosetta-map.schema.json` is the **canonical** JSON Schema (draft-07) for
-the `schema_version: 4` map format. It is the single, language-neutral
+the `schema_version: 5` map format. It is the single, language-neutral
 source of truth for the format — this repo owns it because this repo owns
 the data it describes.
 

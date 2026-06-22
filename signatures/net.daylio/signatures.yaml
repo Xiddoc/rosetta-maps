@@ -1,0 +1,457 @@
+# sigmatcher signatures for net.daylio (Daylio — mood & health tracker).
+# SOURCE OF TRUTH for maps/net.daylio/<version_code>.json (RFC 0001 Decision 4).
+# Offline / host dialect: human-readable regex-over-smali, multi-version.
+#
+# First pass — INTRODUCTORY mapping (version_code 252 / versionName 1.63.12).
+# Daylio is R8-minified with the usual carve-out: framework-instantiated
+# classes (Application, Activities — referenced by name from the manifest) keep
+# their names, while internal logic is renamed. The package PATH net.daylio.* is
+# preserved even where the class name is rotated to a short token. Its service
+# layer lives in net.daylio.modules.* as single-letter classes behind obfuscated
+# interfaces — those rotate between releases and are the real reason this map
+# exists. Every signature below is anchored on a GLOBALLY-UNIQUE string literal
+# (verified to occur in exactly one class app-wide) so it resolves unambiguously
+# and survives name rotation.
+
+# ─── Kept entry points (name not obfuscated; useful client hook landmarks) ───
+
+# Application subclass named in AndroidManifest (android:name) → name retained.
+- name: 'MyApplication'
+  package: 'net.daylio'
+  signatures:
+      - signature: '"Noto Color Emoji Compat"'
+        type: regex
+        count: 1
+
+# Launcher activity (MAIN/LAUNCHER in the manifest) → name retained. This is
+# the home / overview screen.
+- name: 'OverviewActivity'
+  package: 'net.daylio.activities'
+  signatures:
+      - signature: '"spread_buttons_new_milestone_created"'
+        type: regex
+        count: 1
+
+# ─── Obfuscated service modules (net.daylio.modules.*) — the map's real value ─
+
+# Google-Drive backup/restore. Anchored on a backup-integrity error string.
+# Reads/writes backup_*.daylio archives; net.daylio.data.exceptions imports.
+- name: 'BackupModule'
+  package: 'net.daylio.modules'
+  signatures:
+      - signature: '"Metadata are missing in backup!"'
+        type: regex
+        count: 1
+
+# Mood-icon / emoji pack management (the selectable mood-icon tabs).
+- name: 'MoodIconPackModule'
+  package: 'net.daylio.modules'
+  signatures:
+      - signature: '"emoji_tab_first_from_"'
+        type: regex
+        count: 1
+
+# Daily reminder scheduling + the battery-optimisation permission dialog flow.
+- name: 'ReminderModule'
+  package: 'net.daylio.modules'
+  signatures:
+      - signature: '"reminder_bat_optim_dialog_shown"'
+        type: regex
+        count: 1
+
+# Entry/stats data provider — serves entries over date ranges to the charts
+# layer. Identity inferred from method-name string literals; MEDIUM confidence,
+# revisit when member-level signatures are added.
+- name: 'EntriesDataProvider'
+  package: 'net.daylio.modules'
+  signatures:
+      - signature: '"getEntriesInDateRange"'
+        type: regex
+        count: 1
+
+# ══════════════════════════════════════════════════════════════════════════
+# EXPORTS subsystem (user-facing CSV + PDF export) — hardened multi-version (252 + 267) 2026-06-09
+# ══════════════════════════════════════════════════════════════════════════
+# Authored against version_code 252; re-anchored to survive rotation to 267.
+# Class anchors are BYTE-IDENTICAL to the canonical signatures.yaml; only the
+# CsvExportModule members changed (the two that were anchored on rotating
+# obfuscated method names R4/tb).
+
+# ─── CSV export module (the z8 implementation) ───────────────────────────────
+- name: 'CsvExportModule'
+  package: 'net.daylio.modules'
+  signatures:
+      - signature: '"\.csv"'
+        type: regex
+        count: 1
+  methods:
+      # writeCsvFile(String) : File — opens the output file, writes the UTF-8
+      # BOM (0xEF 0xBB 0xBF) then the CSV body. Re-anchored on the pure
+      # framework descriptor (String in, java.io.File out) WITHOUT the
+      # obfuscated method name (was R4 on 252 → rotated to O9 on 267). The
+      # descriptor occurs exactly once in this class on both versions.
+      - name: 'writeCsvFile'
+        signatures:
+            - signature: '\(Ljava/lang/String;\)Ljava/io/File;'
+              type: regex
+              count: 1
+      # startCsvExport (was tb()V on 252 → Tb()V on 267) is DROPPED: its body
+      # holds no string literal and references only obfuscated, rotating types
+      # (vb/yb, q8/r8), and its bare ()V descriptor is ambiguous within the
+      # class (two public ()V methods). No rotation-stable unique anchor exists,
+      # so per the hardening rule the member is dropped; the class map stands.
+
+# ─── CSV row/header builder (inner AsyncTask of the CSV module) ──────────────
+- name: 'CsvExportTask'
+  package: 'net.daylio.modules'
+  signatures:
+      - signature: '"full_date,date,weekday,time,mood,activities,scales,note_title,note"'
+        type: regex
+        count: 1
+
+# ─── CSV export view (the share-tile presenter) ──────────────────────────────
+- name: 'CsvExportView'
+  package: 'zf'
+  signatures:
+      - signature: '"Export CSV file does not exist!"'
+        type: regex
+        count: 1
+
+# ─── PDF export module (the a9 implementation) ───────────────────────────────
+- name: 'PdfExportModule'
+  package: 'net.daylio.modules'
+  signatures:
+      - signature: '"PDF export started"'
+        type: regex
+        count: 1
+
+# ─── PDF renderer (PdfDocument layout engine) ────────────────────────────────
+- name: 'PdfExportRenderer'
+  package: 'pf'
+  signatures:
+      - signature: '"Pdf export of entry note is probably in the endless loop!"'
+        type: regex
+        count: 1
+
+# ─── PDF export view (abstract share-tile presenter) ─────────────────────────
+- name: 'PdfExportView'
+  package: 'sg'
+  signatures:
+      - signature: '"Daylio PDF Export"'
+        type: regex
+        count: 1
+  methods:
+      # c(File) : the share callback — builds the ACTION_SEND intent with
+      # MIME application/pdf. Anchored on that MIME literal (unique to sg.a).
+      - name: 'onPdfReady'
+        signatures:
+            - signature: '"application/pdf"'
+              type: regex
+              count: 1
+
+# ─── PDF export settings screen presenter (concrete sg.a subclass) ───────────
+- name: 'PdfExportSettingsView'
+  package: 'sg'
+  signatures:
+      - signature: '"export_pdf_settings"'
+        type: regex
+        count: 1
+
+# ══════════════════════════════════════════════════════════════════════════
+# PREMIUM subsystem (billing + the is-premium gate) — hardened multi-version (252 + 267) 2026-06-09
+# ══════════════════════════════════════════════════════════════════════════
+# Authored vs version_code 252 (1.63.12); cross-version-hardened vs 267 (1.65.5).
+# Class anchors UNCHANGED (resolved on both). Members re-anchored on
+# rotation-stable evidence (in-body string literals, or the class's unique
+# public no-arg ()Z descriptor) — never on the obfuscated method name.
+
+# ─── Premium-status PROVIDER / GATE — net.daylio.modules.purchases.j impl ──
+# Class `d0` implements the purchases-manager interface `j`. It owns premium
+# state: isPremium reads it; the private writer unconditionally sets the premium
+# pref TRUE; onPremiumLost clears it; the subscribe/lifetime/subscription-restore
+# entry points funnel into the writer. HIGH confidence (identity confirmed in
+# code, not just anchor).
+- name: 'PremiumStatusManager'
+  package: 'net.daylio.modules.purchases'
+  signatures:
+      - signature: '"onPremiumLost"'
+        type: regex
+        count: 1
+  methods:
+      # THE is-premium accessor. Returns the persisted premium boolean.
+      # *** Single best hook point. ***
+      # Re-anchored on the class's UNIQUE public no-arg ()Z descriptor (verified
+      # the only `public <name>()Z` in d0 on BOTH 252 & 267). The previous
+      # name-bound anchor `u6` rotated to `l4` on 267. No in-body string exists
+      # in this body to anchor on, and the field-read it performs (premium pref)
+      # is shared with the sibling o()/t() callback, so the descriptor is the
+      # only stable, in-class-unique discriminator.
+      - name: 'isPremium'
+        signatures:
+            - signature: '\.method public \w+\(\)Z'
+              type: regex
+              count: 1
+      # onPremiumSubscribed(String sku) — subscribe success → grants premium.
+      # Re-anchored on the in-body log literal (present in both versions).
+      # Name rotated u  I7 (252) → Nc (267).
+      - name: 'onPremiumSubscribed'
+        signatures:
+            - signature: '"onPremiumSubscribed - "'
+              type: regex
+              count: 1
+      # onPremiumLifetimeRestored(long) — lifetime/playpass restore.
+      # Re-anchored on the in-body log literal (present in both versions).
+      # Name rotated T9 (252) → M5 (267).
+      - name: 'onPremiumLifetimeRestored'
+        signatures:
+            - signature: '"onPremiumLifetimeRestored - lifetime"'
+              type: regex
+              count: 1
+      # onPremiumSubscriptionRestored() — subscription restore → grants premium.
+      # Re-anchored on the in-body log literal (present in both versions).
+      # Name rotated fb (252) → p6 (267).
+      - name: 'onPremiumSubscriptionRestored'
+        signatures:
+            - signature: '"onPremiumSubscriptionRestored"'
+              type: regex
+              count: 1
+      # onPremiumLost() — clears the premium boolean.
+      # Re-anchored on the in-body "onPremiumLost" log literal — the SAME string
+      # used as the class anchor, which lives inside this method body (verified
+      # in both versions). Name rotated Y0 (252) → cg (267, now takes a param).
+      - name: 'onPremiumLost'
+        signatures:
+            - signature: '"onPremiumLost"'
+              type: regex
+              count: 1
+
+# ─── Central PREFERENCES registry holding the premium boolean ─────────────
+# Anchored on the unique preference-name literal. HIGH confidence. Class-level
+# only (typed-key inner class has no unique anchor; the premium key's
+# const-string sits in <clinit>, not the field region).
+- name: 'Prefs'
+  package: 'ad'
+  signatures:
+      - signature: '"IS_PRO_VERSION_PURCHASED"'
+        type: regex
+        count: 1
+
+# ─── Google-Play BILLING client wrapper ───────────────────────────────────
+# Real billing facade. Anchored on the unique "getBillingClientAsync" task
+# literal in the class body. HIGH confidence. Class-level only.
+- name: 'BillingClientWrapper'
+  package: 'net.daylio.modules.purchases'
+  signatures:
+      - signature: '"getBillingClientAsync"'
+        type: regex
+        count: 1
+
+# ─── Purchase / premium-RESTORE coordinator ────────────────────────────────
+# Drives premium restore (queries owned inapp+subs purchases, validates, grants).
+# Anchored on a restore-flow log literal. HIGH confidence.
+- name: 'PremiumRestoreModule'
+  package: 'net.daylio.modules.purchases'
+  signatures:
+      - signature: '"Premium restore STARTED with force "'
+        type: regex
+        count: 1
+  methods:
+      # isRestoreInProgress() : Z
+      # Re-anchored on the class's UNIQUE public no-arg ()Z descriptor (verified
+      # the only `public <name>()Z` in e0 on BOTH 252 & 267; both read a
+      # purchases/k flag and delegate to the superclass helper). Name rotated
+      # hd (252) → r7 (267).
+      - name: 'isRestoreInProgress'
+        signatures:
+            - signature: '\.method public \w+\(\)Z'
+              type: regex
+              count: 1
+
+# ─── Product / SKU enum ─────────────────────────────────────────────────────
+# Enum mapping Daylio's premium products to Google-Play product IDs. Anchored on
+# the globally-unique enum-constant name. HIGH confidence. Class-level only.
+- name: 'ProductSku'
+  package: 'md'
+  signatures:
+      - signature: '"PREMIUM_LIFETIME"'
+        type: regex
+        count: 1
+
+# ─── Special-offer / trial scheduler ───────────────────────────────────────
+# Schedules special-offer alarms, tracks running offer, gates on premium.
+# Anchored on a unique human-readable log literal in the class body. HIGH
+# confidence. Class-level only.
+- name: 'SpecialOfferModule'
+  package: 'net.daylio.modules'
+  signatures:
+      - signature: '"SpecialOfferModule restoreRunningOffer"'
+        type: regex
+        count: 1
+
+# ══════════════════════════════════════════════════════════════════════════
+# BACKUPS subsystem (Google-Drive .daylio archive + asset sync) — hardened multi-version (252 + 267) 2026-06-09
+# ══════════════════════════════════════════════════════════════════════════
+# Cross-version target: version_code 252 (1.63.12) AND 267 (1.65.5).
+# Every anchor below is proven present + unique in BOTH version trees, and
+# references NO obfuscated type (so it survives R8 name rotation).
+# Re-anchored: BackupPersistenceModule, BackupData(DROPPED), BackupMetadata.fromJson,
+# DriveBackupService(DROPPED). All other entries are byte-identical to the
+# committed signatures.yaml BACKUPS block.
+
+# ─── BackupMetadata (252 sd.a → 267 mi.a) ────────────────────────────────────
+# CLASS anchor "Metadata{m_numberOfEntries=" + "photos_size" already resolve on
+# BOTH versions — left byte-identical. toJson()->JSONObject is framework-only and
+# already stable. ONLY fromJson was re-anchored: its old descriptor
+# (Lorg/json/JSONObject;)Lsd/a; referenced the rotated return type (sd.a→mi.a),
+# so it is now pinned on a framework-only JSONObject reader call that occurs
+# exactly once in this class, inside the parse factory body.
+- name: 'BackupMetadata'
+  package: 'sd'
+  signatures:
+      - signature: '"Metadata\{m_numberOfEntries="'
+        type: regex
+        count: 1
+      # "photos_size" JSON key — appears twice in this class (toJson + fromJson).
+      - signature: '"photos_size"'
+        type: regex
+        count: 2
+  methods:
+      # static a(JSONObject) -> BackupMetadata : the JSON parse factory.
+      # Re-anchored (was '(Lorg/json/JSONObject;)Lsd/a;', return type rotated).
+      # optBoolean(String,Z)Z is called exactly once in this class and only in
+      # the parse body (toJson uses put*), so it pins fromJson without naming the
+      # obfuscated return type. Framework descriptor → rotation-stable.
+      - name: 'fromJson'
+        signatures:
+            - signature: 'Lorg/json/JSONObject;->optBoolean\(Ljava/lang/String;Z\)Z'
+              type: regex
+              count: 1
+      # toJson() -> JSONObject : serialise back to a JSONObject. (unchanged)
+      - name: 'toJson'
+        signatures:
+            - signature: '\(\)Lorg/json/JSONObject;'
+              type: regex
+              count: 1
+
+# ─── BackupData — DROPPED (see findings) ─────────────────────────────────────
+# 252 sd.b held {String payload, BackupMetadata} and wrote the inner "*.daylio"
+# file itself via b(File)/c(File) (Base64+UTF-8). On 267 the class was SPLIT: the
+# successor mi.d is now just a {File, BackupMetadata} pair — the payload string
+# and the Base64/UTF-8 write logic moved into a separate class (267 ed.q / f9.d).
+# mi.d is stringless and its only content references the obfuscated type Lmi/a;.
+# There is no rotation-stable, non-obfuscated, class-unique anchor in EITHER
+# version (252 sd.b's sole string "UTF-8" is not app-wide unique; mi.d has no
+# strings). Re-anchoring would require referencing the rotating type Lmi/a; —
+# exactly what the hardening rules forbid — so BackupData and its getMetadata
+# member are dropped. The class-level map loss is contained: BackupMetadata
+# (mi.a) is still mapped, which is the meaningful half of the pair.
+
+# ─── BackupPersistenceModule (252 net.daylio.modules.s → 267 .t) ─────────────
+# The real serializer/restorer. Old anchor "last_backup.json" is GONE in 267
+# (the JSON scratch-file step was removed: 0 occurrences app-wide). The class is
+# string-poor — its only literal common to both versions is "backup" (the
+# filesDir/backup staging-dir name), which is NOT app-wide unique (3 files each).
+# Hardened with a CONJUNCTION that is unique to this class in BOTH versions:
+# the "backup" dir literal AND a framework getFilesDir() call in the same file
+# (the private dir-builder new File(getFilesDir(), "backup")). Neither anchor
+# references an obfuscated type. Verified: the only file carrying BOTH is
+# 252 modules/s.smali and 267 modules/t.smali.
+- name: 'BackupPersistenceModule'
+  package: 'net.daylio.modules'
+  signatures:
+      - signature: '"backup"'
+        type: regex
+        count: 1
+      - signature: 'getFilesDir\(\)Ljava/io/File;'
+        type: regex
+        count: 1
+  # getLastBackupFile member DROPPED: its 252 method a()->File built
+  # filesDir/backup/last_backup.json; on 267 that scratch file and the method are
+  # gone entirely (no a()Ljava/io/File; here; restore now takes a JSONObject
+  # directly). Nothing stable to anchor — dropped honestly.
+
+# ─── Asset sync trigger module (assets.p / iface assets.s) — UNCHANGED ────────
+# Resolved on both versions; anchors left byte-identical.
+- name: 'AssetsSyncModule'
+  package: 'net.daylio.modules.assets'
+  signatures:
+      - signature: '"---> Scheduling assets sync - "'
+        type: regex
+        count: 1
+      - signature: 'Lnet/daylio/backup/tasks/SyncAssetsWorker;'
+        type: regex
+        count: 1-3
+      - signature: '"assets_sync"'
+        type: regex
+        count: 3-6
+
+# ─── WorkManager workers (KEPT class names) — UNCHANGED ──────────────────────
+- name: 'AssetsSyncWorkerBase'
+  package: 'net.daylio.backup.tasks'
+  signatures:
+      - signature: '"Type map is null. Should not happen!"'
+        type: regex
+        count: 2
+
+- name: 'UploadAssetsToCloudWorker'
+  package: 'net.daylio.backup.tasks'
+  signatures:
+      - signature: '"Upload asset success for "'
+        type: regex
+        count: 1
+      - signature: '"photos_upload_count"'
+        type: regex
+        count: 1
+
+- name: 'DownloadAssetsFromCloudWorker'
+  package: 'net.daylio.backup.tasks'
+  signatures:
+      - signature: '"photos_download_count"'
+        type: regex
+        count: 1
+
+- name: 'SyncAssetsWorker'
+  package: 'net.daylio.backup.tasks'
+  signatures:
+      - signature: '"Sync Assets - "'
+        type: regex
+        count: 1
+      - signature: '"photos_sync_"'
+        type: regex
+        count: 1
+
+# ─── Google-Drive service / query layer — UNCHANGED ──────────────────────────
+- name: 'DriveServiceModule'
+  package: 'net.daylio.modules.drive'
+  signatures:
+      - signature: '"https://www\.googleapis\.com/auth/drive\.appdata"'
+        type: regex
+        count: 1
+
+- name: 'DriveQueryUtil'
+  package: 'of'
+  signatures:
+      - signature: '"More than one folder found for "'
+        type: regex
+        count: 1
+
+# ─── DriveBackupService — DROPPED (see findings) ─────────────────────────────
+# 252 net.daylio.modules.drive.a / iface drive.d. The class TOKEN is actually
+# stable across these two releases (still drive.a impl drive.d on 267, and its
+# sibling DriveServiceModule is drive.c on both), BUT the top-level a.smali has
+# no usable cross-version anchor:
+#   • 252 drive/a.smali is completely stringless (0 const-strings).
+#   • 267 drive/a.smali has only "tmp_backup_" and ".json", both ABSENT in 252
+#     (a 267-only temp-file upload path) — version-specific, not valid anchors.
+#   • Its stable, app-unique drive_backup_*cleanup* strings
+#     ("drive_backup_assets_cleanup_success", "err_drive_backup_cleanup_error",
+#     "err_drive_backup_assets_cleanup_error", "assets_deleted") live in INNER
+#     classes (a$d, a$d$a), NOT in the top-level class file, so they cannot
+#     anchor drive.a itself.
+#   • Every method on a.smali references an obfuscated type (sd.b/mi.d, r7.a/jc.a,
+#     drive.d$c, ad.c/vh.c prefs) or a generic framework call.
+# The only top-level-class anchor would be '.implements Lnet/daylio/modules/
+# drive/d;' — a single-letter obfuscated interface token, exactly the fragile
+# kind the hardening rules forbid. Per the task's explicit guidance, DROP rather
+# than ship a fragile one-version anchor. (Its data class & query util above
+# remain mapped, and BackupModule m/n still covers the high-level flow.)

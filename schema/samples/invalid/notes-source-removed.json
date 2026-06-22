@@ -1,0 +1,10 @@
+{
+    "schema_version": 5,
+    "app": "com.example.app",
+    "version": "1.0.0",
+    "version_code": 100,
+    "sources": [{ "tool": "hand-authored", "notes": "verified via Frida runtime trace" }],
+    "classes": {
+        "com.example.app.Foo": { "obfuscated": "aaaa" }
+    }
+}

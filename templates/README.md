@@ -4,7 +4,7 @@ Copy these to start a contribution (see `CONTRIBUTING.md`):
 
 | Template | Copy to | Purpose |
 | --- | --- | --- |
-| `map.template.json` | `maps/<app>/<version_code>.json` | the published map artifact (strict JSON, `schema_version: 4`) |
+| `map.template.json` | `maps/<app>/<version_code>.json` | the published map artifact (strict JSON, `schema_version: 5`) |
 | `signatures.template.yaml` | `signatures/<app>/signatures.yaml` | the sigmatcher-dialect source of truth |
 
 ## No per-map integrity sidecar

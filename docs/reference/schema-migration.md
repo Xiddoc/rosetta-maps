@@ -1,19 +1,19 @@
 # Schema evolution & the migration contract
 
 `schema_version` is a **hard gate**, not a hint. The canonical schema pins it
-with `"schema_version": { "const": 4 }`, and both client adapters reject any
-other value fail-closed (rosetta-frida's Zod `z.literal(4)`, rosetta-xposed's
-`MapLoader` `CURRENT_SCHEMA_VERSION` check). A `schema_version: 3` map is not
+with `"schema_version": { "const": 5 }`, and both client adapters reject any
+other value fail-closed (rosetta-frida's Zod `z.literal(5)`, rosetta-xposed's
+`MapLoader` `CURRENT_SCHEMA_VERSION` check). A `schema_version: 4` map is not
 "old but readable" — it is **rejected**. This page defines the migration
-strategy and documents the **executed** `2 -> 3` and `3 -> 4` bumps, so that
-future bumps are a deliberate, reproducible operation rather than an ad-hoc
-scramble.
+strategy and documents the **executed** `2 -> 3`, `3 -> 4`, and `4 -> 5` bumps,
+so that future bumps are a deliberate, reproducible operation rather than an
+ad-hoc scramble.
 
-Both migrations described below have **already happened**: the live canonical
-schema is now `schema_version: 4`. Each PAST hop is exercised against **frozen**
-copies of the schemas it bracketed (`frozen-v2.schema.json`, `frozen-v3.schema.json`),
-so an older worked example no longer depends on the live schema once a newer
-version exists.
+All migrations described below have **already happened**: the live canonical
+schema is now `schema_version: 5`. Each PAST hop is exercised against **frozen**
+copies of the schemas it bracketed (`frozen-v2.schema.json`,
+`frozen-v3.schema.json`, `frozen-v4.schema.json`), so an older worked example no
+longer depends on the live schema once a newer version exists.
 
 ## The decision: migrate **in place**, at bump time, once
 
@@ -166,7 +166,7 @@ These fixtures are exercised by the `validate.yml` "Schema-migration 2->3 worked
 example" step, so the *contract* stays CI-pinned. The frozen schemas are **not**
 the canonical schema — they are fixtures that exist only to keep the worked
 examples checkable now that the live `schema/rosetta-map.schema.json` is
-`const: 4`.
+`const: 5`.
 
 ## The executed 3→4 bump
 
@@ -219,12 +219,62 @@ A **before/after fixture pair** lives under
 - `before.v3.json` — a valid v3 map carrying `aidl_descriptor`, `aidl_txn`,
   `anchors`, and a `kind: aidl_stub` (validates against `frozen-v3.schema.json`).
 - `after.v4.json` — the same map after `migrate_v3_to_v4` (validates against the
-  **live** canonical v4 schema).
+  frozen v4 schema, `../v4-to-v5/frozen-v4.schema.json`). This `after` validated
+  against the *live* schema until the `4 -> 5` bump; now that v5 is live, the
+  executed 3→4 contract is pinned against the frozen v4 copy so it no longer
+  shifts when the live schema moves on.
 - `invalid/` — an `after` still at `schema_version: 3`, and one that left an
-  `aidl_descriptor` in: both MUST be **rejected** by the live v4 schema, pinning
+  `aidl_descriptor` in: both MUST be **rejected** by the frozen v4 schema, pinning
   the emit-as-v4 gate in both directions.
 
 These are exercised by the `validate.yml` "Schema-migration 3->4 worked example"
+step.
+
+## The executed 4→5 bump
+
+The `4 -> 5` bump finishes the same "an artifact field must have a reader"
+cleanup that v4 applied to the AIDL/anchor fields, this time for the last
+free-form provenance field. In summary, v5:
+
+- bumps the hard gate to `"schema_version": { "const": 5 }`;
+- **removes** the `sources[].notes` string — the only free-text field left in
+  the map.
+
+**Why it came out.** `notes` was human prose ("rebuilt from signatures.yaml @
+deadbeef", "verified via Frida runtime trace") that **no resolver reads** — both
+static resolvers translate purely off `obfuscated` + a method `signature`, and
+never look at `sources[]` beyond counting provenance. It was *authoring
+narrative* — why/how a contributor produced the map — which belongs in a comment
+at the top of `signatures/<app>/signatures.yaml` (the **source**), not in the
+resolved artifact. In practice the committed maps that carried it were already
+restating provenance their `signatures.yaml` header documented in full, so the
+removal lost nothing. The structured provenance fields that a tool can act on
+(`tool`, `config`, `classes`, per-class `source`, `signer_sha256`) stay.
+
+The migrator hop is:
+
+```text
+migrate_v4_to_v5(map):
+    assert map.schema_version == 4          # accept-as-v4 gate
+    map.schema_version = 5
+    for src in map.sources: drop src.notes  (removed in v5)
+    return map                               # emit-as-v5 gate (validate vs v5 schema)
+```
+
+A **before/after fixture pair** lives under
+[`schema/migration-samples/v4-to-v5/`](https://github.com/Xiddoc/rosetta-maps/tree/master/schema/migration-samples/v4-to-v5):
+
+- `frozen-v4.schema.json` — a frozen copy of the pre-bump v4 canonical schema
+  (shared: it is also the `after` schema of the 3→4 hop).
+- `before.v4.json` — a valid v4 map carrying a `sources[].notes` (validates
+  against `frozen-v4.schema.json`).
+- `after.v5.json` — the same map after `migrate_v4_to_v5` (validates against the
+  **live** canonical v5 schema).
+- `invalid/` — an `after` still at `schema_version: 4`, and one that left a
+  `notes` field in: both MUST be **rejected** by the live v5 schema, pinning the
+  emit-as-v5 gate in both directions.
+
+These are exercised by the `validate.yml` "Schema-migration 4->5 worked example"
 step.
 
 ## Lessons from the v3 bump (why v4 was needed)

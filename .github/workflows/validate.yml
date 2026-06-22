@@ -405,12 +405,15 @@ jobs:
                   echo "attestation sidecars OK for ${#mapfiles[@]} map(s)"
 
             # Schema-migration contract worked examples (maps#19). The live
-            # canonical schema is now schema_version:4 (the 3->4 bump executed).
+            # canonical schema is now schema_version:5 (the 4->5 bump executed).
             # Each PAST hop is pinned against FROZEN copies of the schemas it
             # bracketed, so an older worked example no longer depends on the live
-            # schema once a newer version exists. The frozen v3 schema lives beside
-            # the v3-to-v4 fixtures (frozen-v3.schema.json) and is shared as the
-            # `after` schema of the 2->3 hop and the `before` schema of the 3->4 hop.
+            # schema once a newer version exists. Each migration dir freezes its
+            # `before` schema, and that frozen copy doubles as the `after` schema
+            # of the previous hop: frozen-v3 (in v3-to-v4) is the `after` of 2->3
+            # and the `before` of 3->4; frozen-v4 (in v4-to-v5) is the `after` of
+            # 3->4 and the `before` of 4->5. Only the newest hop's `after`
+            # validates against the LIVE schema.
             #
             # 2->3: bump schema_version, drop `confidence`, ISO-normalize
             # `captured_at`. Pinned in both directions against frozen-v2 (before)
@@ -455,17 +458,20 @@ jobs:
             # 3->4: make the published map a PURE real->obf mapping — drop the
             # AIDL/Binder fields (`aidl_descriptor`, `aidl_txn`, the
             # `aidl_stub`/`aidl_callback` kinds) and the descriptive `anchors[]`.
-            # Pinned in both directions against frozen-v3 (before) and the LIVE v4
-            # canonical schema (after):
+            # Pinned in both directions against frozen-v3 (before) and FROZEN-v4
+            # (after). The `after` schema was the LIVE schema until the 4->5 bump;
+            # now that v5 is live, this hop validates `after.v4.json` against the
+            # frozen v4 copy beside the v4-to-v5 fixtures, so the executed 3->4
+            # contract no longer shifts when the live schema moves on:
             #   * `before.v3.json` MUST pass the FROZEN v3 schema (a real v3 map
             #     carrying the removed fields);
-            #   * `after.v4.json` MUST pass the LIVE canonical (v4) schema;
+            #   * `after.v4.json` MUST pass the FROZEN v4 schema;
             #   * `after.v4.json` MUST be REJECTED by the frozen v3 schema is NOT
             #     asserted (v4 is a strict subset of v3's fields, so a v4 map still
             #     parses as v3) — instead we pin the forward gate:
-            #   * `before.v3.json` MUST be REJECTED by the live v4 schema (v3
+            #   * `before.v3.json` MUST be REJECTED by the frozen v4 schema (v3
             #     `schema_version` + the removed fields fail the v4 gate);
-            #   * every `invalid/` after MUST be REJECTED by the live v4 schema (a
+            #   * every `invalid/` after MUST be REJECTED by the frozen v4 schema (a
             #     map still at v3, or one that left an `aidl_*`/`anchors` field in,
             #     fails the emit-as-v4 gate).
             - name: Schema-migration 3->4 worked example (executed bump)
@@ -473,7 +479,7 @@ jobs:
                   set -euo pipefail
                   dir=schema/migration-samples/v3-to-v4
                   v3="$dir/frozen-v3.schema.json"
-                  v4=schema/rosetta-map.schema.json
+                  v4=schema/migration-samples/v4-to-v5/frozen-v4.schema.json
 
                   # before == valid v3; after == valid v4.
                   timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v3" "$dir/before.v3.json"
@@ -481,12 +487,12 @@ jobs:
                   echo "migration before/after validate against their schemas"
 
                   # The v4 gate is real in both directions: an un-migrated v3 map
-                  # and every invalid `after` MUST be rejected by the live v4 schema.
+                  # and every invalid `after` MUST be rejected by the frozen v4 schema.
                   fail=0
                   for f in "$dir/before.v3.json" "$dir"/invalid/*.json; do
                       if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
                           --schemafile "$v4" "$f" >/dev/null 2>&1; then
-                          echo "::error file=$f::live v4 schema ACCEPTED a non-migrated/invalid map (the 3->4 gate loosened)"
+                          echo "::error file=$f::frozen v4 schema ACCEPTED a non-migrated/invalid map (the 3->4 gate loosened)"
                           fail=1
                       fi
                   done
@@ -494,6 +500,48 @@ jobs:
                       exit 1
                   fi
                   echo "migration v4 gate rejects un-migrated + invalid maps"
+
+            # 4->5: drop the free-form `sources[].notes` string — provenance prose
+            # has no reader in the published artifact (it belongs in a
+            # signatures.yaml comment). Pinned in both directions against frozen-v4
+            # (before) and the LIVE v5 canonical schema (after):
+            #   * `before.v4.json` MUST pass the FROZEN v4 schema (a real v4 map
+            #     carrying a `sources[].notes`);
+            #   * `after.v5.json` MUST pass the LIVE canonical (v5) schema;
+            #   * `after.v5.json` MUST be REJECTED by the frozen v4 schema is NOT
+            #     asserted (v5 is a strict subset of v4's fields, so a v5 map still
+            #     parses as v4) — instead we pin the forward gate:
+            #   * `before.v4.json` MUST be REJECTED by the live v5 schema (v4
+            #     `schema_version` + the removed `notes` field fail the v5 gate);
+            #   * every `invalid/` after MUST be REJECTED by the live v5 schema (a
+            #     map still at v4, or one that left a `notes` field in, fails the
+            #     emit-as-v5 gate).
+            - name: Schema-migration 4->5 worked example (executed bump)
+              run: |
+                  set -euo pipefail
+                  dir=schema/migration-samples/v4-to-v5
+                  v4="$dir/frozen-v4.schema.json"
+                  v5=schema/rosetta-map.schema.json
+
+                  # before == valid v4; after == valid v5.
+                  timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v4" "$dir/before.v4.json"
+                  timeout "$VALIDATE_TIMEOUT" check-jsonschema --schemafile "$v5" "$dir/after.v5.json"
+                  echo "migration before/after validate against their schemas"
+
+                  # The v5 gate is real in both directions: an un-migrated v4 map
+                  # and every invalid `after` MUST be rejected by the live v5 schema.
+                  fail=0
+                  for f in "$dir/before.v4.json" "$dir"/invalid/*.json; do
+                      if timeout "$VALIDATE_TIMEOUT" check-jsonschema \
+                          --schemafile "$v5" "$f" >/dev/null 2>&1; then
+                          echo "::error file=$f::live v5 schema ACCEPTED a non-migrated/invalid map (the 4->5 gate loosened)"
+                          fail=1
+                      fi
+                  done
+                  if [ "$fail" != "0" ]; then
+                      exit 1
+                  fi
+                  echo "migration v5 gate rejects un-migrated + invalid maps"
 
             # signatures/ is the SOURCE OF TRUTH (AGENTS.md) from which maps are
             # reproduced, so it must be validated too — historically only

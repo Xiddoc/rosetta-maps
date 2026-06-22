@@ -21,7 +21,7 @@ rosetta-frida and rosetta-xposed adapters.
   so it **is** the filename; CI rejects any file whose name does not
   equal the map's `version_code`.
 
-Maps are strict JSON, `schema_version: 4` — a pure real→obfuscated mapping (the
+Maps are strict JSON, `schema_version: 5` — a pure real→obfuscated mapping (the
 AIDL/Binder fields and `anchors[]` were removed in v4; finding-evidence lives in
 the signatures source). Field semantics live with the
 [canonical schema](schema.md). Provenance is carried on the map itself via
@@ -66,7 +66,7 @@ convergence point is the resolved **map**, not the signature.
 ## `schema/` — the canonical map schema
 
 `rosetta-map.schema.json` is the single, language-neutral source of truth for the
-`schema_version: 4` format, owned here. See the [map schema](schema.md) page.
+`schema_version: 5` format, owned here. See the [map schema](schema.md) page.
 
 ## `templates/`
 

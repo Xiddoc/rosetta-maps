@@ -1,0 +1,151 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://github.com/Xiddoc/rosetta-maps/schema/rosetta-map.schema.json",
+    "title": "Rosetta map (schema_version 4)",
+    "description": "Canonical, language-neutral schema for the `schema_version: 4` map format. This repo (rosetta-maps) OWNS this schema: it is the single source of truth for the format that the maps here are stored in, and the rosetta-frida (TS/Zod) and rosetta-xposed (Kotlin) adapters are clients that must track it. CI validates every map against this file; editors can point at it for autocompletion. Changing the format means bumping this schema first, then updating the client adapters. v4 makes the published map a PURE real->obfuscated mapping: the AIDL/Binder-specific fields (`aidl_descriptor`, `aidl_txn`, the `aidl_stub`/`aidl_callback` kinds) and the descriptive `anchors[]` array were removed. Finding-evidence like string literals or an AIDL descriptor is authoring input that lives in `signatures/<app>/signatures.yaml`, never in the emitted artifact (a field only belongs here when a resolver reads it).",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["schema_version", "app", "version", "version_code", "classes"],
+    "properties": {
+        "schema_version": { "const": 4 },
+        "app": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+$"
+        },
+        "version": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "\\S", "description": "Human-readable versionName label / fuzzy fallback only. Must contain a non-whitespace character (a whitespace-only label is rejected); version_code is the authoritative selection key." },
+        "version_code": { "type": "integer", "minimum": 0, "maximum": 9007199254740991, "description": "Full Android longVersionCode ((versionCodeMajor << 32) | versionCode), never masked. Capped at Number.MAX_SAFE_INTEGER (2^53 - 1) so the Frida JS client can represent it exactly." },
+        "captured_at": { "type": "string", "format": "date", "description": "The date the map was captured, as an ISO 8601 calendar date `YYYY-MM-DD` (format: date). v3 change: previously a free-form string." },
+        "signer_sha256": {
+            "description": "The SHA-256 of the signing certificate(s). EITHER a single bare lowercase 64-hex string OR a non-empty array of such strings (match-any: a real app may present several signing certs). Canonical on-disk form is bare lowercase hex, NO colon separators, exactly 64 hex chars — the runtime clients normalize the APP-presented hash, not this stored value, so this stays strict. v3 change: the array form is newly allowed (was string-only).",
+            "oneOf": [
+                { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+                }
+            ]
+        },
+        "generated_from": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["signatures_rev"],
+            "description": "Optional provenance binding the map to the exact signatures revision it was generated from (v3 addition). When present, `signatures_rev` is required.",
+            "properties": {
+                "signatures_rev": { "type": "string", "pattern": "^[0-9a-f]{7,40}$", "description": "The git commit (short or full SHA-1, 7-40 lowercase hex chars) of the signatures the map was generated from. Validated as a hex SHAPE only: this is an intentionally-unverified provenance hint with NO repo-internal existence check, deliberately asymmetric with `sources[].config` (which the semantic validator binds to a committed file). A map may be authored where the signatures rev is not a commit in this repo." }
+            }
+        },
+        "status": {
+            "enum": ["active", "superseded", "retracted"],
+            "default": "active",
+            "description": "Optional lifecycle status (v3 addition). Absent is treated as `active`. `superseded` requires `superseded_by`; `retracted` marks a withdrawn map."
+        },
+        "superseded_by": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Optional pointer (a `version_code`) to the map that supersedes this one (v3 addition). The semantic validator enforces that this is present iff `status == \"superseded\"`."
+        },
+        "client_hints": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Optional, advisory hints for specific clients. NOT used by the core resolver; a client MAY consult them. Keeping them in a sub-object keeps the top-level identity keys clean and signals they are non-authoritative.",
+            "properties": {
+                "frida_min_version": { "type": "string", "maxLength": 4096 },
+                "frida_max_version": { "type": "string", "maxLength": 4096 }
+            }
+        },
+        "sources": {
+            "type": "array",
+            "maxItems": 100,
+            "items": { "$ref": "#/definitions/mapSource" }
+        },
+        "classes": {
+            "type": "object",
+            "maxProperties": 50000,
+            "propertyNames": { "not": { "enum": ["__proto__", "constructor", "prototype"] } },
+            "additionalProperties": { "$ref": "#/definitions/classEntry" }
+        }
+    },
+    "definitions": {
+        "classKind": {
+            "enum": [
+                "class",
+                "interface",
+                "enum",
+                "synthetic",
+                "anonymous"
+            ]
+        },
+        "mapSource": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["tool"],
+            "properties": {
+                "tool": { "type": "string", "minLength": 1, "maxLength": 4096, "description": "Provenance of these entries. The canonical, client-neutral vocabulary is `sigmatcher`, `hand-authored`, and `rosetta-runtime-discovered` (the runtime-discovery token is framework-neutral on purpose — do NOT use a framework-specific spelling like `rosetta-frida-runtime-discovered`). Free-form values are permitted for other tools.", "examples": ["sigmatcher", "hand-authored", "rosetta-runtime-discovered"] },
+                "config": { "type": "string", "maxLength": 4096 },
+                "classes": { "type": "integer", "minimum": 0 },
+                "notes": { "type": "string", "maxLength": 4096 }
+            }
+        },
+        "methodEntry": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["obfuscated", "signature"],
+            "properties": {
+                "obfuscated": { "type": "string", "minLength": 1, "maxLength": 512 },
+                "signature": { "type": "string", "minLength": 1, "maxLength": 4096 },
+                "static": { "type": "boolean" },
+                "synthetic": { "type": "boolean" },
+                "is_constructor": { "type": "boolean" }
+            }
+        },
+        "methodMapValue": {
+            "oneOf": [
+                { "$ref": "#/definitions/methodEntry" },
+                {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 200,
+                    "items": { "$ref": "#/definitions/methodEntry" }
+                }
+            ]
+        },
+        "fieldEntry": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["obfuscated", "type"],
+            "properties": {
+                "obfuscated": { "type": "string", "minLength": 1, "maxLength": 512 },
+                "type": { "type": "string", "minLength": 1, "maxLength": 4096 },
+                "static": { "type": "boolean" }
+            }
+        },
+        "classEntry": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["obfuscated"],
+            "properties": {
+                "obfuscated": { "type": "string", "minLength": 1, "maxLength": 512 },
+                "extends": { "type": "string", "maxLength": 4096 },
+                "kind": { "$ref": "#/definitions/classKind" },
+                "dex": { "type": "string", "maxLength": 4096 },
+                "methods": {
+                    "type": "object",
+                    "maxProperties": 5000,
+                    "propertyNames": { "not": { "enum": ["__proto__", "constructor", "prototype"] } },
+                    "additionalProperties": { "$ref": "#/definitions/methodMapValue" }
+                },
+                "fields": {
+                    "type": "object",
+                    "maxProperties": 5000,
+                    "propertyNames": { "not": { "enum": ["__proto__", "constructor", "prototype"] } },
+                    "additionalProperties": { "$ref": "#/definitions/fieldEntry" }
+                },
+                "source": { "type": "string", "maxLength": 4096 }
+            }
+        }
+    }
+}
