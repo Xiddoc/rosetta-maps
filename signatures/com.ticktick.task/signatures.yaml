@@ -1,0 +1,583 @@
+# sigmatcher signatures for com.ticktick.task (TickTick / Dida365 — to-do app).
+# SOURCE OF TRUTH for maps/com.ticktick.task/<version_code>.json (RFC 0001 Decision 4).
+# Offline / host dialect: human-readable regex-over-smali, multi-version.
+#
+# INTRODUCTORY mapping — authored against version_code 8081 / versionName
+# 8.0.8.1, then MULTI-VERSION-HARDENED: all 66 rules verified to resolve with
+# zero failures on BOTH version_code 8081 (8.0.8.1) and 8080 (8.0.8.0) — which
+# is why there is a map per version under maps/com.ticktick.task/. The test
+# bit: 5 renamed helpers ROTATED their obfuscated tokens between the two
+# releases (AiComplete q9.x0->q9.w0, LoginHandler j8.m->j8.n, RequestUser
+# h8.l->h8.n, ResponseUser h8.m->h8.o, TwoFactorLoginHandler j8.n->j8.o) and
+# the anchors below tracked every one. Note j8.n is LoginHandler in 8081 but
+# TwoFactorLoginHandler in 8080 — proof the obfuscated name is worthless across
+# versions and the anchor IS the identity.
+#
+# Obfuscation profile (see research/com.ticktick.task/docs/orientation.md):
+# TickTick is R8-minified with a WIDE carve-out — the whole
+# com.ticktick.task.* business tree keeps readable package/class/member names
+# (incl. the 18 Retrofit API interfaces, the data entities, and the helper.*
+# classes), while bundled third-party libs and a minority of internal
+# helper/lambda classes are renamed to short tokens (y7.a, w7.b, j8.m, vd.d…).
+#
+# Anchoring strategy, in order of preference, all verified GLOBALLY UNIQUE:
+#   1. For the API interfaces — the REST PATH string from a @GET/@POST
+#      annotation (paths rotate far less than names and are unique per route).
+#   2. For renamed helpers — the retained SourceFile string ("Foo.java" /
+#      "Foo.kt"). R8 keeps SourceFile here, so it still spells the ORIGINAL
+#      class name even after the class token rotates → both proves identity
+#      AND survives rotation. (Used only where the source maps to ONE smali
+#      file; Kotlin classes whose lambdas/inner classes share the SourceFile
+#      string are anchored on an in-body literal instead.)
+#   3. A class-unique business string literal (log tag, toString prefix,
+#      error message, descriptor that names the class's own inner type).
+# Most com.ticktick.task.* classes resolve to THEMSELVES; the map certifies
+# that for 8081 and will catch the release that finally rotates one.
+
+# ════════════════════════════════════════════════════════════════════════
+# NETWORK — host foundation (research/.../docs/network-api.md)
+# ════════════════════════════════════════════════════════════════════════
+
+# Central domain config: api/xapi/pull/build/site/support hosts for both
+# ticktick.com and dida365.com; getApiDomain()/isDidaEnv().
+- name: 'BaseUrl'
+  package: 'com.ticktick.task.helper'
+  signatures:
+      - signature: '"\*\.dida365\.com"'
+        type: regex
+        count: 1
+
+# Per-environment host bundle factory (getReleaseTick/getReleaseDida/…),
+# incl. the pomodoro WebSocket URLs. The host strings live in the Companion.
+- name: 'ServerHostConfig$Companion'
+  package: 'com.ticktick.task.helper'
+  signatures:
+      - signature: '"Build/Api"'
+        type: regex
+        count: 1
+
+# Abstract per-request URL builder (Tick/Dida subclasses flip host by
+# account + locale + isIpInChina).
+- name: 'HttpUrlBuilderBase'
+  package: 'com.ticktick.task.helper'
+  signatures:
+      - signature: '"/webview/datalist/infoCollected"'
+        type: regex
+        count: 1
+
+# TickTick URL builder (carries the MS-To-Do import client-id GUID).
+- name: 'HttpUrlBuilderTick'
+  package: 'com.ticktick.task.helper'
+  signatures:
+      - signature: 'https://ms\.ticktick\.com'
+        type: regex
+        count: 1
+
+# Dida URL builder (its own MS-To-Do client-id GUID).
+- name: 'HttpUrlBuilderDida'
+  package: 'com.ticktick.task.helper'
+  signatures:
+      - signature: 'https://ms\.dida365\.com'
+        type: regex
+        count: 1
+
+# ════════════════════════════════════════════════════════════════════════
+# NETWORK — the 18 Retrofit API interfaces (anchored on a unique REST path)
+# ════════════════════════════════════════════════════════════════════════
+
+- name: 'AiApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"/ai/api/v2/voice/task/transcriptions"'
+        type: regex
+        count: 1
+
+- name: 'AppConfigInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"pub/api/v1/app/config"'
+        type: regex
+        count: 1
+
+- name: 'BatchApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"api/v2/tasks/delete"'
+        type: regex
+        count: 1
+
+- name: 'CountdownApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"/api/v2/countdown/batch"'
+        type: regex
+        count: 1
+
+- name: 'CourseApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '\"CourseApiInterface\.kt\"'
+        type: regex
+        count: 1
+
+- name: 'GeneralApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"datacollect/device/update"'
+        type: regex
+        count: 1
+
+- name: 'HabitApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"/api/v2/habitSections/batch"'
+        type: regex
+        count: 1
+
+- name: 'LiveActivityApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"api/v2/live/activity/token/push"'
+        type: regex
+        count: 1
+
+- name: 'LoginApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"api/v2/user/signon"'
+        type: regex
+        count: 1
+
+- name: 'PreferenceExInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '\"PreferenceExInterface\.kt\"'
+        type: regex
+        count: 1
+
+- name: 'PushTestApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"api/v2/push/stats/arrive"'
+        type: regex
+        count: 1
+
+- name: 'TaskApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"api/v2/task-attend/invitation/create"'
+        type: regex
+        count: 1
+
+- name: 'TaskTemplateApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"/api/v2/templates/note"'
+        type: regex
+        count: 1
+
+# Tiny interfaces — anchored on the retained SourceFile (single smali file).
+- name: 'TeamApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"TeamApiInterface\.kt"'
+        type: regex
+        count: 1
+
+- name: 'TestApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"datacollect/pub/v1/ab/group/result"'
+        type: regex
+        count: 1
+
+- name: 'TicketApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"TicketApiInterface\.kt"'
+        type: regex
+        count: 1
+
+- name: 'TimerApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"/api/v2/timer/statistics'
+        type: regex
+        count: 1
+
+- name: 'TwoFactorApiInterface'
+  package: 'com.ticktick.task.network.api'
+  signatures:
+      - signature: '"/api/v2/user/sign/mfa/code/verify"'
+        type: regex
+        count: 1
+
+# ════════════════════════════════════════════════════════════════════════
+# NETWORK — the obfuscated OkHttp/Retrofit stack (classes2.dex)
+# Names rotate; anchored on retained SourceFile or a unique header literal.
+# ════════════════════════════════════════════════════════════════════════
+
+# Retrofit/OkHttp client factory base (builds OkHttp 4.12.0, 25/40/40s).
+- name: 'ApiFactoryBase'
+  package: 'com.ticktick.task'         # obf: w7.b
+  signatures:
+      - signature: '\"apiBaseUrl\"'
+        type: regex
+        count: 1
+
+# Gson-backed concrete factory (singleton).
+- name: 'GsonApiFactory'
+  package: 'com.ticktick.task'         # obf: w7.c
+  signatures:
+      - signature: '"GsonApiFactory\.kt"'
+        type: regex
+        count: 1
+
+# Request interceptor — adds Authorization: OAuth <token>, hl, X-Device,
+# x-tz, traceid headers to every call.
+- name: 'HttpRequestInterceptor'
+  package: 'com.ticktick.task'         # obf: y7.a
+  signatures:
+      - signature: '"x-tz"'
+        type: regex
+        count: 1
+
+# Response interceptor — maps ApiErrorResult, handles 401/token-invalid.
+- name: 'HttpResponseInterceptor'
+  package: 'com.ticktick.task'         # obf: y7.b
+  signatures:
+      - signature: 'onTokenInvalid url:'
+        type: regex
+        count: 1
+
+# Payment-path interceptor — adds X-Data-Label on /api/v1/payment/* calls.
+- name: 'PayPathRequestInterceptor'
+  package: 'com.ticktick.task'         # obf: y7.c
+  signatures:
+      - signature: '"X-Data-Label"'
+        type: regex
+        count: 1
+
+# LoginApiInterface factory (uses the INTERNATIONAL_API domain).
+- name: 'LoginApi'
+  package: 'com.ticktick.task.network.restful'   # obf: vd.j
+  signatures:
+      - signature: '"LoginApi\.kt"'
+        type: regex
+        count: 1
+
+# ════════════════════════════════════════════════════════════════════════
+# AUTH — login orchestration + 2FA (research/.../docs/auth.md)
+# Token model is a stateless `Authorization: OAuth <token>` header (no cookie).
+# ════════════════════════════════════════════════════════════════════════
+
+# Abstract login orchestrator; provider subclasses below.
+- name: 'LoginHandler'
+  package: 'com.ticktick.task'         # obf: j8.m
+  signatures:
+      - signature: '\"action_sign_in\"'
+        type: regex
+        count: 1
+
+- name: 'AccountLoginTickTickHandler'
+  package: 'com.ticktick.task'         # obf: j8.e
+  signatures:
+      - signature: '"AccountLoginTickTickHandler\.java"'
+        type: regex
+        count: 1
+
+- name: 'AccountLoginFacebookHandler'
+  package: 'com.ticktick.task'         # obf: j8.a
+  signatures:
+      - signature: '"AccountLoginFacebookHandler\.java"'
+        type: regex
+        count: 1
+
+- name: 'AccountLoginGoogleWebHandler'
+  package: 'com.ticktick.task'         # obf: j8.c
+  signatures:
+      - signature: '"AccountLoginGoogleWebHandler\.java"'
+        type: regex
+        count: 1
+
+- name: 'TwoFactorLoginHandler'
+  package: 'com.ticktick.task'         # obf: j8.n
+  signatures:
+      - signature: '"TwoFactorLoginHandler\.kt"'
+        type: regex
+        count: 1
+
+# Re-authorize task (replays signon/signOAuth2 by accountType — no refresh ep).
+- name: 'TickTickAuthorizeTask'
+  package: 'com.ticktick.task'         # obf: cf.g
+  signatures:
+      - signature: '"TickTickAuthorizeTask\.java"'
+        type: regex
+        count: 1
+
+# Transient login result (toString prefix).
+- name: 'ResponseUser'
+  package: 'com.ticktick.task'         # obf: h8.m
+  signatures:
+      - signature: '"ResponseUser\{userType="'
+        type: regex
+        count: 1
+
+# Login request DTO.
+- name: 'RequestUser'
+  package: 'com.ticktick.task'         # obf: h8.l
+  signatures:
+      - signature: '"RequestUser\.java"'
+        type: regex
+        count: 1
+
+# Login response model — carries pro/team/2FA status (authId ⇒ need2FA).
+- name: 'SignUserInfo'
+  package: 'com.ticktick.task.network.sync.common.model'
+  signatures:
+      - signature: '"SignUserInfo\.java"'
+        type: regex
+        count: 1
+
+# Username/password login request model (kept field names verKey/verCode).
+- name: 'NamePasswordData'
+  package: 'com.ticktick.task.network.sync.common.model'
+  signatures:
+      - signature: '\"NamePasswordData\.kt\"'
+        type: regex
+        count: 1
+
+# Google sign-in entry Activity.
+- name: 'LoginMainActivity'
+  package: 'com.ticktick.task.account'
+  signatures:
+      - signature: '"GoogleLoginHelper"'
+        type: regex
+        count: 1
+
+# ════════════════════════════════════════════════════════════════════════
+# ACCOUNT — model, manager, profile/config, deletion (docs/account.md)
+# ════════════════════════════════════════════════════════════════════════
+
+# Local account entity (GreenDAO + Parcelable). Pro = proType==1 ||
+# isActiveTeamUser(); accountType==4 is local mode. accessToken lives here.
+- name: 'User'
+  package: 'com.ticktick.task.data'
+  signatures:
+      - signature: '"\*\*\*\*@"'
+        type: regex
+        count: 1
+
+# User settings entity (local).
+- name: 'UserProfile'
+  package: 'com.ticktick.task.data'
+  signatures:
+      - signature: '"UserProfile\{id="'
+        type: regex
+        count: 1
+
+# Account façade — caches current user, switches API domain on account-switch,
+# drives the sign-out wipe, merges pro/team status (saveUserStatus).
+- name: 'TickTickAccountManager'
+  package: 'com.ticktick.task.manager'
+  signatures:
+      - signature: '"user isPro= "'
+        type: regex
+        count: 1
+
+# GreenDAO service layer for User / UserProfile.
+- name: 'UserService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"UserService\.java"'
+        type: regex
+        count: 1
+
+- name: 'UserProfileService'
+  package: 'com.ticktick.task.service'
+  signatures:
+      - signature: '"UserProfileService\.java"'
+        type: regex
+        count: 1
+
+# Settings sync engine (UserProfile ↔ UserPreference pull/push).
+- name: 'UserSettingsSyncService'
+  package: 'com.ticktick.task.sync.sync'
+  signatures:
+      - signature: '\"UserSettingsSyncService\.kt\"'
+        type: regex
+        count: 1
+
+# Remote app-config blob manager (object).
+- name: 'UserConfigManager'
+  package: 'com.ticktick.task.userconfig'
+  signatures:
+      - signature: '/android/user_config/'
+        type: regex
+        count: 1
+
+# kotlinx-serialized wire settings DTO (toString fragment).
+- name: 'UserPreference'
+  package: 'com.ticktick.task.network.sync.entity.user'
+  signatures:
+      - signature: '", calendarViewConf="'
+        type: regex
+        count: 1
+
+# Sign-out controller (confirm + final-sync + logout UI).
+- name: 'AccountSignOutHelper'
+  package: 'com.ticktick.task.manager'
+  signatures:
+      - signature: '"AccountSignOutHelper"'
+        type: regex
+        count: 1
+
+# Delete-account flow host (onDeleteAccount → deleteAccountV3 w/ x-verify-id).
+# Intersect the retained SourceFile with an outer-class intent-extra literal.
+- name: 'BaseAccountInfoActivity'
+  package: 'com.ticktick.task.activity.account'
+  signatures:
+      - signature: '"BaseAccountInfoActivity\.kt"'
+        type: regex
+        count: 1
+      - signature: '"extra_name_user_id"'
+        type: regex
+        count: 1
+
+# ════════════════════════════════════════════════════════════════════════
+# PREMIUM — billing, the is-Pro gate, payment models (docs/premium.md)
+# ════════════════════════════════════════════════════════════════════════
+
+# Play Billing wrapper (ProductDetails/launchBillingFlow → verify → ack).
+# Anchored on a descriptor naming its own inner IProgressDialog type.
+- name: 'NewGoogleBillingPayment'
+  package: 'com.ticktick.task.payfor.billing'
+  signatures:
+      - signature: 'payFor: '
+        type: regex
+        count: 1
+
+# Purchase/verify helper.
+- name: 'NewGoogleBillingPayUtils'
+  package: 'com.ticktick.task.payfor.billing'
+  signatures:
+      - signature: '"queryProductDetailsAsync productId:"'
+        type: regex
+        count: 1
+
+# App-level is-Pro gate + grace-period handling.
+- name: 'ProHelper'
+  package: 'com.ticktick.task.helper.pro'
+  signatures:
+      - signature: '"showEnterGracePeriodWarnDialog needShowDialog FALSE"'
+        type: regex
+        count: 1
+
+# SKU specification model (only two literal SKUs ship in-APK).
+- name: 'SubscriptionSpecification'
+  package: 'com.ticktick.task.network.sync.payment.model'
+  signatures:
+      - signature: '"ticktick_yearly_trial_v2"'
+        type: regex
+        count: 1
+
+# Server verify-result model (isPro/needSubscribe/proEndDate/subscribeType).
+- name: 'SubscriptionInfo'
+  package: 'com.ticktick.task.network.sync.payment.model'
+  signatures:
+      - signature: '"SubscriptionInfo\.java"'
+        type: regex
+        count: 1
+
+# V7 free-trial paywall helper (anchored on a descriptor naming its own
+# inner FreeUsePayWallShowParam type).
+- name: 'ProV7TestHelper'
+  package: 'com.ticktick.task.activity.payfor'
+  signatures:
+      - signature: 'getUserType fail'
+        type: regex
+        count: 1
+
+# ════════════════════════════════════════════════════════════════════════
+# FEATURES — persistence, sync, focus, AI, NL parser (docs/features.md)
+# ════════════════════════════════════════════════════════════════════════
+
+# GreenDAO DAO for the core Task entity (TABLENAME "Tasks2").
+- name: 'Task2Dao'
+  package: 'com.ticktick.task.greendao'
+  signatures:
+      - signature: '"Tasks2"'
+        type: regex
+        count: 1
+
+# Core task entity.
+- name: 'Task2'
+  package: 'com.ticktick.task.data'
+  signatures:
+      - signature: '"Task2\.java"'
+        type: regex
+        count: 1
+
+# Project (list) entity.
+- name: 'Project'
+  package: 'com.ticktick.task.data'
+  signatures:
+      - signature: '"Project\.java"'
+        type: regex
+        count: 1
+
+# Habit entity.
+- name: 'Habit'
+  package: 'com.ticktick.task.data'
+  signatures:
+      - signature: '"Habit\.java"'
+        type: regex
+        count: 1
+
+# Cross-platform sync engine entry (doSync + per-entity commit* batches).
+- name: 'SyncService'
+  package: 'com.ticktick.task.sync.sync'
+  signatures:
+      - signature: '"commitPomodoro brief error conflict  = "'
+        type: regex
+        count: 1
+
+# Pomodoro foreground timer controller.
+- name: 'PomodoroControlService'
+  package: 'com.ticktick.task.focus.pomodoro.service'
+  signatures:
+      - signature: '\" clearSnapshot\"'
+        type: regex
+        count: 1
+
+# Pomodoro state machine (obf: yb.d).
+- name: 'PomodoroStateContext'
+  package: 'com.ticktick.task'
+  signatures:
+      - signature: '"doBeforeUpdateState "'
+        type: regex
+        count: 1
+
+# Focus-target data holder.
+- name: 'FocusEntity'
+  package: 'com.ticktick.task.focus'
+  signatures:
+      - signature: '"FocusEntity\(entityId="'
+        type: regex
+        count: 1
+
+# Streaming (SSE) AI assistant transport (obf: q9.x0).
+- name: 'AiComplete'
+  package: 'com.ticktick.task'
+  signatures:
+      - signature: '"/ai/api/v2/task/decomposition\?stream=true"'
+        type: regex
+        count: 1
+
+# JNI binding to libnative_parser.so (the NL quick-add parser).
+- name: 'TitleParserLib'
+  package: 'com.ticktick.task.utils'
+  signatures:
+      - signature: '"native_parser"'
+        type: regex
+        count: 1
