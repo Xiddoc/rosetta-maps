@@ -4,7 +4,7 @@
 > shared, searchable database of obfuscated app internals.
 
 [![Validate](https://github.com/Xiddoc/rosetta-maps/actions/workflows/validate.yml/badge.svg?branch=master)](https://github.com/Xiddoc/rosetta-maps/actions/workflows/validate.yml?query=branch%3Amaster)
-[![Docs](https://github.com/Xiddoc/rosetta-maps/actions/workflows/pages.yml/badge.svg?branch=master)](https://Xiddoc.github.io/rosetta-maps/)
+[![Docs](https://github.com/Xiddoc/rosetta-maps/actions/workflows/pages.yml/badge.svg?branch=master)](https://iliketo.party/rosetta-maps/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 rosetta-maps is a shared, PR-gated repository of per-app, per-version obfuscation
@@ -34,13 +34,13 @@ the map's `version_code`. No APK is ever uploaded. See
 
 ## Documentation
 
-Full docs are at **[Xiddoc.github.io/rosetta-maps](https://Xiddoc.github.io/rosetta-maps/)**:
+Full docs are at **[iliketo.party/rosetta-maps](https://iliketo.party/rosetta-maps/)**:
 
-- [Quickstart](https://Xiddoc.github.io/rosetta-maps/quickstart/) — grab a map and load it.
-- [Contributing](https://Xiddoc.github.io/rosetta-maps/contributing/) — how to add a map.
-- [Repository layout](https://Xiddoc.github.io/rosetta-maps/reference/layout/) — what lives where.
-- [Trust model & validation](https://Xiddoc.github.io/rosetta-maps/reference/trust-model/) — the trust ladder and what CI does.
-- [Map schema](https://Xiddoc.github.io/rosetta-maps/reference/schema/) — the canonical schema this repo owns.
+- [Quickstart](https://iliketo.party/rosetta-maps/quickstart/) — grab a map and load it.
+- [Contributing](https://iliketo.party/rosetta-maps/contributing/) — how to add a map.
+- [Repository layout](https://iliketo.party/rosetta-maps/reference/layout/) — what lives where.
+- [Trust model & validation](https://iliketo.party/rosetta-maps/reference/trust-model/) — the trust ladder and what CI does.
+- [Map schema](https://iliketo.party/rosetta-maps/reference/schema/) — the canonical schema this repo owns.
 
 ## Related repos
 
