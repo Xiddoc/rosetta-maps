@@ -1,9 +1,7 @@
 # TickTick 8.1.0.0 (version_code 8100) — map refresh + new anchors
 
 Findings from refreshing `com.ticktick.task` against a fresh APK
-(`versionName 8.1.0.0`, `versionCode 8100`). The real release signing cert
-SHA-256 is `80efccbb…578196` (see the signer section below — an earlier
-re-bundled sample had mis-set this to a private key). The authoritative
+(`versionName 8.1.0.0`, `versionCode 8100`). The authoritative
 real→obfuscated mapping lives in `maps/com.ticktick.task/8100.json`; the
 regex anchors live in `signatures/com.ticktick.task/signatures.yaml`. This doc
 only records *what was found*, not the name table.
@@ -13,8 +11,7 @@ only records *what was found*, not the name table.
 - APK arrived as a 5-volume RAR (`TickTick_signed.part1–5.rar`, RAR5) — the
   RARLab `unrar` was needed (7-Zip 23.01 / unrar-free choke on the codec /
   multi-volume join) → `TickTick_signed.zip` → `TickTick_signed.apk` (5 dex,
-  ~41 MB). NOTE: this sample was re-signed with a private key (see signer
-  section); the official build's signer is recorded in the maps.
+  ~41 MB).
 - Decompiled with apktool 3.0.2 (smali, ground truth for sigmatcher) and
   jadx 1.5.5 (Java, for reading). 109/21970 classes failed in jadx — normal
   for R8 output.
@@ -134,47 +131,6 @@ chunks. Consequences:
   avoid dangling refs — e.g. `PomodoroStateContext`'s `doBeforeUpdateState`
   worker takes the obfuscated inner state type `yb.d$h`. `changeDuration(J)V`
   was mapped instead.
-
-## Signer SHA-256 finding — the value in the maps is a RE-BUNDLED key, not TickTick's
-
-The 8100 APK analysed in this pass was **re-signed with a private key** (not the
-official TickTick release cert). Its signing cert SHA-256 is
-`44c3bb8c…b29541` — i.e. **identical to the `signer_sha256` already committed in
-all three maps** (8080/8081/8100). That confirms the stored value is the
-re-bundling key, **not** Google Play's TickTick signing certificate, so any
-client checking a Play-Store-installed TickTick against this map would fail the
-signer guard.
-
-`signer_sha256` is a functional version/authenticity guard, not derivable from a
-re-signed sample. **Now corrected** in all three maps (8080/8081/8100) to the
-real Google Play release certificate, read from a device running the official
-build:
-
-```
-80efccbbbc822a799ff7e787b889d02f3376cc4b829875eaa237adf19e578196
-```
-
-The recommended way to read it from a device, given a package name, is to pull
-the installed base APK and print the cert digest with `apksigner` (its
-"certificate SHA-256 digest" line is already in the canonical bare-lowercase-hex
-form the schema wants):
-
-```bash
-pkg=com.ticktick.task
-adb pull "$(adb shell pm path "$pkg" | sed 's/package://;s/\r//' | grep -m1 base.apk)" /tmp/base.apk \
-  && apksigner verify --print-certs /tmp/base.apk | grep -i 'SHA-256'
-```
-
-That prints two lines for TickTick:
-
-- `Signer #1 certificate SHA-256 digest: 80efccbb…578196` — the **APK signing
-  certificate**; this is what goes in `signer_sha256`.
-- `Source Stamp Signer certificate SHA-256 digest: 3257d599…3bbd6d` — the Play
-  **source stamp**, a separate provenance marker injected by Google Play. It is
-  NOT the app's signing identity and is deliberately **not** stored in the map.
-
-(If `apksigner` isn't handy, `keytool -printcert -jarfile /tmp/base.apk | grep
-SHA256` gives the same Signer #1 digest with colons — strip them and lowercase.)
 
 ## Coverage expansion — +14 classes, +8 account/Pro methods (8100)
 
