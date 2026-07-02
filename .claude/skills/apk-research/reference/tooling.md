@@ -173,6 +173,30 @@ $ jadx --version
 1.5.5
 ```
 
+#### Fallback when GitHub release downloads are blocked (Maven Central)
+
+Some managed/cloud environments allow `repo1.maven.org` but return **403 on
+`github.com/.../releases/download`** (and on `codeload.github.com`) — the release
+zip above then can't be fetched. jadx also publishes to Maven Central, but the
+`jadx-cli` "all" jar there is **not** a real fat jar and its transitive deps must
+be assembled. Resolve `io.github.skylot:jadx-cli:<ver>` (plus the input plugins
+`jadx-dex-input`, `jadx-smali-input`, `jadx-java-convert`) and run
+`jadx.cli.JadxCLI` off the assembled classpath. Two gotchas seen in the wild:
+
+- **`jadx-cli` hard-references logback** (`ch.qos.logback.classic.Level` in
+  `LogHelper`), so you need **both** `logback-classic` *and* `logback-core` on the
+  classpath — a resolver that pulls only `logback-classic` crashes at startup with
+  `NoClassDefFoundError: ch/qos/logback/classic/Level` (and, one layer up,
+  `LogbackServiceProvider Unable to get public no-arg constructor`). Dropping
+  logback entirely makes jadx swallow all errors via the SLF4J NOP logger — you
+  then see `exit 1` with no message. Keep both logback jars.
+- Large jars (jadx-core ~2 MB+) may `IncompleteRead` through a re-terminating
+  proxy when fetched with Python `urllib`; fetch jars with `curl` (`--retry`)
+  instead. A ~40-line stdlib POM walker (parent + `${...}` + dependencyManagement,
+  skipping test/provided/optional) is enough to build the classpath.
+
+Run it via a wrapper: `java -Xmx6g -cp "$CP" jadx.cli.JadxCLI "$@"`.
+
 ### Usage
 
 ```bash
@@ -233,6 +257,23 @@ chmod +x /usr/local/bin/apktool
 $ apktool --version
 3.0.2
 ```
+
+#### Fallback when GitHub release downloads are blocked (Maven Central)
+
+When `github.com/.../releases/download` 403s but `repo1.maven.org` is reachable,
+grab the self-contained CLI jar straight from Maven Central — unlike jadx's, this
+one **is** a fat jar (`Main-Class: brut.apktool.Main`, ~22 MB, bundles
+`brut.androlib`):
+
+```bash
+curl -fsSL -o /opt/tools/apktool-cli-3.0.2.jar \
+  https://repo1.maven.org/maven2/org/apktool/apktool-cli/3.0.2/apktool-cli-3.0.2.jar
+printf '#!/usr/bin/env bash\nexec java -jar /opt/tools/apktool-cli-3.0.2.jar "$@"\n' \
+  > ~/.local/bin/apktool && chmod +x ~/.local/bin/apktool
+```
+
+`sigmatcher analyze` shells out to whatever `apktool` is on `PATH`, so this
+wrapper is all it needs.
 
 ### Usage
 
@@ -317,3 +358,18 @@ strings -n 8 out/apktool/lib/arm64-v8a/libfoo.so | rg -i 'http|token|key'
 - **Ephemeral box.** Tools, caches, and the workspace vanish when the
   container is reclaimed. Re-run Setup each session; only repo-committed
   `signatures.yaml` / map JSON persist.
+- **Multi-volume RAR uploads (`.part1.rar`/`.part2.rar`/…).** A large APK may
+  arrive split into RAR5 volumes. `unrar-free` (apt) mishandles RAR5 multi-volume
+  (extracts a truncated file); use `7z` (`apt-get install -y p7zip-full p7zip-rar`).
+  Volume auto-detection keys off a **consistent base name**, so first strip any
+  per-file upload hash prefixes — rename to `Name.part1.rar`, `Name.part2.rar`, …
+  — then `7z x Name.part1.rar` reassembles all volumes (it reports `Volumes = N`).
+- **sigmatcher matching model** (verify anchors before writing them): a class
+  `signature` regex must match the target class **exactly `count` times** (default
+  `count: 1`) AND that `(regex, count)` must be **globally unique to one class
+  file**, or the class won't resolve. A `count` mismatch (e.g. a string that
+  appears twice) yields `Found no matches!`. Verify both with ripgrep:
+  `rg -oN --pcre2 -e 'REGEX' <class.smali> | wc -l` (== count) and
+  `rg -lN --pcre2 -e 'REGEX' <smali-roots> | wc -l` (== 1). Method `signature`s
+  resolve within the already-matched class; **field** signatures proved
+  unreliable on Moovit (skip field-level mapping — anchor classes + methods).
