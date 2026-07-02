@@ -26,8 +26,8 @@
       - signature: '"favoriteRouteId"'
         type: regex
         count: 1
-# [medium] qh3 component that persists favorites to per-metro .dat files (favorite_home_%s.dat, favorite_stops_vtwo_%s.dat, favorites_routes_%s.dat, etc.) and runs version upgraders logged as FavoriteStopsMigrat
-- name: 'FavoritesLocalStore'
+# [medium] qh3 migration component (lw4): migrate/shouldMigrate/cleanUp read legacy favorite_home_%s.dat / favorite_stops_vtwo_%s.dat / favorites_routes_%s.dat etc. into new DB entities; R8-merged (several ctors
+- name: 'FavoritesMigrator'
   package: 'com.moovit.app.useraccount.manager'
   signatures:
       - signature: '"FavoriteStopsMigrator"'
@@ -97,76 +97,6 @@
   package: 'com.moovit.app.useraccount.manager.favorites'
   signatures:
       - signature: '"\]\[LOCATION,"'
-        type: regex
-        count: 1
-
-# ==========================================================================
-# network-protocol (7 classes)
-# ==========================================================================
-# [high] Abstract base of the classic HttpURLConnection request framework: builds Uri from a server-path string resource + server config, appends query params (setUrlParameter guarded by 'Can\'t set a URL para
-- name: 'BaseServerRequest'
-  package: 'com.moovit.commons.request'
-  signatures:
-      - signature: '"Can\\''t set a URL parameter after the connection has been opened"'
-        type: regex
-        count: 1
-  methods:
-      - name: 'addRequestHeaders'
-        signatures:
-            - signature: '"Failed to add access token header!"'
-              type: regex
-              count: 1
-      - name: 'onServerException'
-        signatures:
-            - signature: '"CLIENT_ACCOUNT_REFRESH_TOKEN_INVALID"'
-              type: regex
-              count: 1
-# [high] Abstract base of the classic response hierarchy, paired with pac (holds a back-ref field 'a:pac', instantiated via pac.T() this.d.newInstance()). readHeaders parses X-Android-Response-Source (Response
-- name: 'BaseServerResponse'
-  package: 'com.moovit.commons.request'
-  signatures:
-      - signature: '" returned response code "'
-        type: regex
-        count: 1
-  methods:
-      - name: 'readHeaders'
-        signatures:
-            - signature: '"X-Android-Response-Source"'
-              type: regex
-              count: 1
-# [high] Kept enum of the Ktor-stack server endpoints; each constant carries a baseUrl: APP_SERVER=https://app5.moovitapp.com/services-app/services/, APP_SECURED_SERVER=app4, CDN_SERVER=app4cdn, CDN_RESOURCES=
-- name: 'Backend'
-  package: 'com.moovit.core.network'
-  signatures:
-      - signature: '"APP_SECURED_SERVER"'
-        type: regex
-        count: 2
-# [high] Full prod/qa/stg backend URL matrix: enumerates every environment's app/secureApp/cdn/search/resources/offlineResources/tvm/tvmNew/sdk endpoint (prod app5/app4/app4cdn/anonymousstream/sdk, qa qa-app*/
-- name: 'BackendEnvironments'
-  package: 'com.moovit.data.core.environment.backend'
-  signatures:
-      - signature: '"https://tvm\.moovitapp\.com/"'
-        type: regex
-        count: 1
-# [high] Enclosing class (this$0) of the leaked synthetic NetworkModule$Companion$parseUserError$1; its static a(e, je6, Continuation) casts the Ktor response body to com.tranzmate.moovit.protocol.common.MVErr
-- name: 'parseUserError'
-  package: 'com.moovit.core.network'
-  signatures:
-      - signature: '"null cannot be cast to non-null type com\.tranzmate\.moovit\.protocol\.common\.MVErrorMessage"'
-        type: regex
-        count: 1
-# [high] Ktor HttpClientPlugin (implements od6 with getKey/install/prepare) that installs request/response/exception logging by wiring the kept-named Logging$setupRequestLogging / setupResponseLogging / logExc
-- name: 'NetworkLoggingPlugin'
-  package: 'com.moovit.core.network'
-  signatures:
-      - signature: '"Request\[\*\]"'
-        type: regex
-        count: 1
-# [high] Abstract holder (from HttpClientUtils.kt) defining the three Ktor request AttributeKeys that route each Ktor call: 'backend-attribute' typed as Backend, 'path-attribute' typed as String, 'auth-attribu
-- name: 'NetworkRequestAttributes'
-  package: 'com.moovit.core.network'
-  signatures:
-      - signature: '"backend-attribute"'
         type: regex
         count: 1
 
@@ -1152,6 +1082,76 @@
   package: 'com.moovit.micromobility'
   signatures:
       - signature: 'Lcom/tranzmate/moovit/protocol/micromobility/MVMicroMobilityReportDamageRequest;-><init>\(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;\)V'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# network-protocol (7 classes)
+# ==========================================================================
+# [high] Abstract base of the classic HttpURLConnection request framework: builds Uri from a server-path string resource + server config, appends query params (setUrlParameter guarded by 'Can\'t set a URL para
+- name: 'BaseServerRequest'
+  package: 'com.moovit.commons.request'
+  signatures:
+      - signature: '"Can\\''t set a URL parameter after the connection has been opened"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'addRequestHeaders'
+        signatures:
+            - signature: '"Failed to add access token header!"'
+              type: regex
+              count: 1
+      - name: 'onServerException'
+        signatures:
+            - signature: '"CLIENT_ACCOUNT_REFRESH_TOKEN_INVALID"'
+              type: regex
+              count: 1
+# [high] Abstract base of the classic response hierarchy, paired with pac (holds a back-ref field 'a:pac', instantiated via pac.T() this.d.newInstance()). readHeaders parses X-Android-Response-Source (Response
+- name: 'BaseServerResponse'
+  package: 'com.moovit.commons.request'
+  signatures:
+      - signature: '" returned response code "'
+        type: regex
+        count: 1
+  methods:
+      - name: 'readHeaders'
+        signatures:
+            - signature: '"X-Android-Response-Source"'
+              type: regex
+              count: 1
+# [high] Kept enum of the Ktor-stack server endpoints; each constant carries a baseUrl: APP_SERVER=https://app5.moovitapp.com/services-app/services/, APP_SECURED_SERVER=app4, CDN_SERVER=app4cdn, CDN_RESOURCES=
+- name: 'Backend'
+  package: 'com.moovit.core.network'
+  signatures:
+      - signature: '"APP_SECURED_SERVER"'
+        type: regex
+        count: 2
+# [high] Full prod/qa/stg backend URL matrix: enumerates every environment's app/secureApp/cdn/search/resources/offlineResources/tvm/tvmNew/sdk endpoint (prod app5/app4/app4cdn/anonymousstream/sdk, qa qa-app*/
+- name: 'BackendEnvironments'
+  package: 'com.moovit.data.core.environment.backend'
+  signatures:
+      - signature: '"https://tvm\.moovitapp\.com/"'
+        type: regex
+        count: 1
+# [high] Enclosing class (this$0) of the leaked synthetic NetworkModule$Companion$parseUserError$1; its static a(e, je6, Continuation) casts the Ktor response body to com.tranzmate.moovit.protocol.common.MVErr
+- name: 'parseUserError'
+  package: 'com.moovit.core.network'
+  signatures:
+      - signature: '"null cannot be cast to non-null type com\.tranzmate\.moovit\.protocol\.common\.MVErrorMessage"'
+        type: regex
+        count: 1
+# [high] Ktor HttpClientPlugin (implements od6 with getKey/install/prepare) that installs request/response/exception logging by wiring the kept-named Logging$setupRequestLogging / setupResponseLogging / logExc
+- name: 'NetworkLoggingPlugin'
+  package: 'com.moovit.core.network'
+  signatures:
+      - signature: '"Request\[\*\]"'
+        type: regex
+        count: 1
+# [high] Abstract holder (from HttpClientUtils.kt) defining the three Ktor request AttributeKeys that route each Ktor call: 'backend-attribute' typed as Backend, 'path-attribute' typed as String, 'auth-attribu
+- name: 'NetworkRequestAttributes'
+  package: 'com.moovit.core.network'
+  signatures:
+      - signature: '"backend-attribute"'
         type: regex
         count: 1
 

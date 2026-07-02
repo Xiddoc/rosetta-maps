@@ -43,13 +43,12 @@ The tree is R8 partially-obfuscated: managers/providers are renamed to default-p
 | --- | --- | --- | --- |
 | `UserAccountManager` | yes | high | Component returned by MoovitAppApplication.getSystemService("user_account_manager_service") = this.e.d("USER_ACCOUNT"), cast to juf. juf.a() returns the FAVO… |
 | `FavoritesManager` | yes | high | UserAccountDataProvider whose getType() returns UserAccountDataProvider$ProviderType.FAVORITES; returned by UserAccountManager.a() / getSystemService("user_f… |
-| `FavoritesLocalStore` | yes | medium | qh3 component that persists favorites to per-metro .dat files (favorite_home_%s.dat, favorite_stops_vtwo_%s.dat, favorites_routes_%s.dat, etc.) and runs vers… |
+| `FavoritesMigrator` | yes | medium | qh3 migration component (lw4): migrate/shouldMigrate/cleanUp read legacy favorite_home_%s.dat / favorite_stops_vtwo_%s.dat / favorites_routes_%s.dat etc. int… |
 | `UserNotificationsManager` | yes | high | UserAccountDataProvider getType()->NOTIFICATIONS; returned by UserAccountManager.b(). Leaks tag "UserNotificationsManager", broadcasts com.moovit.useraccount… |
 | `UserPromotionsManager` | yes | high | UserAccountDataProvider getType()->PROMOTIONS. Leaks tag "UserPromotionsManager", broadcast com.moovit.useraccount.manager.promotions.user_promotions_update_… |
 | `PaymentAccountManager` | yes | high | Holds the connected payment/identity account: tag "PaymentAccountManager", service key "payment_account_manager", prefs account_id/account_type/account_auth_… |
 | `PaymentAccountAuthManager` | yes | high | Tag "PaymentAccountAuthManager"; reads/writes the auth token blob "payment_account_auth_info_v2.dat" (globally unique) via setAuthInfo/getAuthInfo ("setAuthI… |
 | `AccountAuthGetTokenTask` | yes | high | Log tag "AccountAuthGetTokenTask" (repeated 6x, globally unique) names the class; body validates cached tokens and calls getNetworkAccessToken with retry ("g… |
-| `AccountAuthHeadersProvider` | yes | medium | Abstract type that injects Authorization / Access-Token request headers and handles auth-error codes CLIENT_ACCOUNT_ACCESS_TOKEN_INVALID / CLIENT_ACCOUNT_REF… |
 | `UserAdsTargetingData` | no | high | Kept-name Parcelable profile model (userTags + customUserProperties maps) with reflective CODER (const-class self-reference confirms it is genuinely kept). t… |
 | `FavoriteLocation` | no | high | Kept-name Parcelable extending Favorite (reflective CODER const-class self-ref confirms kept). Serializes as [[NAME,…][LOCATION,…][SOURCE,…]]; anchor "][LOCA… |
 

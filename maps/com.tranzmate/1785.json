@@ -22,7 +22,7 @@
             "kind": "class",
             "source": "sigmatcher"
         },
-        "com.moovit.app.useraccount.manager.FavoritesLocalStore": {
+        "com.moovit.app.useraccount.manager.FavoritesMigrator": {
             "obfuscated": "lw4",
             "kind": "class",
             "source": "sigmatcher"
@@ -77,64 +77,6 @@
             "obfuscated": "com.moovit.app.useraccount.manager.favorites.FavoriteLocation",
             "kind": "class",
             "extends": "com.moovit.app.useraccount.manager.favorites.Favorite",
-            "source": "sigmatcher"
-        },
-        "com.moovit.commons.request.BaseServerRequest": {
-            "obfuscated": "pac",
-            "kind": "class",
-            "extends": "java.lang.Object",
-            "methods": {
-                "addRequestHeaders": {
-                    "obfuscated": "I",
-                    "signature": "(Ljava/net/HttpURLConnection;)V"
-                },
-                "onServerException": {
-                    "obfuscated": "W",
-                    "signature": "(Lcom/moovit/commons/request/ServerException;)V"
-                }
-            },
-            "source": "sigmatcher"
-        },
-        "com.moovit.commons.request.BaseServerResponse": {
-            "obfuscated": "fec",
-            "kind": "class",
-            "extends": "java.lang.Object",
-            "methods": {
-                "readHeaders": {
-                    "obfuscated": "d",
-                    "signature": "(Lpac;Ljava/net/HttpURLConnection;Ljava/io/BufferedInputStream;)V"
-                }
-            },
-            "source": "sigmatcher"
-        },
-        "com.moovit.core.network.Backend": {
-            "obfuscated": "com.moovit.core.network.Backend",
-            "kind": "enum",
-            "extends": "java.lang.Enum",
-            "source": "sigmatcher"
-        },
-        "com.moovit.data.core.environment.backend.BackendEnvironments": {
-            "obfuscated": "com.moovit.data.core.environment.backend.a",
-            "kind": "class",
-            "extends": "java.lang.Object",
-            "source": "sigmatcher"
-        },
-        "com.moovit.core.network.parseUserError": {
-            "obfuscated": "com.moovit.core.network.e",
-            "kind": "class",
-            "extends": "java.lang.Object",
-            "source": "sigmatcher"
-        },
-        "com.moovit.core.network.NetworkLoggingPlugin": {
-            "obfuscated": "com.moovit.core.network.b",
-            "kind": "class",
-            "extends": "java.lang.Object",
-            "source": "sigmatcher"
-        },
-        "com.moovit.core.network.NetworkRequestAttributes": {
-            "obfuscated": "com.moovit.core.network.a",
-            "kind": "class",
-            "extends": "java.lang.Object",
             "source": "sigmatcher"
         },
         "com.moovit.data.tripplan.full.DefaultFullTripPlansRepository$performFullTripPlanSearch$1": {
@@ -872,6 +814,64 @@
             "obfuscated": "yd9",
             "kind": "class",
             "extends": "kfe",
+            "source": "sigmatcher"
+        },
+        "com.moovit.commons.request.BaseServerRequest": {
+            "obfuscated": "pac",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "methods": {
+                "addRequestHeaders": {
+                    "obfuscated": "I",
+                    "signature": "(Ljava/net/HttpURLConnection;)V"
+                },
+                "onServerException": {
+                    "obfuscated": "W",
+                    "signature": "(Lcom/moovit/commons/request/ServerException;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.commons.request.BaseServerResponse": {
+            "obfuscated": "fec",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "methods": {
+                "readHeaders": {
+                    "obfuscated": "d",
+                    "signature": "(Lpac;Ljava/net/HttpURLConnection;Ljava/io/BufferedInputStream;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.core.network.Backend": {
+            "obfuscated": "com.moovit.core.network.Backend",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.data.core.environment.backend.BackendEnvironments": {
+            "obfuscated": "com.moovit.data.core.environment.backend.a",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.core.network.parseUserError": {
+            "obfuscated": "com.moovit.core.network.e",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.core.network.NetworkLoggingPlugin": {
+            "obfuscated": "com.moovit.core.network.b",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.core.network.NetworkRequestAttributes": {
+            "obfuscated": "com.moovit.core.network.a",
+            "kind": "class",
+            "extends": "java.lang.Object",
             "source": "sigmatcher"
         },
         "com.moovit.app.home.HomeActivity": {

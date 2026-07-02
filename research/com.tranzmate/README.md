@@ -12,7 +12,7 @@ Confirmed against **version_code 1785** (versionName 5.194.0.1785). Moovit is R8
 
 | Doc | Subsystem | Classes |
 | --- | --- | --- |
-| [`docs/user-account.md`](docs/user-account.md) | User account & profile | 11 |
+| [`docs/user-account.md`](docs/user-account.md) | User account & profile | 10 |
 | [`docs/trip-planner.md`](docs/trip-planner.md) | Trip planning | 15 |
 | [`docs/itinerary.md`](docs/itinerary.md) | Itinerary model & legs | 13 |
 | [`docs/premium-subscription.md`](docs/premium-subscription.md) | Premium / Moovit+ / subscriptions | 12 |
@@ -28,7 +28,7 @@ Confirmed against **version_code 1785** (versionName 5.194.0.1785). Moovit is R8
 | [`docs/transit-realtime.md`](docs/transit-realtime.md) | Transit entities & real-time arrivals | 16 |
 | [`docs/push-notifications.md`](docs/push-notifications.md) | Push, GCM & Braze | 11 |
 
-**194 class findings across 15 subsystems.**
+**193 class findings across 15 subsystems.**
 
 ## Provenance
 
