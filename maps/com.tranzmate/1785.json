@@ -1,0 +1,1292 @@
+{
+    "schema_version": 5,
+    "app": "com.tranzmate",
+    "version": "5.194.0.1785",
+    "version_code": 1785,
+    "captured_at": "2026-07-02",
+    "sources": [
+        {
+            "tool": "sigmatcher",
+            "config": "signatures/com.tranzmate/signatures.yaml",
+            "classes": 192
+        }
+    ],
+    "classes": {
+        "com.moovit.app.useraccount.manager.UserAccountManager": {
+            "obfuscated": "juf",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.useraccount.manager.FavoritesManager": {
+            "obfuscated": "awf",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.useraccount.manager.FavoritesLocalStore": {
+            "obfuscated": "lw4",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.useraccount.manager.UserNotificationsManager": {
+            "obfuscated": "pwf",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.useraccount.manager.UserPromotionsManager": {
+            "obfuscated": "xwf",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.useraccount.manager.PaymentAccountManager": {
+            "obfuscated": "iva",
+            "kind": "class",
+            "methods": {
+                "invalidate": {
+                    "obfuscated": "h",
+                    "signature": "(Ljava/lang/String;)V"
+                },
+                "notifyPurchase": {
+                    "obfuscated": "j",
+                    "signature": "(J)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.useraccount.manager.PaymentAccountAuthManager": {
+            "obfuscated": "v37",
+            "kind": "class",
+            "methods": {
+                "setAuthInfo": {
+                    "obfuscated": "r",
+                    "signature": "(Lcom/moovit/auth/model/AuthenticationInfo;)Z"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.useraccount.manager.AccountAuthGetTokenTask": {
+            "obfuscated": "ec",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.useraccount.manager.profile.UserAdsTargetingData": {
+            "obfuscated": "com.moovit.app.useraccount.manager.profile.UserAdsTargetingData",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.useraccount.manager.favorites.FavoriteLocation": {
+            "obfuscated": "com.moovit.app.useraccount.manager.favorites.FavoriteLocation",
+            "kind": "class",
+            "extends": "com.moovit.app.useraccount.manager.favorites.Favorite",
+            "source": "sigmatcher"
+        },
+        "com.moovit.commons.request.BaseServerRequest": {
+            "obfuscated": "pac",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "methods": {
+                "addRequestHeaders": {
+                    "obfuscated": "I",
+                    "signature": "(Ljava/net/HttpURLConnection;)V"
+                },
+                "onServerException": {
+                    "obfuscated": "W",
+                    "signature": "(Lcom/moovit/commons/request/ServerException;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.commons.request.BaseServerResponse": {
+            "obfuscated": "fec",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "methods": {
+                "readHeaders": {
+                    "obfuscated": "d",
+                    "signature": "(Lpac;Ljava/net/HttpURLConnection;Ljava/io/BufferedInputStream;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.core.network.Backend": {
+            "obfuscated": "com.moovit.core.network.Backend",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.data.core.environment.backend.BackendEnvironments": {
+            "obfuscated": "com.moovit.data.core.environment.backend.a",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.core.network.parseUserError": {
+            "obfuscated": "com.moovit.core.network.e",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.core.network.NetworkLoggingPlugin": {
+            "obfuscated": "com.moovit.core.network.b",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.core.network.NetworkRequestAttributes": {
+            "obfuscated": "com.moovit.core.network.a",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.data.tripplan.full.DefaultFullTripPlansRepository$performFullTripPlanSearch$1": {
+            "obfuscated": "com.moovit.data.tripplan.full.DefaultFullTripPlansRepository$performFullTripPlanSearch$1",
+            "kind": "synthetic",
+            "source": "sigmatcher"
+        },
+        "com.moovit.data.tripplan.schedule.remote.DefaultTripPlanScheduleRemoteDataSource": {
+            "obfuscated": "com.moovit.data.tripplan.schedule.remote.a",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.data.tripplan.full.DefaultFullTripPlansRepositoryReceiveTripPlanCollector": {
+            "obfuscated": "com.moovit.data.tripplan.full.b",
+            "kind": "synthetic",
+            "source": "sigmatcher"
+        },
+        "com.tranzmate.moovit.protocol.tripplanner.MVTripPlanRequest": {
+            "obfuscated": "com.tranzmate.moovit.protocol.tripplanner.MVTripPlanRequest",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.feature.tripplan.TripPlanViewModel": {
+            "obfuscated": "com.moovit.feature.tripplan.c",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.feature.tripplan.preferences.TripPlanPreferencesViewModel": {
+            "obfuscated": "com.moovit.feature.tripplan.preferences.f",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.feature.tripplan.nogroup.ItinerariesNoGroupingViewModel": {
+            "obfuscated": "com.moovit.feature.tripplan.nogroup.b",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.feature.tripplan.model.MutableTripPlanParams": {
+            "obfuscated": "com.moovit.feature.tripplan.model.c",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.data.tripplan.latest.DefaultLatestItineraryRepository": {
+            "obfuscated": "com.moovit.data.tripplan.latest.a",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.data.tripplan.latest.local.DefaultLatestItineraryLocalDataSource": {
+            "obfuscated": "com.moovit.data.tripplan.latest.local.a",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tripplanner.TripPlannerActivity": {
+            "obfuscated": "com.moovit.app.tripplanner.TripPlannerActivity",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tripplanner.TripPlannerResultsFragment": {
+            "obfuscated": "com.moovit.app.tripplanner.TripPlannerResultsFragment",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.feature.tripplan.TripPlanArgs": {
+            "obfuscated": "com.moovit.feature.tripplan.TripPlanArgs",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.data.tripplan.full.TripPlanConfig": {
+            "obfuscated": "com.moovit.data.tripplan.full.TripPlanConfig",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.data.tripplan.full.TripPlanSection": {
+            "obfuscated": "com.moovit.data.tripplan.full.TripPlanSection",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.Itinerary": {
+            "obfuscated": "com.moovit.itinerary.model.Itinerary",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.ItineraryMetadata": {
+            "obfuscated": "com.moovit.itinerary.model.ItineraryMetadata",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.leg.Leg": {
+            "obfuscated": "com.moovit.itinerary.model.leg.Leg",
+            "kind": "interface",
+            "extends": "android.os.Parcelable",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.leg.WalkLeg": {
+            "obfuscated": "com.moovit.itinerary.model.leg.WalkLeg",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.leg.TransitLineLeg": {
+            "obfuscated": "com.moovit.itinerary.model.leg.TransitLineLeg",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.leg.WaitToTransitLineLeg": {
+            "obfuscated": "com.moovit.itinerary.model.leg.WaitToTransitLineLeg",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.leg.MultiTransitLinesLeg": {
+            "obfuscated": "com.moovit.itinerary.model.leg.MultiTransitLinesLeg",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.leg.BicycleRentalLeg": {
+            "obfuscated": "com.moovit.itinerary.model.leg.BicycleRentalLeg",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.leg.CarpoolLeg": {
+            "obfuscated": "com.moovit.itinerary.model.leg.CarpoolLeg",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.model.leg.PathwayWalkLeg": {
+            "obfuscated": "com.moovit.itinerary.model.leg.PathwayWalkLeg",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.ItineraryProtocol": {
+            "obfuscated": "w07",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "methods": {
+                "decodeItinerary": {
+                    "obfuscated": "d",
+                    "signature": "(Ljava/lang/String;Lr89;Lzp2;Lcom/tranzmate/moovit/protocol/tripplanner/MVTripPlanItinerary;Lw89;)Lcom/moovit/itinerary/model/Itinerary;"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.itinerary.ItineraryLegLocationResolver": {
+            "obfuscated": "f17",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.itinerary2.ItineraryViewModel": {
+            "obfuscated": "com.moovit.app.itinerary2.ItineraryViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.subscription.premium.packages.SubscriptionPackageType": {
+            "obfuscated": "com.moovit.app.subscription.premium.packages.SubscriptionPackageType",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.subscription.premium.packages.SubscriptionPackageState": {
+            "obfuscated": "com.moovit.app.subscription.premium.packages.SubscriptionPackageState",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.subscription.model.SubscriptionStatus": {
+            "obfuscated": "com.moovit.app.subscription.model.SubscriptionStatus",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.subscription.model.RecurrenceMode": {
+            "obfuscated": "com.moovit.app.subscription.model.RecurrenceMode",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.subscription.model.SubscriptionPricingPhase": {
+            "obfuscated": "com.moovit.app.subscription.model.SubscriptionPricingPhase",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.subscription.model.SubscriptionBasePlan": {
+            "obfuscated": "com.moovit.app.subscription.model.SubscriptionBasePlan",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.plus.referral.MoovitPlusReferralParams": {
+            "obfuscated": "com.moovit.app.plus.referral.MoovitPlusReferralParams",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.benefits.BenefitViewModel": {
+            "obfuscated": "com.moovit.app.benefits.BenefitViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "methods": {
+                "calculateUiState": {
+                    "obfuscated": "a",
+                    "signature": "(Lcom/moovit/app/benefits/BenefitViewModel;Ljava/lang/String;Lkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;"
+                },
+                "sendBenefitInstructionsRequest": {
+                    "obfuscated": "c",
+                    "signature": "(Ljava/lang/String;Lkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.plus.MoovitPlusContentCards": {
+            "obfuscated": "com.moovit.app.plus.a",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.tranzmate.moovit.protocol.moovitplusbenefits.MVRedeemCouponRequest": {
+            "obfuscated": "com.tranzmate.moovit.protocol.moovitplusbenefits.MVRedeemCouponRequest",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.tranzmate.moovit.protocol.moovitplusbenefits.MVRedeemCouponResponse": {
+            "obfuscated": "com.tranzmate.moovit.protocol.moovitplusbenefits.MVRedeemCouponResponse",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.tranzmate.moovit.protocol.moovitplusbenefits.MVGetReferralCouponResponse": {
+            "obfuscated": "com.tranzmate.moovit.protocol.moovitplusbenefits.MVGetReferralCouponResponse",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.payment.contacts.PaymentContextContactsRepository": {
+            "obfuscated": "com.moovit.payment.contacts.c",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "methods": {
+                "fetchContacts": {
+                    "obfuscated": "e",
+                    "signature": "(Landroid/content/Context;ZLkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;"
+                },
+                "resendInvitationLink": {
+                    "obfuscated": "f",
+                    "signature": "(Landroid/content/Context;Ljava/lang/String;Lkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.payment.account.model.PaymentAccount": {
+            "obfuscated": "com.moovit.payment.account.model.PaymentAccount",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.payment.contacts.model.PaymentAccountContact": {
+            "obfuscated": "com.moovit.payment.contacts.model.PaymentAccountContact",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.payment.account.model.PaymentAccountProfile": {
+            "obfuscated": "com.moovit.payment.account.model.PaymentAccountProfile",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.payment.wallet.widget.MyWalletViewModel": {
+            "obfuscated": "com.moovit.payment.wallet.widget.MyWalletViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "source": "sigmatcher"
+        },
+        "com.moovit.payment.wallet.widget.WalletItemsActionViewModel": {
+            "obfuscated": "com.moovit.payment.wallet.widget.WalletItemsActionViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "source": "sigmatcher"
+        },
+        "com.moovit.payment.wallet.widget.WalletItemsViewModel": {
+            "obfuscated": "com.moovit.payment.wallet.widget.WalletItemsViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "source": "sigmatcher"
+        },
+        "com.moovit.payment.invoices.PaymentAccountUpcomingPaymentViewModel": {
+            "obfuscated": "com.moovit.payment.invoices.PaymentAccountUpcomingPaymentViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "source": "sigmatcher"
+        },
+        "com.moovit.payment.gateway.PaymentGatewayFragment": {
+            "obfuscated": "com.moovit.payment.gateway.PaymentGatewayFragment",
+            "kind": "class",
+            "extends": "rk9",
+            "methods": {
+                "onAddPaymentMethodClicked": {
+                    "obfuscated": "z1",
+                    "signature": "()V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.wallet.UserWalletStore": {
+            "obfuscated": "com.moovit.ticketing.wallet.UserWalletStore",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.wallet.HistoryUserWalletStore": {
+            "obfuscated": "com.moovit.ticketing.wallet.HistoryUserWalletStore",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.ticket.TicketAgency": {
+            "obfuscated": "com.moovit.ticketing.ticket.TicketAgency",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.purchase.fare.TicketFare": {
+            "obfuscated": "com.moovit.ticketing.purchase.fare.TicketFare",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.vouchers.VoucherWallet": {
+            "obfuscated": "com.moovit.ticketing.vouchers.VoucherWallet",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.vouchers.ReservedVoucher": {
+            "obfuscated": "com.moovit.ticketing.vouchers.ReservedVoucher",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.ticket.Status": {
+            "obfuscated": "com.moovit.ticketing.ticket.Ticket$Status",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.rewards.VelociaViewModel": {
+            "obfuscated": "com.moovit.ticketing.rewards.VelociaViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.vouchers.VouchersManagementViewModel": {
+            "obfuscated": "com.moovit.ticketing.vouchers.VouchersManagementViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.vouchers.VoucherManagementActivity": {
+            "obfuscated": "com.moovit.ticketing.vouchers.VoucherManagementActivity",
+            "kind": "class",
+            "extends": "com.moovit.MoovitActivity2",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.purchase.cart.PurchaseCartConfirmationActivity": {
+            "obfuscated": "com.moovit.ticketing.purchase.cart.PurchaseCartConfirmationActivity",
+            "kind": "class",
+            "extends": "com.moovit.payment.gateway.AbstractPaymentGatewayActivity",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.purchase.PurchaseTicketActivity": {
+            "obfuscated": "com.moovit.ticketing.purchase.PurchaseTicketActivity",
+            "kind": "class",
+            "extends": "com.moovit.payment.gateway.AbstractPaymentGatewayActivity",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.model.MotQrCodeEstimation": {
+            "obfuscated": "com.moovit.app.mot.model.MotQrCodeEstimation",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.model.PaymentContactActivationPrice": {
+            "obfuscated": "com.moovit.app.mot.model.PaymentContactActivationPrice",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.model.MotActivationFailedContact": {
+            "obfuscated": "com.moovit.app.mot.model.MotActivationFailedContact",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.model.MotActivationStationInfo": {
+            "obfuscated": "com.moovit.app.mot.model.MotActivationStationInfo",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.model.MotActivationRegionalFare": {
+            "obfuscated": "com.moovit.app.mot.model.MotActivationRegionalFare",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.model.MotActivationPrice": {
+            "obfuscated": "com.moovit.app.mot.model.MotActivationPrice",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.purchase.model.MotQrCodeActivationFare": {
+            "obfuscated": "com.moovit.app.mot.purchase.model.MotQrCodeActivationFare",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.purchase.ActivationInfo": {
+            "obfuscated": "com.moovit.app.mot.purchase.ActivationInfo",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.purchase.MotPricesSummaryViewModel": {
+            "obfuscated": "com.moovit.app.mot.purchase.MotPricesSummaryViewModel",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.wallet.widget.MotActivationWalletPurchaseViewModel": {
+            "obfuscated": "com.moovit.app.mot.wallet.widget.MotActivationWalletPurchaseViewModel",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.wallet.widget.MotWalletInfoBoxViewModel": {
+            "obfuscated": "com.moovit.app.mot.wallet.widget.MotWalletInfoBoxViewModel",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.wallet.widget.SmartCardWalletWidgetViewModel": {
+            "obfuscated": "com.moovit.app.mot.wallet.widget.SmartCardWalletWidgetViewModel",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.wallet.widget.ZuzuWalletViewModel": {
+            "obfuscated": "com.moovit.app.mot.wallet.widget.ZuzuWalletViewModel",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.purchase.MotQrCodeActivationActivity": {
+            "obfuscated": "com.moovit.app.mot.purchase.MotQrCodeActivationActivity",
+            "kind": "class",
+            "methods": {
+                "activateFare": {
+                    "obfuscated": "R0",
+                    "signature": "(Lcom/moovit/app/mot/purchase/model/MotQrCodeActivationFare;Lcom/moovit/transit/TransitLine;Lcom/moovit/network/model/ServerId;Z)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.purchase.MotQrCodeScanActivity": {
+            "obfuscated": "com.moovit.app.mot.purchase.MotQrCodeScanActivity",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.mot.purchase.MotStationActivationAbstractActivity": {
+            "obfuscated": "com.moovit.app.mot.purchase.MotStationActivationAbstractActivity",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.tranzmate.moovit.protocol.ptb.activations.MVPTBSetActivationRequestV2": {
+            "obfuscated": "com.tranzmate.moovit.protocol.ptb.activations.MVPTBSetActivationRequestV2",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.tranzmate.moovit.protocol.ptb.activations.MVPTBSetActivationResponse": {
+            "obfuscated": "com.tranzmate.moovit.protocol.ptb.activations.MVPTBSetActivationResponse",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.tranzmate.moovit.protocol.ptb.activations.MVPTBGetUserActivationsResponse": {
+            "obfuscated": "com.tranzmate.moovit.protocol.ptb.activations.MVPTBGetUserActivationsResponse",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.tranzmate.moovit.protocol.ptb.activations.MVPTBActivation": {
+            "obfuscated": "com.tranzmate.moovit.protocol.ptb.activations.MVPTBActivation",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.fairtiq.FairtiqManager": {
+            "obfuscated": "com.moovit.fairtiq.b",
+            "kind": "class",
+            "methods": {
+                "performCheckIn": {
+                    "obfuscated": "f",
+                    "signature": "(Lcom/fairtiq/sdk/api/domains/user/ClassLevel;Ljava/lang/String;Ljava/lang/String;)V"
+                },
+                "performCheckOut": {
+                    "obfuscated": "g",
+                    "signature": "()V"
+                },
+                "closeElsewhereTracker": {
+                    "obfuscated": "c",
+                    "signature": "()V"
+                },
+                "handleNotification": {
+                    "obfuscated": "e",
+                    "signature": "(Lcom/google/firebase/messaging/RemoteMessage;)Z"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.FairtiqTicketingManager": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.d",
+            "kind": "class",
+            "methods": {
+                "performCheckOut": {
+                    "obfuscated": "d",
+                    "signature": "()V"
+                },
+                "setAdditionalOptions": {
+                    "obfuscated": "e",
+                    "signature": "(Lcom/moovit/ticketing/fairtiq/model/FairtiqAdditionalOptions;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.journey.FairtiqJourneyViewModel": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.journey.FairtiqJourneyViewModel",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.journey.FairtiqAdditionalOptionsViewModel": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.journey.FairtiqAdditionalOptionsViewModel",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.model.FairtiqTicket": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.model.FairtiqTicket",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.model.FairtiqStation": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.model.FairtiqStation",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.model.FairtiqTracker": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.model.FairtiqTracker",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.model.FairtiqAdditionalOptions": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.model.FairtiqAdditionalOptions",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.model.FairtiqClassLevel": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.model.FairtiqClassLevel",
+            "kind": "enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.model.FairtiqReason": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.model.FairtiqReason",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.ticketing.fairtiq.model.FairtiqTicketBarcodeToken": {
+            "obfuscated": "com.moovit.ticketing.fairtiq.model.FairtiqTicketToken$FairtiqTicketBarcodeToken",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.TodRidesProvider": {
+            "obfuscated": "com.moovit.app.tod.TodRidesProvider",
+            "kind": "class",
+            "extends": "android.content.BroadcastReceiver",
+            "methods": {
+                "requestRidesUpdate": {
+                    "obfuscated": "g",
+                    "signature": "()Z"
+                },
+                "notifyRidesUpdated": {
+                    "obfuscated": "a",
+                    "signature": "(Lcom/moovit/app/tod/TodRidesProvider;Ljava/io/IOException;)V"
+                },
+                "onReceive": {
+                    "obfuscated": "onReceive",
+                    "signature": "(Landroid/content/Context;Landroid/content/Intent;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.TodRideActivity": {
+            "obfuscated": "com.moovit.app.tod.TodRideActivity",
+            "kind": "class",
+            "methods": {
+                "onNewRideIntent": {
+                    "obfuscated": "R0",
+                    "signature": "(Landroid/content/Intent;Landroid/os/Bundle;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.order.TodOrderActivity": {
+            "obfuscated": "com.moovit.app.tod.order.TodOrderActivity",
+            "kind": "class",
+            "methods": {
+                "sendOrderRequest": {
+                    "obfuscated": "Y0",
+                    "signature": "()V"
+                },
+                "stopActiveOrder": {
+                    "obfuscated": "a1",
+                    "signature": "()V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.bookingflow.TodBookingOrderViewModel": {
+            "obfuscated": "com.moovit.app.tod.bookingflow.TodBookingOrderViewModel",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.model.TodRide": {
+            "obfuscated": "com.moovit.app.tod.model.TodRide",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.model.TodRideJourney": {
+            "obfuscated": "com.moovit.app.tod.model.TodRideJourney",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.model.TodRideStatus": {
+            "obfuscated": "com.moovit.app.tod.model.TodRideStatus",
+            "kind": "enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.model.TodJourneyStatus": {
+            "obfuscated": "com.moovit.app.tod.model.TodJourneyStatus",
+            "kind": "enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.model.TodOrderAssignment": {
+            "obfuscated": "com.moovit.app.tod.model.TodOrderAssignment",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.model.TodRideVehicleColorBar": {
+            "obfuscated": "com.moovit.app.tod.model.TodRideVehicleColorBar",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.bookingflow.model.TodLocation": {
+            "obfuscated": "com.moovit.app.tod.bookingflow.model.TodLocation",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.bookingflow.model.TodBookingPickupInformation": {
+            "obfuscated": "com.moovit.app.tod.bookingflow.model.TodBookingPickupInformation",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.bookingflow.model.TodBookingDropOffInformation": {
+            "obfuscated": "com.moovit.app.tod.bookingflow.model.TodBookingDropOffInformation",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.bookingflow.model.TodZoneShape": {
+            "obfuscated": "com.moovit.app.tod.bookingflow.model.TodZoneShape",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.tod.cancellation.TodCancelFeeDialogInfo": {
+            "obfuscated": "com.moovit.app.tod.cancellation.TodCancelFeeDialogInfo",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.MicroMobilityManager": {
+            "obfuscated": "zc9",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.MicroMobilityRidesHistory": {
+            "obfuscated": "gc9",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.MicroMobilityUserWallet": {
+            "obfuscated": "qe9",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.ride.MicroMobilityRide": {
+            "obfuscated": "com.moovit.micromobility.ride.a",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.MicroMobilityBottomSheetDialog": {
+            "obfuscated": "cc9",
+            "kind": "class",
+            "extends": "com.moovit.map.f",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.purchase.error.MicroMobilityError": {
+            "obfuscated": "com.moovit.micromobility.purchase.error.MicroMobilityError",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.damage.MicroMobilityReportDamageActivity": {
+            "obfuscated": "com.moovit.micromobility.damage.MicroMobilityReportDamageActivity",
+            "kind": "class",
+            "extends": "com.moovit.micromobility.MoovitMicroMobilityActivity",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.MicroMobilityRideActivity": {
+            "obfuscated": "com.moovit.micromobility.MicroMobilityRideActivity",
+            "kind": "class",
+            "extends": "com.moovit.micromobility.MoovitMicroMobilityActivity",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.MicroMobilityGetItemInfoRequest": {
+            "obfuscated": "sc9",
+            "kind": "class",
+            "extends": "kfe",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.MicroMobilityRealTimeInfoRequest": {
+            "obfuscated": "vd9",
+            "kind": "class",
+            "extends": "kfe",
+            "source": "sigmatcher"
+        },
+        "com.moovit.micromobility.MicroMobilityReportDamageRequest": {
+            "obfuscated": "yd9",
+            "kind": "class",
+            "extends": "kfe",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.HomeActivity": {
+            "obfuscated": "com.moovit.app.home.HomeActivity",
+            "kind": "class",
+            "extends": "com.moovit.app.MoovitAppActivity",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.tab.HomeTabUi": {
+            "obfuscated": "com.moovit.app.home.tab.HomeTabUi",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.DashboardSection": {
+            "obfuscated": "com.moovit.app.home.dashboard.DashboardSection",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.LocationServicesStateSection": {
+            "obfuscated": "com.moovit.app.home.dashboard.LocationServicesStateSection",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.PackageSection": {
+            "obfuscated": "com.moovit.app.home.dashboard.PackageSection",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.HomeFavoriteItemFragment": {
+            "obfuscated": "com.moovit.app.home.dashboard.HomeFavoriteItemFragment",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.WorkFavoriteItemFragment": {
+            "obfuscated": "com.moovit.app.home.dashboard.WorkFavoriteItemFragment",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.SuggestionsSectionFragment": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.SuggestionsSectionFragment",
+            "kind": "class",
+            "methods": {
+                "stopAutoSwipe": {
+                    "obfuscated": "A1",
+                    "signature": "()V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.ads.AdSuggestionFragment": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.ads.AdSuggestionFragment",
+            "kind": "class",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.ads.AdSuggestionViewModel": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.ads.c",
+            "kind": "class",
+            "extends": "h60",
+            "methods": {
+                "loadAdWithTimeOut": {
+                    "obfuscated": "b",
+                    "signature": "(Lcom/moovit/app/home/dashboard/suggestions/ads/c;JLkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.itinerary.CustomFavoriteSuggestionCardsProvider": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.itinerary.a",
+            "kind": "class",
+            "extends": "com.moovit.app.home.dashboard.suggestions.itinerary.c",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.itinerary.HomeSuggestionCardsProvider": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.itinerary.d",
+            "kind": "class",
+            "extends": "com.moovit.app.home.dashboard.suggestions.itinerary.c",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.itinerary.WorkSuggestionCardsProvider": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.itinerary.j",
+            "kind": "class",
+            "extends": "com.moovit.app.home.dashboard.suggestions.itinerary.c",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.itinerary.RecentSearchSuggestionCardsProvider": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.itinerary.h",
+            "kind": "class",
+            "extends": "v17",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.notifications.TripNotificationsSuggestionCardProvider": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.notifications.b",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.itinerary.LatestItineraryCompactCardViewModel": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.itinerary.LatestItineraryCompactCardViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.home.dashboard.suggestions.notifications.TripNotificationCompactCardViewModel": {
+            "obfuscated": "com.moovit.app.home.dashboard.suggestions.notifications.TripNotificationCompactCardViewModel",
+            "kind": "class",
+            "extends": "h60",
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.NavigationService": {
+            "obfuscated": "com.moovit.navigation.NavigationService",
+            "kind": "class",
+            "extends": "com.moovit.MoovitLooperService",
+            "methods": {
+                "onHandleCommandIntent": {
+                    "obfuscated": "a",
+                    "signature": "(ILandroid/content/Intent;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.NavigationState": {
+            "obfuscated": "com.moovit.navigation.NavigationState",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.Navigator": {
+            "obfuscated": "com.moovit.navigation.i",
+            "kind": "class",
+            "extends": "android.content.ContextWrapper",
+            "methods": {
+                "onNavigableArrivedToDestination": {
+                    "obfuscated": "l",
+                    "signature": "(Lcom/moovit/navigation/event/NavigationProgressEvent;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.LocationBasedNavigator": {
+            "obfuscated": "com.moovit.navigation.a",
+            "kind": "class",
+            "extends": "com.moovit.navigation.i",
+            "methods": {
+                "onLocationUpdate": {
+                    "obfuscated": "p",
+                    "signature": "(Landroid/location/Location;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.event.NavigationProgressEvent": {
+            "obfuscated": "com.moovit.navigation.event.NavigationProgressEvent",
+            "kind": "class",
+            "extends": "com.moovit.navigation.event.NavigationEvent",
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.event.NavigationStopEvent": {
+            "obfuscated": "com.moovit.navigation.event.NavigationStopEvent",
+            "kind": "class",
+            "extends": "com.moovit.navigation.event.NavigationEvent",
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.event.NavigationDeviationEvent": {
+            "obfuscated": "com.moovit.navigation.event.NavigationDeviationEvent",
+            "kind": "class",
+            "extends": "com.moovit.navigation.event.NavigationEvent",
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.GeofenceMetadata": {
+            "obfuscated": "com.moovit.navigation.GeofenceMetadata",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.NavigationGeofence": {
+            "obfuscated": "com.moovit.navigation.NavigationGeofence",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.navigation.NavigationPath": {
+            "obfuscated": "com.moovit.navigation.NavigationPath",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.resumetrip.ResumeTripNotificationWorker": {
+            "obfuscated": "com.moovit.app.resumetrip.ResumeTripNotificationWorker",
+            "kind": "class",
+            "extends": "androidx.work.CoroutineWorker",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.resumetrip.ResumeTripBroadcastReceiver": {
+            "obfuscated": "com.moovit.app.resumetrip.ResumeTripBroadcastReceiver",
+            "kind": "class",
+            "extends": "android.content.BroadcastReceiver",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.actions.notifications.TripNotification": {
+            "obfuscated": "com.moovit.app.actions.notifications.TripNotification",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.transit.TransitStop": {
+            "obfuscated": "com.moovit.transit.TransitStop",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.transit.TransitLine": {
+            "obfuscated": "com.moovit.transit.TransitLine",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.transit.TransitLineGroup": {
+            "obfuscated": "com.moovit.transit.TransitLineGroup",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.transit.TransitPattern": {
+            "obfuscated": "com.moovit.transit.TransitPattern",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.transit.TransitFrequency": {
+            "obfuscated": "com.moovit.transit.TransitFrequency",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.transit.LocationDescriptor": {
+            "obfuscated": "com.moovit.transit.LocationDescriptor",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.transit.TripId": {
+            "obfuscated": "com.moovit.transit.TripId",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.stoparrivals.StopArrival": {
+            "obfuscated": "com.moovit.app.stoparrivals.StopArrival",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.stoparrivals.StopArrivalServiceAlert": {
+            "obfuscated": "com.moovit.app.stoparrivals.StopArrivalServiceAlert",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.stoparrivals.TripsUpdateResult": {
+            "obfuscated": "com.moovit.app.stoparrivals.TripsUpdateResult",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.stoparrivals.TripsSelectionUpdate": {
+            "obfuscated": "com.moovit.app.stoparrivals.TripsSelectionUpdate",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.stoparrivals.StopArrivalsViewModel": {
+            "obfuscated": "com.moovit.app.stoparrivals.d",
+            "kind": "class",
+            "extends": "h60",
+            "methods": {
+                "refreshArrivals": {
+                    "obfuscated": "a",
+                    "signature": "(Lcom/moovit/app/stoparrivals/d;Lcom/moovit/network/model/ServerId;Ljava/util/List;Lkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.metroentities.MetroEntitiesRepository": {
+            "obfuscated": "com.moovit.metroentities.c",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.metroentities.MetroEntityType": {
+            "obfuscated": "com.moovit.metroentities.MetroEntityType",
+            "kind": "enum",
+            "extends": "java.lang.Enum",
+            "source": "sigmatcher"
+        },
+        "com.moovit.servicealerts.StopServiceAlertDigest": {
+            "obfuscated": "com.moovit.servicealerts.StopServiceAlertDigest",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.servicealerts.LineServiceAlertDigest": {
+            "obfuscated": "com.moovit.servicealerts.LineServiceAlertDigest",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.gcm.GcmListenerService": {
+            "obfuscated": "com.moovit.gcm.GcmListenerService",
+            "kind": "class",
+            "extends": "com.google.firebase.messaging.FirebaseMessagingService",
+            "methods": {
+                "handleRemoteMessage": {
+                    "obfuscated": "onMessageReceived",
+                    "signature": "(Lcom/google/firebase/messaging/RemoteMessage;)V"
+                },
+                "handleMessageBar": {
+                    "obfuscated": "e",
+                    "signature": "(Lcom/google/firebase/messaging/RemoteMessage;Lcom/moovit/gcm/payload/GcmPayload;)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.gcm.GcmCallbackIntentService": {
+            "obfuscated": "com.moovit.gcm.GcmCallbackIntentService",
+            "kind": "class",
+            "extends": "android.app.IntentService",
+            "source": "sigmatcher"
+        },
+        "com.moovit.gcm.notification.GcmNotification": {
+            "obfuscated": "com.moovit.gcm.notification.GcmNotification",
+            "kind": "class",
+            "extends": "java.lang.Object (implements android.os.Parcelable)",
+            "source": "sigmatcher"
+        },
+        "com.moovit.gcm.GcmNotificationActivity": {
+            "obfuscated": "com.moovit.gcm.GcmNotificationActivity",
+            "kind": "class",
+            "extends": "androidx.appcompat.app.AppCompatActivity",
+            "source": "sigmatcher"
+        },
+        "com.moovit.gcm.topic.GcmTopicManager": {
+            "obfuscated": "com.moovit.gcm.topic.GcmTopicManager",
+            "kind": "class",
+            "extends": "androidx.work.Worker",
+            "methods": {
+                "subscribeToTopic": {
+                    "obfuscated": "b",
+                    "signature": "(Ljava/lang/String;)Z"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.braze.BrazeInAppMessageHelper": {
+            "obfuscated": "com.moovit.braze.a",
+            "kind": "class",
+            "extends": "java.lang.Object (implements com.braze.ui.inappmessage.listeners.IInAppMessageManagerListener)",
+            "methods": {
+                "beforeInAppMessageDisplayed": {
+                    "obfuscated": "beforeInAppMessageDisplayed",
+                    "signature": "(Lcom/braze/models/inappmessage/IInAppMessage;)Lcom/braze/ui/inappmessage/InAppMessageOperation;"
+                },
+                "onInAppMessageButtonClicked": {
+                    "obfuscated": "onInAppMessageButtonClicked",
+                    "signature": "(Lcom/braze/models/inappmessage/IInAppMessage;Lcom/braze/models/inappmessage/MessageButton;)Z"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.braze.BrazeManager": {
+            "obfuscated": "com.moovit.braze.b",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "methods": {
+                "setInAppMessageEnabled": {
+                    "obfuscated": "d",
+                    "signature": "(Z)V"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.braze.BrazeRecoveryManager": {
+            "obfuscated": "com.moovit.app.braze.a",
+            "kind": "class",
+            "extends": "java.lang.Object",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.braze.BrazeUpdateUserWorker": {
+            "obfuscated": "com.moovit.app.braze.BrazeUpdateUserWorker",
+            "kind": "class",
+            "extends": "androidx.work.CoroutineWorker",
+            "methods": {
+                "updateNewBrazeUser": {
+                    "obfuscated": "b",
+                    "signature": "(Lkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;"
+                },
+                "resetBrazeUserLocally": {
+                    "obfuscated": "a",
+                    "signature": "(Lkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;"
+                }
+            },
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.braze.BrazeUpdateUserAttributesRequestWorker": {
+            "obfuscated": "com.moovit.app.braze.BrazeUpdateUserAttributesRequestWorker",
+            "kind": "class",
+            "extends": "androidx.work.CoroutineWorker",
+            "source": "sigmatcher"
+        },
+        "com.moovit.app.braze.BrazeDeleteUserRequestWorker": {
+            "obfuscated": "com.moovit.app.braze.BrazeDeleteUserRequestWorker",
+            "kind": "class",
+            "extends": "androidx.work.CoroutineWorker",
+            "source": "sigmatcher"
+        }
+    }
+}

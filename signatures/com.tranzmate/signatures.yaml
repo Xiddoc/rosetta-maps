@@ -1,0 +1,1664 @@
+# sigmatcher signatures for com.tranzmate (Moovit — public-transit app).
+# SOURCE OF TRUTH for maps/com.tranzmate/<version_code>.json (RFC 0001 Decision 4).
+# Offline / host dialect: human-readable regex-over-smali.
+#
+# Authored against version_code 1785 (versionName 5.194.0.1785).
+# Moovit is R8 PARTIALLY obfuscated: package paths (com.moovit.*, com.tranzmate.*)
+# are preserved; many class names are kept but internal classes rotate to short
+# tokens and method/field names are renamed even inside kept classes. Every class
+# below is anchored on ROTATION-STABLE evidence (string literals reached by the
+# class), verified globally-unique to one class file. See research/com.tranzmate/.
+
+# ==========================================================================
+# user-account (10 classes)
+# ==========================================================================
+# [high] Component returned by MoovitAppApplication.getSystemService("user_account_manager_service") = this.e.d("USER_ACCOUNT"), cast to juf. juf.a() returns the FAVORITES provider, juf.b() the NOTIFICATIONS p
+- name: 'UserAccountManager'
+  package: 'com.moovit.app.useraccount.manager'
+  signatures:
+      - signature: '"favoritesController"'
+        type: regex
+        count: 1
+# [high] UserAccountDataProvider whose getType() returns UserAccountDataProvider$ProviderType.FAVORITES; returned by UserAccountManager.a() / getSystemService("user_favorites_manager_service"). Add/remove-favo
+- name: 'FavoritesManager'
+  package: 'com.moovit.app.useraccount.manager'
+  signatures:
+      - signature: '"favoriteRouteId"'
+        type: regex
+        count: 1
+# [medium] qh3 component that persists favorites to per-metro .dat files (favorite_home_%s.dat, favorite_stops_vtwo_%s.dat, favorites_routes_%s.dat, etc.) and runs version upgraders logged as FavoriteStopsMigrat
+- name: 'FavoritesLocalStore'
+  package: 'com.moovit.app.useraccount.manager'
+  signatures:
+      - signature: '"FavoriteStopsMigrator"'
+        type: regex
+        count: 1
+# [high] UserAccountDataProvider getType()->NOTIFICATIONS; returned by UserAccountManager.b(). Leaks tag "UserNotificationsManager", broadcasts com.moovit.useraccount.manager.notifications.user_notifications_u
+- name: 'UserNotificationsManager'
+  package: 'com.moovit.app.useraccount.manager'
+  signatures:
+      - signature: '"Updating user notifications"'
+        type: regex
+        count: 1
+# [high] UserAccountDataProvider getType()->PROMOTIONS. Leaks tag "UserPromotionsManager", broadcast com.moovit.useraccount.manager.promotions.user_promotions_update_success, and logs "Updating user promotions
+- name: 'UserPromotionsManager'
+  package: 'com.moovit.app.useraccount.manager'
+  signatures:
+      - signature: '"Updating user promotions"'
+        type: regex
+        count: 1
+# [high] Holds the connected payment/identity account: tag "PaymentAccountManager", service key "payment_account_manager", prefs account_id/account_type/account_auth_required/last_connected_account_type, and b
+- name: 'PaymentAccountManager'
+  package: 'com.moovit.app.useraccount.manager'
+  signatures:
+      - signature: '"last_connected_account_type"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'invalidate'
+        signatures:
+            - signature: '"invalidate: action=%s"'
+              type: regex
+              count: 1
+      - name: 'notifyPurchase'
+        signatures:
+            - signature: '"notifyPurchase: time=%d"'
+              type: regex
+              count: 1
+# [high] Tag "PaymentAccountAuthManager"; reads/writes the auth token blob "payment_account_auth_info_v2.dat" (globally unique) via setAuthInfo/getAuthInfo ("setAuthInfo: isExists=%s, isSuccess=%s", "Account a
+- name: 'PaymentAccountAuthManager'
+  package: 'com.moovit.app.useraccount.manager'
+  signatures:
+      - signature: '"payment_account_auth_info_v2\.dat"'
+        type: regex
+        count: 3
+  methods:
+      - name: 'setAuthInfo'
+        signatures:
+            - signature: '"setAuthInfo: isExists=%s, isSuccess=%s"'
+              type: regex
+              count: 1
+# [high] Log tag "AccountAuthGetTokenTask" (repeated 6x, globally unique) names the class; body validates cached tokens and calls getNetworkAccessToken with retry ("getNetworkAccessToken attempt #%d failed - e
+- name: 'AccountAuthGetTokenTask'
+  package: 'com.moovit.app.useraccount.manager'
+  signatures:
+      - signature: '"AccountAuthGetTokenTask"'
+        type: regex
+        count: 6
+# [high] Kept-name Parcelable profile model (userTags + customUserProperties maps) with reflective CODER (const-class self-reference confirms it is genuinely kept). toString anchor "UserAdsTargetingData{userTa
+- name: 'UserAdsTargetingData'
+  package: 'com.moovit.app.useraccount.manager.profile'
+  signatures:
+      - signature: '"UserAdsTargetingData\{userTags="'
+        type: regex
+        count: 1
+# [high] Kept-name Parcelable extending Favorite (reflective CODER const-class self-ref confirms kept). Serializes as [[NAME,…][LOCATION,…][SOURCE,…]]; anchor "][LOCATION," is globally unique to this class (Fa
+- name: 'FavoriteLocation'
+  package: 'com.moovit.app.useraccount.manager.favorites'
+  signatures:
+      - signature: '"\]\[LOCATION,"'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# network-protocol (7 classes)
+# ==========================================================================
+# [high] Abstract base of the classic HttpURLConnection request framework: builds Uri from a server-path string resource + server config, appends query params (setUrlParameter guarded by 'Can\'t set a URL para
+- name: 'BaseServerRequest'
+  package: 'com.moovit.commons.request'
+  signatures:
+      - signature: '"Can\\''t set a URL parameter after the connection has been opened"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'addRequestHeaders'
+        signatures:
+            - signature: '"Failed to add access token header!"'
+              type: regex
+              count: 1
+      - name: 'onServerException'
+        signatures:
+            - signature: '"CLIENT_ACCOUNT_REFRESH_TOKEN_INVALID"'
+              type: regex
+              count: 1
+# [high] Abstract base of the classic response hierarchy, paired with pac (holds a back-ref field 'a:pac', instantiated via pac.T() this.d.newInstance()). readHeaders parses X-Android-Response-Source (Response
+- name: 'BaseServerResponse'
+  package: 'com.moovit.commons.request'
+  signatures:
+      - signature: '" returned response code "'
+        type: regex
+        count: 1
+  methods:
+      - name: 'readHeaders'
+        signatures:
+            - signature: '"X-Android-Response-Source"'
+              type: regex
+              count: 1
+# [high] Kept enum of the Ktor-stack server endpoints; each constant carries a baseUrl: APP_SERVER=https://app5.moovitapp.com/services-app/services/, APP_SECURED_SERVER=app4, CDN_SERVER=app4cdn, CDN_RESOURCES=
+- name: 'Backend'
+  package: 'com.moovit.core.network'
+  signatures:
+      - signature: '"APP_SECURED_SERVER"'
+        type: regex
+        count: 2
+# [high] Full prod/qa/stg backend URL matrix: enumerates every environment's app/secureApp/cdn/search/resources/offlineResources/tvm/tvmNew/sdk endpoint (prod app5/app4/app4cdn/anonymousstream/sdk, qa qa-app*/
+- name: 'BackendEnvironments'
+  package: 'com.moovit.data.core.environment.backend'
+  signatures:
+      - signature: '"https://tvm\.moovitapp\.com/"'
+        type: regex
+        count: 1
+# [high] Enclosing class (this$0) of the leaked synthetic NetworkModule$Companion$parseUserError$1; its static a(e, je6, Continuation) casts the Ktor response body to com.tranzmate.moovit.protocol.common.MVErr
+- name: 'parseUserError'
+  package: 'com.moovit.core.network'
+  signatures:
+      - signature: '"null cannot be cast to non-null type com\.tranzmate\.moovit\.protocol\.common\.MVErrorMessage"'
+        type: regex
+        count: 1
+# [high] Ktor HttpClientPlugin (implements od6 with getKey/install/prepare) that installs request/response/exception logging by wiring the kept-named Logging$setupRequestLogging / setupResponseLogging / logExc
+- name: 'NetworkLoggingPlugin'
+  package: 'com.moovit.core.network'
+  signatures:
+      - signature: '"Request\[\*\]"'
+        type: regex
+        count: 1
+# [high] Abstract holder (from HttpClientUtils.kt) defining the three Ktor request AttributeKeys that route each Ktor call: 'backend-attribute' typed as Backend, 'path-attribute' typed as String, 'auth-attribu
+- name: 'NetworkRequestAttributes'
+  package: 'com.moovit.core.network'
+  signatures:
+      - signature: '"backend-attribute"'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# trip-planner (15 classes)
+# ==========================================================================
+# [high] Suspend lambda of DefaultFullTripPlansRepository.performFullTripPlanSearch; contains the trip-plan search server endpoint const-string "V4/TripPlanner2/Search" and builds/casts com.tranzmate.moovit.pr
+- name: 'DefaultFullTripPlansRepository$performFullTripPlanSearch$1'
+  package: 'com.moovit.data.tripplan.full'
+  signatures:
+      - signature: '"V4/TripPlanner2/Search"'
+        type: regex
+        count: 1
+# [high] Remote data source for trip-plan schedule/time suggestions: synthetic DefaultTripPlanScheduleRemoteDataSource$fetchSchedule$1 has this$0:Lcom/moovit/data/tripplan/schedule/remote/a; . Uses a ktor io.k
+- name: 'DefaultTripPlanScheduleRemoteDataSource'
+  package: 'com.moovit.data.tripplan.schedule.remote'
+  signatures:
+      - signature: '"V4/TripPlanner2/TripPlanTimeSuggestion"'
+        type: regex
+        count: 1
+# [medium] Flow collector (implements kb5 = FlowCollector) belonging to DefaultFullTripPlansRepository.getFullTripPlan: logs const-string "Received trip plan: isUpdated=" followed by ", response=" and references
+- name: 'DefaultFullTripPlansRepositoryReceiveTripPlanCollector'
+  package: 'com.moovit.data.tripplan.full'
+  signatures:
+      - signature: '"Received trip plan: isUpdated="'
+        type: regex
+        count: 1
+# [high] Thrift-generated wire struct for the trip-plan search request; field metadata const-strings tripPlanPref/timeUtc/timeType/routeTypes/fromLocation/toLocation/transportTypes/personalPreferences/algorith
+- name: 'MVTripPlanRequest'
+  package: 'com.tranzmate.moovit.protocol.tripplanner'
+  signatures:
+      - signature: '"MVTripPlanRequest\(tripPlanPref:"'
+        type: regex
+        count: 1
+# [high] Extends ViewModel base f6g; every TripPlanViewModel$* synthetic (setOrigin$1, setDestination$1, resolveUiInputArgs$2, addToFavorites$1, ...) has this$0:Lcom/moovit/feature/tripplan/c; . Reads nav args
+- name: 'TripPlanViewModel'
+  package: 'com.moovit.feature.tripplan'
+  signatures:
+      - signature: '"Failed to add auto favorite"'
+        type: regex
+        count: 1
+# [high] Extends ViewModel base f6g; synthetics TripPlanPreferencesViewModel$uiState$2 / $special$$inlined$flatMapLatest$1 belong to it. Persists preference keys const-strings "trip_plan_widget_sort" and "trip
+- name: 'TripPlanPreferencesViewModel'
+  package: 'com.moovit.feature.tripplan.preferences'
+  signatures:
+      - signature: '"trip_plan_widget_sort"'
+        type: regex
+        count: 1
+# [high] Extends ViewModel base f6g; synthetics ItinerariesNoGroupingViewModel$uiState$1/$2 belong to it. Reads a trip-plan section's itineraries by (ITINERARIES_REQUEST_ID_KEY, TRIP_PLAN_SECTION_ID_KEY) and e
+- name: 'ItinerariesNoGroupingViewModel'
+  package: 'com.moovit.feature.tripplan.nogroup'
+  signatures:
+      - signature: '"Missing itineraries for requestId="'
+        type: regex
+        count: 1
+# [high] Mutable builder for the new-feature trip-plan params: contains its own distinctive error const-strings "MutableTripPlanParams.toImmutable called while routeType is null", "resolveTripPlanRoute called 
+- name: 'MutableTripPlanParams'
+  package: 'com.moovit.feature.tripplan.model'
+  signatures:
+      - signature: '"MutableTripPlanParams\.toImmutable called while routeType is null"'
+        type: regex
+        count: 1
+# [high] Synthetic DefaultLatestItineraryRepository$saveLatestItineraryId$1 belongs here; holds latest chosen ItineraryId (AtomicReference), delegates to DefaultLatestItineraryLocalDataSource. Logs "Failed to 
+- name: 'DefaultLatestItineraryRepository'
+  package: 'com.moovit.data.tripplan.latest'
+  signatures:
+      - signature: '"Failed to save latest itinerary: itineraryId="'
+        type: regex
+        count: 1
+# [high] Local (DataStore) persistence for the latest itinerary: preference-key const-strings "latest_itinerary_request_id" and "latest_itinerary_itinerary_id". Synthetic DefaultHistoryTripPlansLocalDataSource
+- name: 'DefaultLatestItineraryLocalDataSource'
+  package: 'com.moovit.data.tripplan.latest.local'
+  signatures:
+      - signature: '"latest_itinerary_request_id"'
+        type: regex
+        count: 1
+# [high] Abstract base Activity for the legacy trip planner: declares fragment tags trip_plan_locations/options/map/results/search_button_fragment_tag, extras extra_trip_plan_params/extra_auto_search, and requ
+- name: 'TripPlannerActivity'
+  package: 'com.moovit.app.tripplanner'
+  signatures:
+      - signature: '"fragmentsState"'
+        type: regex
+        count: 2
+# [high] Legacy results fragment; holds SearchParams (searchId/locations/options) and a saved-instance key const-string "latestSearchParams" (appears twice, globally unique - 1 file). Inner SearchParams Parcel
+- name: 'TripPlannerResultsFragment'
+  package: 'com.moovit.app.tripplanner'
+  signatures:
+      - signature: '"latestSearchParams"'
+        type: regex
+        count: 2
+# [high] Navigation/argument model for the new trip-plan feature (originLocation/destinationLocation/intermediate/...); data-class toString prefix const-string "TripPlanArgs(originLocation=" is globally unique
+- name: 'TripPlanArgs'
+  package: 'com.moovit.feature.tripplan'
+  signatures:
+      - signature: '"TripPlanArgs\(originLocation="'
+        type: regex
+        count: 1
+# [high] Parcelable config describing how a resolved trip plan is laid out: holds a list of TripPlanSection. data-class toString prefix const-string "TripPlanConfig(sections=" is globally unique (1 file).
+- name: 'TripPlanConfig'
+  package: 'com.moovit.data.tripplan.full'
+  signatures:
+      - signature: '"TripPlanConfig\(sections="'
+        type: regex
+        count: 1
+# [high] Parcelable section of a trip-plan result list (id/type/sortType/text/maxItemsToDisplay/collapseByGroupKey/branding). data-class toString prefix const-string "TripPlanSection(id=" is globally unique (1
+- name: 'TripPlanSection'
+  package: 'com.moovit.data.tripplan.full'
+  signatures:
+      - signature: '"TripPlanSection\(id="'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# itinerary (13 classes)
+# ==========================================================================
+# [high] Parcelable holding id(String a), ItineraryMetadata(b), List<Leg>(c) and a lazily-built combined Polylon(d); ctor validates args and throws "legs may not be empty!"; U0() unions every leg polyline; get
+- name: 'Itinerary'
+  package: 'com.moovit.itinerary.model'
+  signatures:
+      - signature: '"legs may not be empty!"'
+        type: regex
+        count: 1
+# [medium] 14-field Parcelable itinerary metadata: ServerId section id(b), groupType int(c: NONE/NO_GROUPING/LINE_GROUPING/STOP_GROUPING), groupKey(d), CurrencyAmount fare(e), hasNext/hasPrev/relevantForRealtime
+- name: 'ItineraryMetadata'
+  package: 'com.moovit.itinerary.model'
+  signatures:
+      - signature: '^\.class .*Lcom/moovit/itinerary/model/ItineraryMetadata;'
+        type: regex
+        count: 1
+# [high] Common leg interface (extends Parcelable) implemented by all concrete legs; declares getType()I, getStartTime/getEndTime (Time), getOrigin/F1 (LocationDescriptor, F1=destination), U0 (Polyline shape) 
+- name: 'Leg'
+  package: 'com.moovit.itinerary.model.leg'
+  signatures:
+      - signature: '^\.class .*Lcom/moovit/itinerary/model/leg/Leg;'
+        type: regex
+        count: 1
+# [medium] Implements Leg; getType()=1; fields startTime/endTime, origin/destination LocationDescriptor, Polyline shape, List<TurnInstruction> instructions, two TripPlannerIntermediateLocationType. p1 dispatches
+- name: 'WalkLeg'
+  package: 'com.moovit.itinerary.model.leg'
+  signatures:
+      - signature: '^\.class .*Lcom/moovit/itinerary/model/leg/WalkLeg;'
+        type: regex
+        count: 1
+# [high] Implements Leg; getType()=2; holds DbEntityRef<TransitLine> lineRef, List<DbEntityRef<TransitStop>> stopRefs (unmodifiable, >=2 enforced), Polyline shape, CurrencyAmount fare, LongServerId tripId, dro
+- name: 'TransitLineLeg'
+  package: 'com.moovit.itinerary.model.leg'
+  signatures:
+      - signature: '"Number of stops must be at least 2 stops!"'
+        type: regex
+        count: 1
+# [high] Implements Leg; getType()=3; the 'wait for a transit line at a stop' leg. Ctor takes static+realtime start/end Times, lineRef, waitAt/departOn TransitStop refs, a DeparturesInfo (schedule + StopRealTi
+- name: 'WaitToTransitLineLeg'
+  package: 'com.moovit.itinerary.model.leg'
+  signatures:
+      - signature: '"departuresInfo"'
+        type: regex
+        count: 1
+# [high] Implements Leg; getType()=9; ctor takes a List of TransitLineLeg alternatives (unique key-string "lineLegs"), a primaryAlternativeIndex and a destination StopServiceAlertDigest. Built by ItineraryProt
+- name: 'MultiTransitLinesLeg'
+  package: 'com.moovit.itinerary.model.leg'
+  signatures:
+      - signature: '"lineLegs"'
+        type: regex
+        count: 1
+# [high] Implements Leg; getType()=12; docked bike-share leg. Ctor holds origin/destination bicycle stops + originNearbyBicycleStops/destinationNearbyBicycleStops lists, shape, instructions; validates with uni
+- name: 'BicycleRentalLeg'
+  package: 'com.moovit.itinerary.model.leg'
+  signatures:
+      - signature: '"Origin bicycle stop/location descriptor must be set!"'
+        type: regex
+        count: 1
+# [high] Implements Leg; getType()=7; carpool/ride-share leg. Ctor key-strings origin/destination/provider/carpoolType/image/driverInfo, with "driverInfo" unique to this class. Inner enum CarpoolLeg$CarpoolPro
+- name: 'CarpoolLeg'
+  package: 'com.moovit.itinerary.model.leg'
+  signatures:
+      - signature: '"driverInfo"'
+        type: regex
+        count: 1
+# [medium] Implements Leg; getType()=8; indoor pathway walk leg. Ctor takes startTime/endTime plus a stop reference; key-string "stopRef" is (verified) unique to this class. Anchor is a short/generic field-name 
+- name: 'PathwayWalkLeg'
+  package: 'com.moovit.itinerary.model.leg'
+  signatures:
+      - signature: '"stopRef"'
+        type: regex
+        count: 1
+# [high] Abstract static converter between Thrift MVTripPlan* types and the itinerary model. Imports every Leg subtype and MV* tripplanner type; static block builds a leg codec registry (kca a) via bkb; d(Stri
+- name: 'ItineraryProtocol'
+  package: 'com.moovit.itinerary'
+  signatures:
+      - signature: '"ItineraryProtocol"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'decodeItinerary'
+        signatures:
+            - signature: '"caught exception in decodeItinerary - itinerary guid: %s"'
+              type: regex
+              count: 1
+# [medium] Post-decode itinerary enricher constructed by ItineraryBridgeImpl (new f17(context)). a(Itinerary) iterates the legs via the Leg.p1 visitor; b(LocationDescriptor) reverse-geocodes/resolves each locati
+- name: 'ItineraryLegLocationResolver'
+  package: 'com.moovit.itinerary'
+  signatures:
+      - signature: '"IRGH"'
+        type: regex
+        count: 1
+# [medium] AndroidViewModel-style UI model for the itinerary2 screen (super h60). Stores the current itinerary in a SavedStateHandle (jnc b) under keys "current_itinerary" and "is_favorite"; exposes itineraryReq
+- name: 'ItineraryViewModel'
+  package: 'com.moovit.app.itinerary2'
+  signatures:
+      - signature: '^\.class .*Lcom/moovit/app/itinerary2/ItineraryViewModel;'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# premium-subscription (12 classes)
+# ==========================================================================
+# [high] Kept enum name; @Metadata + $VALUES list all premium package types with their server keys (ad_free, safe_ride, advanced_trip_plan_route_options, ...); consumed by SubscriptionPackagesManager (zvd) swi
+- name: 'SubscriptionPackageType'
+  package: 'com.moovit.app.subscription.premium.packages'
+  signatures:
+      - signature: '"advanced_trip_plan_route_options"'
+        type: regex
+        count: 1
+# [high] Kept enum name; values INACTIVE/OFFER/PENDING_ACTIVATION/ACTIVE each carry an analyticsConstant (package_state_offer/pending_activation/active); returned by SubscriptionPackage.calculateState and read
+- name: 'SubscriptionPackageState'
+  package: 'com.moovit.app.subscription.premium.packages'
+  signatures:
+      - signature: '"package_state_pending_activation"'
+        type: regex
+        count: 1
+# [high] Kept enum mirroring Google Play Billing subscription states (ACTIVE, CANCELLED, EXPIRED, IN_GRACE_PERIOD, ON_HOLD, PAUSED). Anchor string appears twice in-class (clinit const-string + @Metadata d2 arr
+- name: 'SubscriptionStatus'
+  package: 'com.moovit.app.subscription.model'
+  signatures:
+      - signature: '"IN_GRACE_PERIOD"'
+        type: regex
+        count: 2
+# [high] Kept enum for Play Billing pricing recurrence (FINITE_RECURRING, INFINITE_RECURRING, NON_RECURRING); used by SubscriptionPricingPhase. Anchor appears twice in-class (clinit + Metadata), globally uniqu
+- name: 'RecurrenceMode'
+  package: 'com.moovit.app.subscription.model'
+  signatures:
+      - signature: '"INFINITE_RECURRING"'
+        type: regex
+        count: 2
+# [high] Kept Parcelable data class; Kotlin-generated toString prefix 'SubscriptionPricingPhase(cycleCount=' plus fields period/price/recurrenceMode describe one Play Billing pricing phase.
+- name: 'SubscriptionPricingPhase'
+  package: 'com.moovit.app.subscription.model'
+  signatures:
+      - signature: '"SubscriptionPricingPhase\(cycleCount="'
+        type: regex
+        count: 1
+# [high] Kept Parcelable model of a Play Billing base plan; carries fields basePlanId, period, price, pricePerMonth, productId. The pricePerMonth field-name string is globally unique to this class.
+- name: 'SubscriptionBasePlan'
+  package: 'com.moovit.app.subscription.model'
+  signatures:
+      - signature: '"pricePerMonth"'
+        type: regex
+        count: 1
+# [high] Kept Parcelable params model for the Moovit+ referral screen; Kotlin toString prefix 'MoovitPlusReferralParams(title=' with field showCloseButton.
+- name: 'MoovitPlusReferralParams'
+  package: 'com.moovit.app.plus.referral'
+  signatures:
+      - signature: '"MoovitPlusReferralParams\(title="'
+        type: regex
+        count: 1
+# [high] Kept ViewModel (extends obfuscated base h60); drives the Moovit+ benefit registration/instructions flow. Inner classes BenefitViewModel$calculateUiState$1 / $sendBenefitInstructionsRequest$1 / $sendRe
+- name: 'BenefitViewModel'
+  package: 'com.moovit.app.benefits'
+  signatures:
+      - signature: '"GetBenefitInstructionsRequest failed with e="'
+        type: regex
+        count: 1
+  methods:
+      - name: 'calculateUiState'
+        signatures:
+            - signature: '"GetBenefitInstructionsRequest failed with e="'
+              type: regex
+              count: 1
+      - name: 'sendBenefitInstructionsRequest'
+        signatures:
+            - signature: '"Invalid benefit."'
+              type: regex
+              count: 1
+# [high] Obfuscated to plus/a but leaked inner classes MoovitPlusContentCards$enrichCard$1 and MoovitPlusContentCards$getMostImportantContentCardFlow$... reference this outer; selects the most important premiu
+- name: 'MoovitPlusContentCards'
+  package: 'com.moovit.app.plus'
+  signatures:
+      - signature: '"No offers found for subscription tag: "'
+        type: regex
+        count: 1
+  methods:
+      - name: 'enrichCard'
+        signatures:
+            - signature: '"Card enrichment is not supported\."'
+              type: regex
+              count: 1
+# [high] Kept Apache-Thrift struct (implements TBase) for the Moovit+ referral redeem call; single field 'code'. Thrift toString prefix 'MVRedeemCouponRequest(code:' is globally unique.
+- name: 'MVRedeemCouponRequest'
+  package: 'com.tranzmate.moovit.protocol.moovitplusbenefits'
+  signatures:
+      - signature: '"MVRedeemCouponRequest\(code:"'
+        type: regex
+        count: 1
+# [high] Kept Thrift struct (TBase) for the redeem-coupon response in the Moovit+ benefits protocol; Thrift toString prefix 'MVRedeemCouponResponse(' globally unique.
+- name: 'MVRedeemCouponResponse'
+  package: 'com.tranzmate.moovit.protocol.moovitplusbenefits'
+  signatures:
+      - signature: '"MVRedeemCouponResponse\(data:"'
+        type: regex
+        count: 1
+# [high] Kept Thrift struct (TBase) returning the user's referral coupon: fields code, discountPercents, message. Thrift toString prefix 'MVGetReferralCouponResponse(code:' globally unique.
+- name: 'MVGetReferralCouponResponse'
+  package: 'com.tranzmate.moovit.protocol.moovitplusbenefits'
+  signatures:
+      - signature: '"MVGetReferralCouponResponse\(code:"'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# payments-wallet (9 classes)
+# ==========================================================================
+# [high] Outer class renamed to c, but its lambda/suspend synthetics keep the original name (com.moovit.payment.contacts.PaymentContextContactsRepository$add$2, $fetchContacts$1, $sendResendLinkRequest$1, ...)
+- name: 'PaymentContextContactsRepository'
+  package: 'com.moovit.payment.contacts'
+  signatures:
+      - signature: '"Contact or Instruction must be set!"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'fetchContacts'
+        signatures:
+            - signature: '"fetchContacts\["'
+              type: regex
+              count: 1
+      - name: 'resendInvitationLink'
+        signatures:
+            - signature: '"resendInvitationLink\["'
+              type: regex
+              count: 1
+# [high] Kept class name. Constructor validates fields via b56.v with literal names accountId, accountType, paymentAccountContexts, personalDetails, paymentMethods, profiles, certificates, settings, accountPro
+- name: 'PaymentAccount'
+  package: 'com.moovit.payment.account.model'
+  signatures:
+      - signature: '"paymentAccountContexts"'
+        type: regex
+        count: 1
+# [high] Kept Kotlin data class (id, PaymentAccountContactPersonalInfo, PaymentAccountContactStatus, PaymentAccountContactAdditionalInfo). Generated toString literal "PaymentAccountContact(id=" is class-unique
+- name: 'PaymentAccountContact'
+  package: 'com.moovit.payment.contacts.model'
+  signatures:
+      - signature: '"PaymentAccountContact\(id="'
+        type: regex
+        count: 1
+# [high] Kept model. Constructor validates fields profile, status, linkedText via b56.v; "linkedText" is class-unique globally. Rider profile within a PaymentAccount.
+- name: 'PaymentAccountProfile'
+  package: 'com.moovit.payment.account.model'
+  signatures:
+      - signature: '"linkedText"'
+        type: regex
+        count: 1
+# [high] Kept ViewModel (base class renamed to h60). Listens to active/future wallet-update broadcasts (activeWalletUpdatesReceiver, futureWalletUpdatesReceiver) and exposes a calculateUiState reducer whose fu
+- name: 'MyWalletViewModel'
+  package: 'com.moovit.payment.wallet.widget'
+  signatures:
+      - signature: 'calculateUiState\(Ljava/util/List;Ljava/util/List;\)Lcom/moovit/payment/wallet/widget/MyWalletViewModel\$UiState;'
+        type: regex
+        count: 1
+# [high] Kept ViewModel (base h60) for the wallet action widget; folds AppDataParts + PaymentAccount into a UiState. calculateUiState descriptor literal (with AppDataParts + PaymentAccount params) is class-uni
+- name: 'WalletItemsActionViewModel'
+  package: 'com.moovit.payment.wallet.widget'
+  signatures:
+      - signature: 'calculateUiState\(Lcom/moovit/commons/appdata/AppDataParts;Lcom/moovit/payment/account/model/PaymentAccount;\)Lcom/moovit/payment/wallet/widget/UiState;'
+        type: regex
+        count: 1
+# [high] Kept ViewModel (base h60) backing the wallet items list; requires setCategory() before use (guard string "Must call setCategory() first." appears twice), keyed by viewmodel_category, loads WALLET_UI_C
+- name: 'WalletItemsViewModel'
+  package: 'com.moovit.payment.wallet.widget'
+  signatures:
+      - signature: '"Must call setCategory\(\) first\."'
+        type: regex
+        count: 2
+# [high] Kept ViewModel (base h60) for account invoices / upcoming payments; has fetchAccountInvoices + invoicesFlow/profileFlow synthetics and a calculateUiState reducer whose descriptor literal referencing c
+- name: 'PaymentAccountUpcomingPaymentViewModel'
+  package: 'com.moovit.payment.invoices'
+  signatures:
+      - signature: 'calculateUiState\(Ljava/lang/Object;Ljava/util/List;\)Lcom/moovit/payment/invoices/UiState;'
+        type: regex
+        count: 1
+# [high] Kept Fragment (base renamed rk9) orchestrating the tokenization/clearing flow. Holds the in-progress tokenizer under bundle key "activeTokenizer" (saved/restored, used twice) and routes onActivityResu
+- name: 'PaymentGatewayFragment'
+  package: 'com.moovit.payment.gateway'
+  signatures:
+      - signature: '"activeTokenizer"'
+        type: regex
+        count: 2
+  methods:
+      - name: 'onAddPaymentMethodClicked'
+        signatures:
+            - signature: '"payment_method_add_clicked"'
+              type: regex
+              count: 1
+
+# ==========================================================================
+# ticketing-core (12 classes)
+# ==========================================================================
+# [high] Kept class name; Parcelable holder of moovitServerTickets/validations/storedValues/agencyMessagesByKey/quickPurchaseInfo; static singleton persisted via scd.r(context, "ticketing_user_wallet_store", c
+- name: 'UserWalletStore'
+  package: 'com.moovit.ticketing.wallet'
+  signatures:
+      - signature: '"Unable to initialize ticketing user wallet store!"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'getStore'
+        signatures:
+            - signature: '"ticketing_user_wallet_store"'
+              type: regex
+              count: 1
+# [high] Kept class name; Parcelable holder of a history moovitServerTickets list; static singleton persisted via scd.r(context, "ticketing_history_user_wallet_store", coder, coder); log tag "HistoryUserWallet
+- name: 'HistoryUserWalletStore'
+  package: 'com.moovit.ticketing.wallet'
+  signatures:
+      - signature: '"Unable to initialize ticketing user tickets history store!"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'getStore'
+        signatures:
+            - signature: '"ticketing_history_user_wallet_store"'
+              type: regex
+              count: 1
+# [high] Kept class name; Parcelable model with agencyKey/agencyName + logo/background Image + DbEntityRef<TransitAgency>; distinctive toString prefix "TicketAgency{agencyKey='". Anchor is the toString literal
+- name: 'TicketAgency'
+  package: 'com.moovit.ticketing.ticket'
+  signatures:
+      - signature: '"TicketAgency\{agencyKey='
+        type: regex
+        count: 1
+# [high] Kept class name; purchasable fare model (id, providerId ServerId, name, price/fullPrice CurrencyAmount, quantityLimit, TicketAgency, PurchaseVerificationType, TicketFareExtraInfo); distinctive toStrin
+- name: 'TicketFare'
+  package: 'com.moovit.ticketing.purchase.fare'
+  signatures:
+      - signature: '"TicketFare\{id='
+        type: regex
+        count: 1
+# [high] Kept class name; Kotlin data/Parcelable class wrapping an ArrayList of ReservedVoucher; distinctive toString "VoucherWallet(reservedVouchers=". Anchor is the toString literal prefix (( regex-escaped).
+- name: 'VoucherWallet'
+  package: 'com.moovit.ticketing.vouchers'
+  signatures:
+      - signature: '"VoucherWallet\(reservedVouchers='
+        type: regex
+        count: 1
+# [high] Kept class name; Kotlin data/Parcelable class with code/title/descriptionHtml/expirationTime; distinctive toString "ReservedVoucher(code=". Anchor is the toString literal prefix (( regex-escaped). Fie
+- name: 'ReservedVoucher'
+  package: 'com.moovit.ticketing.vouchers'
+  signatures:
+      - signature: '"ReservedVoucher\(code='
+        type: regex
+        count: 1
+# [high] Kept inner enum name (leaks that the outer 'Ticket' model was renamed); Parcelable enum with values ACTIVE/VALID_AUTO_ACTIVATE/VALID/VALID_AUTO_MANAGED/NOT_YET_VALID/ISSUING_IN_PROGRESS/EXPIRED/CANCEL
+- name: 'Status'
+  package: 'com.moovit.ticketing.ticket'
+  signatures:
+      - signature: '"VALID_AUTO_MANAGED"'
+        type: regex
+        count: 1
+# [high] Kept class name; AndroidViewModel (obfuscated base h60, rotates) driving the Velocia rewards screen: loads Velocia webview URL + required data, computes menu-item + full UiState via flows; in-class gu
+- name: 'VelociaViewModel'
+  package: 'com.moovit.ticketing.rewards'
+  signatures:
+      - signature: '"Velocia is not supported"'
+        type: regex
+        count: 1
+# [high] Kept class name; AndroidViewModel (obfuscated base h60) managing the VoucherWallet: fetch wallet, reserve/apply voucher, payment-account flow; in-class guard string "Voucher management is not active" 
+- name: 'VouchersManagementViewModel'
+  package: 'com.moovit.ticketing.vouchers'
+  signatures:
+      - signature: '"Voucher management is not active"'
+        type: regex
+        count: 1
+# [high] Kept class name; voucher management screen; shows the add-voucher dialog (fragment tag "ADD_MANAGEMENT_VOUCHER_DIALOG"), reads initialCode extra, emits voucher_management_screen_impression; hosts AddM
+- name: 'VoucherManagementActivity'
+  package: 'com.moovit.ticketing.vouchers'
+  signatures:
+      - signature: '"ADD_MANAGEMENT_VOUCHER_DIALOG"'
+        type: regex
+        count: 1
+# [high] Kept class name; final cart confirm-and-buy screen (extends AbstractPaymentGatewayActivity); analytics ticketing_cart/cart_confirmation_view/purchase_clicked, abandon-cart dialog, wallet-full guard "T
+- name: 'PurchaseCartConfirmationActivity'
+  package: 'com.moovit.ticketing.purchase.cart'
+  signatures:
+      - signature: '"Did you use PurchaseCartConfirmationActivity\.createStartIntent\(\.\.\.\)\?"'
+        type: regex
+        count: 1
+# [high] Kept class name; entry point of the ticket purchase flow (extends AbstractPaymentGatewayActivity); reads a PurchaseTicketIntent from the "ticket_purchase_intent_se" extra, tracks UTM params, drives th
+- name: 'PurchaseTicketActivity'
+  package: 'com.moovit.ticketing.purchase'
+  signatures:
+      - signature: '"ticket_purchase_intent_se"'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# mot-ticketing (20 classes)
+# ==========================================================================
+# [high] Kotlin data class implementing Parcelable with fields estimatedLine(MotQrCodeLinePrediction), qrCodes(List), source(String); generated toString prefix 'MotQrCodeEstimation(estimatedLine=' is globally 
+- name: 'MotQrCodeEstimation'
+  package: 'com.moovit.app.mot.model'
+  signatures:
+      - signature: '"MotQrCodeEstimation\(estimatedLine="'
+        type: regex
+        count: 1
+# [high] Kotlin data class (contact + activationPrice) for per-contact group-purchase pricing; unique toString prefix 'PaymentContactActivationPrice(contact='. .class line kept.
+- name: 'PaymentContactActivationPrice'
+  package: 'com.moovit.app.mot.model'
+  signatures:
+      - signature: '"PaymentContactActivationPrice\(contact="'
+        type: regex
+        count: 1
+# [high] Kotlin data class (contactId + name) representing a contact that failed group activation; unique toString prefix 'MotActivationFailedContact(contactId='. .class line kept.
+- name: 'MotActivationFailedContact'
+  package: 'com.moovit.app.mot.model'
+  signatures:
+      - signature: '"MotActivationFailedContact\(contactId="'
+        type: regex
+        count: 1
+# [high] Parcelable holding origin/destination TransitStop DbEntityRefs; constructor validates b56.v(dbEntityRef,"originStopRef") — that literal is globally unique to this class. .class line kept.
+- name: 'MotActivationStationInfo'
+  package: 'com.moovit.app.mot.model'
+  signatures:
+      - signature: '"originStopRef"'
+        type: regex
+        count: 1
+# [high] Parcelable model (radius + list of region fares); constructor validation key 'regionFares' is globally unique. .class line kept.
+- name: 'MotActivationRegionalFare'
+  package: 'com.moovit.app.mot.model'
+  signatures:
+      - signature: '"regionFares"'
+        type: regex
+        count: 1
+# [high] Parcelable price model (priceAmount, fullPriceAmount CurrencyAmount, discountReasons List) with nested DiscountReason; validation key 'fullPriceAmount' is globally unique to this class (other MOT pric
+- name: 'MotActivationPrice'
+  package: 'com.moovit.app.mot.model'
+  signatures:
+      - signature: '"fullPriceAmount"'
+        type: regex
+        count: 1
+# [high] Parcelable fare selected during QR activation (fare + regionFare); validation key 'regionFare' is globally unique. Consumed by MotQrCodeActivationActivity.R0(...). .class line kept.
+- name: 'MotQrCodeActivationFare'
+  package: 'com.moovit.app.mot.purchase.model'
+  signatures:
+      - signature: '"regionFare"'
+        type: regex
+        count: 1
+# [high] Kotlin data class for a prices-summary row (contactId, name, title, subtitle, price, icon, mostSevereProfileStatus); unique toString prefix 'ActivationInfo(contactId='. .class line kept.
+- name: 'ActivationInfo'
+  package: 'com.moovit.app.mot.purchase'
+  signatures:
+      - signature: '"ActivationInfo\(contactId="'
+        type: regex
+        count: 1
+# [high] Kotlin ViewModel behind MotPricesSummaryFragment; lambdas fetchMainUserPrice/fetchContactsPrices/updatePaymentAccount/paymentAccountFlow/uiStateFlow. Anchor is the unique calculateUiState function-ref
+- name: 'MotPricesSummaryViewModel'
+  package: 'com.moovit.app.mot.purchase'
+  signatures:
+      - signature: 'calculateUiState\(Lcom/moovit/configuration/Configuration;Ljava/util/List;Lcom/moovit/payment/account/model/PaymentAccount;ILcom/moovit/app/mot/purchase/UserPrices;\)Lcom/moovit/app/mot/purchase/MotPricesSummaryViewModel\$UiState;'
+        type: regex
+        count: 1
+# [high] Kotlin ViewModel for MotActivationWalletPurchaseWidget; loads route-type data, combines AppDataParts + PaymentAccount + list into a UiState. Anchor is the unique calculateUiState function-reference de
+- name: 'MotActivationWalletPurchaseViewModel'
+  package: 'com.moovit.app.mot.wallet.widget'
+  signatures:
+      - signature: 'calculateUiState\(Lcom/moovit/commons/appdata/AppDataParts;Lcom/moovit/payment/account/model/PaymentAccount;Ljava/util/List;\)Lcom/moovit/app/mot/wallet/widget/UiState;'
+        type: regex
+        count: 1
+# [high] Kotlin ViewModel for MotWalletInfoBoxWidget; loadInfoBox/infoBoxFlow, listens to activeWalletInfoBoxUpdatesReceiver. Anchor is the unique calculateUiState(AppDataParts, MotWalletInfoBox) -> MotWalletI
+- name: 'MotWalletInfoBoxViewModel'
+  package: 'com.moovit.app.mot.wallet.widget'
+  signatures:
+      - signature: 'calculateUiState\(Lcom/moovit/commons/appdata/AppDataParts;Lcom/moovit/app/mot/model/MotWalletInfoBox;\)Lcom/moovit/app/mot/wallet/widget/MotWalletInfoBoxUiState;'
+        type: regex
+        count: 1
+# [high] Kotlin ViewModel for SmartCardWalletWidget; deleteCard/setPrimary/paymentAccountFlow. Anchor is the unique calculateUiState(Configuration, PaymentAccount) -> SmartCardUiState descriptor. .class line k
+- name: 'SmartCardWalletWidgetViewModel'
+  package: 'com.moovit.app.mot.wallet.widget'
+  signatures:
+      - signature: 'calculateUiState\(Lcom/moovit/configuration/Configuration;Lcom/moovit/payment/account/model/PaymentAccount;\)Lcom/moovit/app/mot/wallet/widget/SmartCardUiState;'
+        type: regex
+        count: 1
+# [high] Kotlin ViewModel integrating the external Zuzu app (package il.idf.zuzu) into the wallet; logs 'The zuzu app is not installed!' (globally unique) and 'Failed to calculate the ui state!'. .class line k
+- name: 'ZuzuWalletViewModel'
+  package: 'com.moovit.app.mot.wallet.widget'
+  signatures:
+      - signature: '"The zuzu app is not installed!"'
+        type: regex
+        count: 1
+# [high] Request-backed activation Activity (createInitialRequest/onInitialRequestSuccessful; static factory M0=createStartIntent; R0(MotQrCodeActivationFare,...) activates). Guard string 'Did you use MotQrCod
+- name: 'MotQrCodeActivationActivity'
+  package: 'com.moovit.app.mot.purchase'
+  signatures:
+      - signature: '"Did you use MotQrCodeActivationActivity\.createStartIntent\(\.\.\.\)"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'activateFare'
+        signatures:
+            - signature: 'R0'
+              type: regex
+              count: 1
+# [high] Camera QR scanner Activity (android.permission.CAMERA); analytics QR_scan_tap / mot_on_qr_code_scanned; resolves nearby lines via 'get_mot_nearby_bus' (globally unique). .class line kept.
+- name: 'MotQrCodeScanActivity'
+  package: 'com.moovit.app.mot.purchase'
+  signatures:
+      - signature: '"get_mot_nearby_bus"'
+        type: regex
+        count: 1
+# [high] Abstract base for station entrance/exit activation Activities (MotStationEntrance/Exit/EntranceOnly...); analytics 'mot_station_impression' + 'mot_station_error_try_again_clicked' (latter globally uni
+- name: 'MotStationActivationAbstractActivity'
+  package: 'com.moovit.app.mot.purchase'
+  signatures:
+      - signature: '"mot_station_error_try_again_clicked"'
+        type: regex
+        count: 1
+# [high] Thrift request struct for performing an MOT activation/purchase (fields context, scanLocation, fareInfo, ...); generated toString prefix 'MVPTBSetActivationRequestV2(context:' is globally unique. Thri
+- name: 'MVPTBSetActivationRequestV2'
+  package: 'com.tranzmate.moovit.protocol.ptb.activations'
+  signatures:
+      - signature: '"MVPTBSetActivationRequestV2\(context:"'
+        type: regex
+        count: 1
+# [high] Thrift response for an MOT activation (fields activationsGroup, failedContacts); unique toString prefix 'MVPTBSetActivationResponse(activationsGroup:'. Thrift MV* class name kept.
+- name: 'MVPTBSetActivationResponse'
+  package: 'com.tranzmate.moovit.protocol.ptb.activations'
+  signatures:
+      - signature: '"MVPTBSetActivationResponse\(activationsGroup:"'
+        type: regex
+        count: 1
+# [high] Thrift response carrying the user's active MOT tickets for the wallet (fields activations, info, routeTypeData); unique toString prefix 'MVPTBGetUserActivationsResponse(activations:'. Thrift MV* class
+- name: 'MVPTBGetUserActivationsResponse'
+  package: 'com.tranzmate.moovit.protocol.ptb.activations'
+  signatures:
+      - signature: '"MVPTBGetUserActivationsResponse\(activations:"'
+        type: regex
+        count: 1
+# [high] Core Thrift activation struct (activationId, activationTime, activationTitle, agencyName, profileName, priceReference, ...) that the app MotActivation model is decoded from; unique toString prefix 'MV
+- name: 'MVPTBActivation'
+  package: 'com.tranzmate.moovit.protocol.ptb.activations'
+  signatures:
+      - signature: '"MVPTBActivation\(activationId:"'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# fairtiq-ticketing (11 classes)
+# ==========================================================================
+# [high] Direct FAIRTIQ SDK wrapper: imports com.fairtiq.sdk.api.* (ClassLevel, SubjectToken, User, UnauthorizedContext, BeOut*); log tag "FairtiqManager"; SharedPreferences file "FAIRTIQ_PREFERENCES"; methods
+- name: 'FairtiqManager'
+  package: 'com.moovit.fairtiq'
+  signatures:
+      - signature: '"FAIRTIQ_PREFERENCES"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'performCheckIn'
+        signatures:
+            - signature: 'Lcom/moovit/fairtiq/FairtiqManager\$performCheckIn\$1;'
+              type: regex
+              count: 2
+      - name: 'performCheckOut'
+        signatures:
+            - signature: 'Lcom/moovit/fairtiq/FairtiqManager\$performCheckOut\$1;'
+              type: regex
+              count: 2
+      - name: 'closeElsewhereTracker'
+        signatures:
+            - signature: '"closeElsewhereTracker\(\)"'
+              type: regex
+              count: 1
+      - name: 'handleNotification'
+        signatures:
+            - signature: '"handling be out push notification."'
+              type: regex
+              count: 1
+# [high] App/ticketing-facing manager over FairtiqManager: registers the authenticator via setAuthenticator() (log tag "FairtiqManager") and holds com.moovit.fairtiq.b as field i; SharedPreferences file "FAIRT
+- name: 'FairtiqTicketingManager'
+  package: 'com.moovit.ticketing.fairtiq'
+  signatures:
+      - signature: '"FAIRTIQ_TICKETING_PREFERENCES"'
+        type: regex
+        count: 2
+  methods:
+      - name: 'performCheckOut'
+        signatures:
+            - signature: 'Lcom/moovit/ticketing/fairtiq/FairtiqTicketingManager\$performCheckOut\$1;'
+              type: regex
+              count: 2
+      - name: 'setAdditionalOptions'
+        signatures:
+            - signature: '"setAdditionalOptions: classLevel="'
+              type: regex
+              count: 1
+# [high] Kept class name; AndroidViewModel (super h60). Combines FairtiqTicketingManager state, saved-state chosenStationId, additional-options flow, payment-account flow and CONFIGURATION into a JourneyUiStat
+- name: 'FairtiqJourneyViewModel'
+  package: 'com.moovit.ticketing.fairtiq.journey'
+  signatures:
+      - signature: '"calculateUiState\(Lcom/moovit/ticketing/fairtiq/FairtiqTicketingState;'
+        type: regex
+        count: 1
+# [high] Kept class name; AndroidViewModel (super h60) for the class-level/discount selection screen. Saved-state key "selectedOptions", log tag "FairtiqAdditionalOptionsViewModel", log literal "setDiscountInf
+- name: 'FairtiqAdditionalOptionsViewModel'
+  package: 'com.moovit.ticketing.fairtiq.journey'
+  signatures:
+      - signature: '"setDiscountInfo: discountInfo="'
+        type: regex
+        count: 1
+# [high] Kept-name Parcelable data class {fareTypeDisplayName:String?, classLevel:FairtiqClassLevel?, token:FairtiqTicketToken}; toString literal "FairtiqTicket(fareTypeDisplayName=" is unique.
+- name: 'FairtiqTicket'
+  package: 'com.moovit.ticketing.fairtiq.model'
+  signatures:
+      - signature: '"FairtiqTicket\(fareTypeDisplayName="'
+        type: regex
+        count: 1
+# [high] Kept-name Parcelable data class {id:String, name:String}; toString literal "FairtiqStation(id=" is unique.
+- name: 'FairtiqStation'
+  package: 'com.moovit.ticketing.fairtiq.model'
+  signatures:
+      - signature: '"FairtiqStation\(id="'
+        type: regex
+        count: 1
+# [high] Kept-name Parcelable data class = active-journey snapshot {checkinStationName:String?, startTime:Long?, ticket:FairtiqTicket?, isOutOfCommunity:boolean}; toString literal "FairtiqTracker(checkinStatio
+- name: 'FairtiqTracker'
+  package: 'com.moovit.ticketing.fairtiq.model'
+  signatures:
+      - signature: '"FairtiqTracker\(checkinStationName="'
+        type: regex
+        count: 1
+# [high] Kept-name Parcelable data class {classLevel:FairtiqClassLevel, discountInfo:DiscountInfo?}; the options carried by FairtiqTicketingManager.setAdditionalOptions; toString literal "FairtiqAdditionalOpti
+- name: 'FairtiqAdditionalOptions'
+  package: 'com.moovit.ticketing.fairtiq.model'
+  signatures:
+      - signature: '"FairtiqAdditionalOptions\(classLevel="'
+        type: regex
+        count: 1
+# [high] Kept-name Parcelable enum {FIRST, SECOND} (fare class level), Parcelable-by-name (writeToParcel writes name()). Anchored on the .class enum line which carries the stable kept type name.
+- name: 'FairtiqClassLevel'
+  package: 'com.moovit.ticketing.fairtiq.model'
+  signatures:
+      - signature: 'enum Lcom/moovit/ticketing/fairtiq/model/FairtiqClassLevel;'
+        type: regex
+        count: 1
+# [high] Kept-name abstract sealed base (implements Comparable<FairtiqReason>, Parcelable) for reasons a check-in is blocked/unavailable; fields {int priority, FairtiqReasonResolution}; subclasses LocationServ
+- name: 'FairtiqReason'
+  package: 'com.moovit.ticketing.fairtiq.model'
+  signatures:
+      - signature: 'public abstract Lcom/moovit/ticketing/fairtiq/model/FairtiqReason;'
+        type: regex
+        count: 1
+# [high] Kept-name nested Parcelable data class implementing the FairtiqTicketToken sealed interface; the scannable proof-of-ticket {data:String, format:BarcodeFormat}; toString literal "FairtiqTicketBarcodeTo
+- name: 'FairtiqTicketBarcodeToken'
+  package: 'com.moovit.ticketing.fairtiq.model'
+  signatures:
+      - signature: '"FairtiqTicketBarcodeToken\(data="'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# tod-ridehailing (15 classes)
+# ==========================================================================
+# [high] Singleton BroadcastReceiver rides-repository: registers GCM topic "tod_ride" and local broadcasts com.moovit.tod_rides_provider.action.* (book/cancel_ride/login/ride_status_change/reassign/ride_rating
+- name: 'TodRidesProvider'
+  package: 'com.moovit.app.tod'
+  signatures:
+      - signature: '"requestRidesUpdate: isUpdateNeeded=%s, isRequestNeeded=%s"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'requestRidesUpdate'
+        signatures:
+            - signature: '"requestRidesUpdate: isUpdateNeeded=%s, isRequestNeeded=%s"'
+              type: regex
+              count: 1
+      - name: 'notifyRidesUpdated'
+        signatures:
+            - signature: '"notifyRidesUpdated: isError=%s"'
+              type: regex
+              count: 1
+      - name: 'onReceive'
+        signatures:
+            - signature: '"onReceive: action=%s"'
+              type: regex
+              count: 1
+# [high] Live active-ride screen (map + TodRideBottomSheet). Handles new-ride intents (rideId), cancel-ride dialog, rating, TOD support validator and Lottie prefetch. Anchored on its unique onNewRideIntent log
+- name: 'TodRideActivity'
+  package: 'com.moovit.app.tod'
+  signatures:
+      - signature: '"onNewRideIntent: rideId=%s"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'onNewRideIntent'
+        signatures:
+            - signature: '"onNewRideIntent: rideId=%s"'
+              type: regex
+              count: 1
+# [high] Order/checkout screen: builds & sends the TOD order request, disables pay button while in-flight, keeps current order valid until expiry, stops active order. Multiple unique log strings (sendOrderRequ
+- name: 'TodOrderActivity'
+  package: 'com.moovit.app.tod.order'
+  signatures:
+      - signature: '"stopActiveOrder: currentOrderId=%s"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'sendOrderRequest'
+        signatures:
+            - signature: '"sendOrderRequest: Disabling payment button, sending requestId=%s"'
+              type: regex
+              count: 1
+      - name: 'stopActiveOrder'
+        signatures:
+            - signature: '"stopActiveOrder: currentOrderId=%s"'
+              type: regex
+              count: 1
+# [high] Booking-flow state machine. Uses SavedStateHandle keys pickup_location/drop_off_location/pickup_loading/drop_off_loading/order_info/USER_CONTEXT; loads user context and resolves pickup & drop-off serv
+- name: 'TodBookingOrderViewModel'
+  package: 'com.moovit.app.tod.bookingflow'
+  signatures:
+      - signature: '"drop_off_loading"'
+        type: regex
+        count: 1
+# [high] Central active-ride aggregate (Parcelable, implements odg). Fields: rideId, orderTime, TodRideStatus, TodRideJourney, TodRideVehicle, price, provider id/name/icons, rating/ratable, reservation, hasPay
+- name: 'TodRide'
+  package: 'com.moovit.app.tod.model'
+  signatures:
+      - signature: '"TodRide\{rideId=\\''"'
+        type: regex
+        count: 1
+# [high] Ride journey model: origin/destination LocationDescriptors, pickup & drop-off points, walking times, map bounds. Anchored on unique toString prefix TodRideJourney{origin=.
+- name: 'TodRideJourney'
+  package: 'com.moovit.app.tod.model'
+  signatures:
+      - signature: '"TodRideJourney\{origin="'
+        type: regex
+        count: 1
+# [high] Ride lifecycle status enum FUTURE/ACTIVE/CANCELLED/COMPLETED/PASSENGER_NOT_SHOWN/DECLINED, each with icon/text/color resource ids + priority; persisted via li4 CODER. Distinguished from Thrift MVTodPa
+- name: 'TodRideStatus'
+  package: 'com.moovit.app.tod.model'
+  signatures:
+      - signature: '->tod_passenger_ride_status_passenger_not_shown:I'
+        type: regex
+        count: 1
+# [high] Live vehicle-progress enum HEADING/ARRIVING/ARRIVED x PICKUP/DROP_OFF, driving the ride bottom-sheet state views; each value maps to a tod_passenger_ride_real_time_* string resource. Distinguished fro
+- name: 'TodJourneyStatus'
+  package: 'com.moovit.app.tod.model'
+  signatures:
+      - signature: '->tod_passenger_ride_real_time_heading_pickup:I'
+        type: regex
+        count: 1
+# [high] One driver/vehicle assignment within a TodOrder: assignmentId, TodRideJourney, provider image + provider map image. Anchored on its ctor validation string providerMapImage (unique to this class app-wi
+- name: 'TodOrderAssignment'
+  package: 'com.moovit.app.tod.model'
+  signatures:
+      - signature: '"providerMapImage"'
+        type: regex
+        count: 1
+# [high] Vehicle-identification color bar (find-my-ride color action) with mainColor. Anchored on unique toString prefix TodRideVehicleColorBar{mainColor=.
+- name: 'TodRideVehicleColorBar'
+  package: 'com.moovit.app.tod.model'
+  signatures:
+      - signature: '"TodRideVehicleColorBar\{mainColor="'
+        type: regex
+        count: 1
+# [high] Chosen booking location: snapshotId + LocationDescriptor. Anchored on unique toString prefix TodLocation(snapshotId=.
+- name: 'TodLocation'
+  package: 'com.moovit.app.tod.bookingflow.model'
+  signatures:
+      - signature: '"TodLocation\(snapshotId="'
+        type: regex
+        count: 1
+# [high] Per-zone pickup rules: providerId, pickup shapes/stops, hasServiceArea, isPickupConfirmationRequired, pickupExplanationUrl. Anchored on unique toString prefix TodBookingOrderPickupInformation[provider
+- name: 'TodBookingPickupInformation'
+  package: 'com.moovit.app.tod.bookingflow.model'
+  signatures:
+      - signature: '"TodBookingOrderPickupInformation\[providerId="'
+        type: regex
+        count: 1
+# [high] Per-zone drop-off rules: drop-off shapes/stops, restrictions, dropOffExplanationUrl. Anchored on unique toString prefix TodBookingOrderDropOffInformation[dropOffShapes= (on-disk class name is the shor
+- name: 'TodBookingDropOffInformation'
+  package: 'com.moovit.app.tod.bookingflow.model'
+  signatures:
+      - signature: '"TodBookingOrderDropOffInformation\[dropOffShapes="'
+        type: regex
+        count: 1
+# [high] TOD service-zone boundary polygon: shapeId + polygon point list. Anchored on unique toString prefix TodZoneShape{shapeId=.
+- name: 'TodZoneShape'
+  package: 'com.moovit.app.tod.bookingflow.model'
+  signatures:
+      - signature: '"TodZoneShape\{shapeId="'
+        type: regex
+        count: 1
+# [high] Cancel-fee confirmation dialog payload: image, title, message, options list, closeButtonText. Anchored on unique toString prefix TodCancelFeeDialogInfo(image=.
+- name: 'TodCancelFeeDialogInfo'
+  package: 'com.moovit.app.tod.cancellation'
+  signatures:
+      - signature: '"TodCancelFeeDialogInfo\(image="'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# micromobility (11 classes)
+# ==========================================================================
+# [high] Singleton (static volatile d, a()/f() init) that lazily loads and caches the user's micromobility wallet (qe9 MicroMobilityUserWallet) and rides history (gc9 MicroMobilityRidesHistory) via Tasks on a 
+- name: 'MicroMobilityManager'
+  package: 'com.moovit.micromobility'
+  signatures:
+      - signature: '"m-mm"'
+        type: regex
+        count: 1
+# [high] Immutable holder wrapping an unmodifiable List of MicroMobilityRide (rides); its own toString() emits the literal "MicroMobilityRidesHistory{rides=" which names the class. Empty-singleton gc9.b is ret
+- name: 'MicroMobilityRidesHistory'
+  package: 'com.moovit.micromobility'
+  signatures:
+      - signature: '"MicroMobilityRidesHistory\{rides="'
+        type: regex
+        count: 1
+# [high] Immutable holder for the user's active micromobility rides; static set qe9.c = EnumSet.of(RESERVED, ACTIVE, PAUSED, PENDING) built from MicroMobilityRide$Status; toString() emits literal "MicroMobilit
+- name: 'MicroMobilityUserWallet'
+  package: 'com.moovit.micromobility'
+  signatures:
+      - signature: '"MicroMobilityUserWallet\{rides="'
+        type: regex
+        count: 1
+# [high] Core ride model (implements ordering iface odg): fields serviceId, itemId, two ServerIds, vehicleTypeName, provider Image, start timestamp, statusInfo (pe9) and rideInfo (ke9); getPriority() reads sta
+- name: 'MicroMobilityRide'
+  package: 'com.moovit.micromobility.ride'
+  signatures:
+      - signature: '"vehicleTypeName"'
+        type: regex
+        count: 1
+# [high] Map bottom-sheet popup for a nearby MicroMobilityItemInfo; embeds MicroMobilityIntegrationView, wires serviceId/itemId, launches MicroMobilityPurchaseActivity / MicroMobilityRideActivity, and emits an
+- name: 'MicroMobilityBottomSheetDialog'
+  package: 'com.moovit.micromobility'
+  signatures:
+      - signature: 'Did you use MicroMobilityBottomSheetDialog\.newInstance\(\.\.\.\)\?'
+        type: regex
+        count: 1
+# [high] Kept enum mapping micromobility server error codes to dialogs: fromErrorCode() switches 50007->WUNDER_ERROR, 50008->DOUBLE_ACTIVE_RIDES_ERROR, 50009->NO_BIKES_IN_STATION_ERROR, 50010->UNRECOVERABLE_ER
+- name: 'MicroMobilityError'
+  package: 'com.moovit.micromobility.purchase.error'
+  signatures:
+      - signature: '"NO_BIKES_IN_STATION_ERROR"'
+        type: regex
+        count: 1
+# [high] Kept activity for submitting a micromobility damage report (serviceId/itemId + description + images) via request yd9; on success shows report_sent_successfully_dialog and logs analytics micro_mobility
+- name: 'MicroMobilityReportDamageActivity'
+  package: 'com.moovit.micromobility.damage'
+  signatures:
+      - signature: 'Did you use MicroMobilityReportDamageActivity\.createStartingIntent\(\.\.\.\)\?'
+        type: regex
+        count: 1
+# [high] Kept activity for tracking an active ride by rideId: real-time polling (log "startRealTimePolling: rideId=%s" / "stopRealTimePolling", request vd9), cancel-ride confirmation (cancel_ride_confirmation_
+- name: 'MicroMobilityRideActivity'
+  package: 'com.moovit.micromobility'
+  signatures:
+      - signature: 'startRealTimePolling: rideId=%s'
+        type: regex
+        count: 1
+# [high] Moovit server request (extends request base kfe) that fetches item info for a nearby micromobility item; constructor takes (RequestContext, serviceId, itemId), targets api_path_micro_mobility_get_item
+- name: 'MicroMobilityGetItemInfoRequest'
+  package: 'com.moovit.micromobility'
+  signatures:
+      - signature: 'Lcom/tranzmate/moovit/protocol/micromobility/MVMicroMobilityItemInfoRequest;-><init>\(Ljava/lang/String;Ljava/lang/String;\)V'
+        type: regex
+        count: 1
+# [high] Moovit server request (extends kfe) for live ride state used by MicroMobilityRideActivity's real-time polling; constructor takes (RequestContext, ServerId rideId), targets api_path_micro_mobility_real
+- name: 'MicroMobilityRealTimeInfoRequest'
+  package: 'com.moovit.micromobility'
+  signatures:
+      - signature: 'Lcom/tranzmate/moovit/protocol/micromobility/MVMicroMobilityRealTimeInfoRequest;-><init>\(I\)V'
+        type: regex
+        count: 1
+# [high] Moovit server request (extends kfe, implements Callable) that submits a damage report; constructor takes (RequestContext, serviceId, itemId, description, images) validating "serviceId"/"itemId"/"descr
+- name: 'MicroMobilityReportDamageRequest'
+  package: 'com.moovit.micromobility'
+  signatures:
+      - signature: 'Lcom/tranzmate/moovit/protocol/micromobility/MVMicroMobilityReportDamageRequest;-><init>\(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;\)V'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# home-dashboard (17 classes)
+# ==========================================================================
+# [high] On-disk name kept: `.class public Lcom/moovit/app/home/HomeActivity;` extending MoovitAppActivity. Reads intent extras `extra_tab`/`extra_tab_position` to select the home tab; fires `shortcut_menu_but
+- name: 'HomeActivity'
+  package: 'com.moovit.app.home'
+  signatures:
+      - signature: '"extra_tab_position"'
+        type: regex
+        count: 3
+# [high] Kept enum `.class public final enum Lcom/moovit/app/home/tab/HomeTabUi;`. Each tab constant carries its analytics event: `dashboard_clicked`, `map_view_clicked`, `direction_tab_tap`, `station_tab_tap`
+- name: 'HomeTabUi'
+  package: 'com.moovit.app.home.tab'
+  signatures:
+      - signature: '"map_view_clicked"'
+        type: regex
+        count: 1
+# [high] Kept enum `.class public final enum Lcom/moovit/app/home/dashboard/DashboardSection;` whose <clinit> defines the dashboard section kinds: NAVIGABLE, TAXI, TOPUP, COMMUNITY, FAVORITE_LOCATIONS, FAVORIT
+- name: 'DashboardSection'
+  package: 'com.moovit.app.home.dashboard'
+  signatures:
+      - signature: '"ITINERARY_HISTORY"'
+        type: regex
+        count: 1
+# [high] Kept name; log tag `LocationServicesStateSection` + `Change state: from=%s, to=%s`; renders the `location_services_bar` dashboard alert row reacting to location permission/GPS state.
+- name: 'LocationServicesStateSection'
+  package: 'com.moovit.app.home.dashboard'
+  signatures:
+      - signature: '"location_services_bar"'
+        type: regex
+        count: 1
+# [high] Kept name `.class public final Lcom/moovit/app/home/dashboard/PackageSection;`; subscription-package promo dashboard section persisting pref `first_time_section_impression_timestamp` and `had_subscrip
+- name: 'PackageSection'
+  package: 'com.moovit.app.home.dashboard'
+  signatures:
+      - signature: '"first_time_section_impression_timestamp"'
+        type: regex
+        count: 1
+# [high] Kept name; dashboard favorites row for the Home location — analytics `fav_home_clicked`, `edit_home_clicked`, `remove_home_clicked` in `dashboard_favorites_section` with type `home_favorite`.
+- name: 'HomeFavoriteItemFragment'
+  package: 'com.moovit.app.home.dashboard'
+  signatures:
+      - signature: '"fav_home_clicked"'
+        type: regex
+        count: 1
+# [high] Kept name; dashboard favorites row for the Work location — analytics `fav_work_clicked`, `edit_work_clicked`, `remove_work_clicked` in `dashboard_favorites_section` with type `work_favorite`.
+- name: 'WorkFavoriteItemFragment'
+  package: 'com.moovit.app.home.dashboard'
+  signatures:
+      - signature: '"fav_work_clicked"'
+        type: regex
+        count: 1
+# [high] Kept name `.class public final Lcom/moovit/app/home/dashboard/suggestions/SuggestionsSectionFragment;`; hosts the suggestions ViewPager+indicator, references `LATEST_ITINERARY_CONTROLLER`, and logs `s
+- name: 'SuggestionsSectionFragment'
+  package: 'com.moovit.app.home.dashboard.suggestions'
+  signatures:
+      - signature: '"stopAutoSwipe\(\)"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'stopAutoSwipe'
+        signatures:
+            - signature: '"stopAutoSwipe\(\)"'
+              type: regex
+              count: 1
+# [high] Kept name; the ad card in the suggestions carousel (`suggestions_data_type_ad`), log tag `AdSuggestionFragment`.
+- name: 'AdSuggestionFragment'
+  package: 'com.moovit.app.home.dashboard.suggestions.ads'
+  signatures:
+      - signature: '"suggestions_data_type_ad"'
+        type: regex
+        count: 1
+# [high] Renamed to letter `c` under the ads package. Its own log tag is `AdSuggestionViewModel`; drives ad loading with a timeout race, logging `loadAdWithTimeOut: ad loading exceeded time limit, timeoutInMil
+- name: 'AdSuggestionViewModel'
+  package: 'com.moovit.app.home.dashboard.suggestions.ads'
+  signatures:
+      - signature: '"loadAdWithTimeOut: ad loading exceeded time limit, timeoutInMillis="'
+        type: regex
+        count: 1
+  methods:
+      - name: 'loadAdWithTimeOut'
+        signatures:
+            - signature: '"loadAdWithTimeOut: ad loading exceeded time limit, timeoutInMillis="'
+              type: regex
+              count: 1
+# [high] Renamed to letter `a`; extends the abstract FavoriteSuggestionCardsProvider base (letter `c`). Card type key `suggestion_custom_favorite`; synthetic CustomFavoriteSuggestionCardsProvider$getFavoriteLo
+- name: 'CustomFavoriteSuggestionCardsProvider'
+  package: 'com.moovit.app.home.dashboard.suggestions.itinerary'
+  signatures:
+      - signature: '"suggestion_custom_favorite"'
+        type: regex
+        count: 1
+# [high] Renamed to letter `d`; extends FavoriteSuggestionCardsProvider base `c`. Card type key `suggestion_home`; synthetic HomeSuggestionCardsProvider$getFavoriteLocations$1 leaks the original name. Produces
+- name: 'HomeSuggestionCardsProvider'
+  package: 'com.moovit.app.home.dashboard.suggestions.itinerary'
+  signatures:
+      - signature: '"suggestion_home"'
+        type: regex
+        count: 1
+# [high] Renamed to letter `j`; extends FavoriteSuggestionCardsProvider base `c`. Card type key `suggestion_work`; synthetic WorkSuggestionCardsProvider$getFavoriteLocations$1 leaks the original name. Produces
+- name: 'WorkSuggestionCardsProvider'
+  package: 'com.moovit.app.home.dashboard.suggestions.itinerary'
+  signatures:
+      - signature: '"suggestion_work"'
+        type: regex
+        count: 1
+# [high] Renamed to letter `h`; extends provider base v17. Two card type keys: `suggestion_recent_trip` and `suggestion_recent_trip_matched` (the latter is globally unique to this class). Synthetics RecentSear
+- name: 'RecentSearchSuggestionCardsProvider'
+  package: 'com.moovit.app.home.dashboard.suggestions.itinerary'
+  signatures:
+      - signature: '"suggestion_recent_trip_matched"'
+        type: regex
+        count: 1
+# [high] Renamed to letter `b`; implements the ywd provider interface and builds a zwd descriptor with type `suggestion_trip_notifications`. Its log tag `TripNotificationsSuggestionCard` is globally unique. Sy
+- name: 'TripNotificationsSuggestionCardProvider'
+  package: 'com.moovit.app.home.dashboard.suggestions.notifications'
+  signatures:
+      - signature: '"TripNotificationsSuggestionCard"'
+        type: regex
+        count: 1
+# [high] Kept name `.class public final Lcom/moovit/app/home/dashboard/suggestions/itinerary/LatestItineraryCompactCardViewModel;` extending AndroidViewModel h60. Requires an `itinerary` (`Itinerary is require
+- name: 'LatestItineraryCompactCardViewModel'
+  package: 'com.moovit.app.home.dashboard.suggestions.itinerary'
+  signatures:
+      - signature: '"Itinerary is required\."'
+        type: regex
+        count: 1
+# [high] Kept name extending AndroidViewModel h60. Requires `line` and `notification` (`Line is required.` / `Notification is required.`), fetches transit-line arrivals and can cancel the trip notification for
+- name: 'TripNotificationCompactCardViewModel'
+  package: 'com.moovit.app.home.dashboard.suggestions.notifications'
+  signatures:
+      - signature: '"Notification is required\."'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# navigation-livetrip (13 classes)
+# ==========================================================================
+# [high] Foreground navigation service (extends MoovitLooperService, implements mp3). Holds HashMap of navigable-id -> NavigationState, persists to 'NAVIGATION_STATE_STORE', dispatches com.moovit.navigation_se
+- name: 'NavigationService'
+  package: 'com.moovit.navigation'
+  signatures:
+      - signature: 'NavigationService\.onStartMessage called with null intent'
+        type: regex
+        count: 1
+  methods:
+      - name: 'onHandleCommandIntent'
+        signatures:
+            - signature: 'Handle intent with action: %s'
+              type: regex
+              count: 1
+# [high] Parcelable state holder wrapping a Navigable + accurate-navigator-state (h3a) + last NavigationProgressEvent; null-checks its ctor args with messages 'navigable' and 'accurateNavigatorState'. Serializ
+- name: 'NavigationState'
+  package: 'com.moovit.navigation'
+  signatures:
+      - signature: '"accurateNavigatorState"'
+        type: regex
+        count: 1
+# [high] Abstract navigation state machine (extends ContextWrapper), log tag 'Navigator'. Interpolates progress along NavigationPath, computes ArrivalState transitions (analytics reasons navigation_travelling/
+- name: 'Navigator'
+  package: 'com.moovit.navigation'
+  signatures:
+      - signature: 'onNavigableArrivedToDestination: navigableId=%s'
+        type: regex
+        count: 1
+  methods:
+      - name: 'onNavigableArrivedToDestination'
+        signatures:
+            - signature: 'onNavigableArrivedToDestination: navigableId=%s'
+              type: regex
+              count: 1
+# [high] Concrete GPS-driven navigator (final, extends Navigator/i), log tag 'LocationBasedNavigator'. Consumes LocationRequest + ActivityRecognitionResult; per-fix loop logs 'onLocationUpdate: %s activity: %s
+- name: 'LocationBasedNavigator'
+  package: 'com.moovit.navigation'
+  signatures:
+      - signature: 'Current path changed from %s to %s'
+        type: regex
+        count: 1
+  methods:
+      - name: 'onLocationUpdate'
+        signatures:
+            - signature: 'onLocationUpdate: %s activity: %s'
+              type: regex
+              count: 1
+# [high] Live-progress broadcast payload (action com.moovit.navigation_event.action.navigation_progress). Unique toString format 'NavigationProgressEvent[pathIndex=%d currentGeofenceId=%s distanceProgress=%g .
+- name: 'NavigationProgressEvent'
+  package: 'com.moovit.navigation.event'
+  signatures:
+      - signature: 'NavigationProgressEvent\[pathIndex=%d'
+        type: regex
+        count: 1
+# [high] Navigation-stopped lifecycle event (action com.moovit.navigation_event.action.navigation_stop) carrying a NavigationStopReason; unique toString prefix 'NavigationStopEvent{navigationStopReason='.
+- name: 'NavigationStopEvent'
+  package: 'com.moovit.navigation.event'
+  signatures:
+      - signature: 'NavigationStopEvent\{navigationStopReason='
+        type: regex
+        count: 1
+# [high] Off-route deviation event (action com.moovit.navigation_event.action.navigation_deviation) carrying legIndex + location; unique toString prefix 'NavigationDeviationEvent{legIndex='.
+- name: 'NavigationDeviationEvent'
+  package: 'com.moovit.navigation.event'
+  signatures:
+      - signature: 'NavigationDeviationEvent\{legIndex='
+        type: regex
+        count: 1
+# [high] Per-geofence arrival metadata (arrivalState, distToDest, timeToDest, expirationFromEtaSeconds, nextStopIndex); unique toString prefix 'GeofenceMetadata[arrivalState: '.
+- name: 'GeofenceMetadata'
+  package: 'com.moovit.navigation'
+  signatures:
+      - signature: 'GeofenceMetadata\[arrivalState: '
+        type: regex
+        count: 1
+# [high] Comparable geofence node (legIndex/pathIndex/inLegIndex + Geofence + GeofenceMetadata); guards cross-leg/cross-path comparison and has unique toString prefix 'NavigationGeofence['. Legacy tree (core t
+- name: 'NavigationGeofence'
+  package: 'com.moovit.navigation'
+  signatures:
+      - signature: 'NavigationGeofence\['
+        type: regex
+        count: 1
+# [high] Navigation path model: ServerId + polyline + ShapeReliability + stopIds + GeofencePath + pathLengthMeters + pathTimeSeconds. Serialized by legacy stream coders e/f. Anchored on ctor null-check field n
+- name: 'NavigationPath'
+  package: 'com.moovit.navigation'
+  signatures:
+      - signature: '"pathLengthMeters"'
+        type: regex
+        count: 1
+# [high] CoroutineWorker that reads app-data parts (CONFIGURATION, HISTORY, LATEST_ITINERARY_CONTROLLER, NAVIGATION_STATE_STORE) and schedules the resume-trip alarm/notification (com.moovit.resumetrip.action.p
+- name: 'ResumeTripNotificationWorker'
+  package: 'com.moovit.app.resumetrip'
+  signatures:
+      - signature: '"ResumeTripNotificationWorker"'
+        type: regex
+        count: 4
+# [high] BroadcastReceiver firing on the resume-trip alarm (com.moovit.resumetrip.action.publish_notification) and dismissal (...notification_dismissed); builds the resume-trip notification. Unique log 'publis
+- name: 'ResumeTripBroadcastReceiver'
+  package: 'com.moovit.app.resumetrip'
+  signatures:
+      - signature: 'publishNotification: alarmId='
+        type: regex
+        count: 1
+# [high] Parcelable data class for line-arrival alerts: stopId/lineId/activationTime/expirationTime; unique toString prefix 'TripNotification(stopId='. Its EntryPointHelper/CancelViewModel host classes are obf
+- name: 'TripNotification'
+  package: 'com.moovit.app.actions.notifications'
+  signatures:
+      - signature: 'TripNotification\(stopId='
+        type: regex
+        count: 1
+
+# ==========================================================================
+# transit-realtime (16 classes)
+# ==========================================================================
+# [high] Kept class name; final Parcelable implementing Lu46;/Lt46;; toString 'TransitStop{id=' with fields id,name,location,mainTransitTypeRef,lineRefs,nearByLinesRefs,platforms,pathways,amenities,mapImages —
+- name: 'TransitStop'
+  package: 'com.moovit.transit'
+  signatures:
+      - signature: '"TransitStop\{id="'
+        type: regex
+        count: 1
+# [high] Kept name; Parcelable implementing Lu46;; guard string 'Transit line group may not be null' and 'destination' field — a line belonging to a TransitLineGroup.
+- name: 'TransitLine'
+  package: 'com.moovit.transit'
+  signatures:
+      - signature: '"Transit line group may not be null"'
+        type: regex
+        count: 1
+# [high] Kept final Parcelable implementing Lu46;; fields agencyRef,lineNumber,imageRefSet,innerImageIds,lines and integrity guard 'Line id … does not exist in attached group id …' — groups TransitLine members
+- name: 'TransitLineGroup'
+  package: 'com.moovit.transit'
+  signatures:
+      - signature: '" does not exist in attached group id "'
+        type: regex
+        count: 1
+# [high] Kept Parcelable implementing Lu46;; fields stopRefSequence + stopNames with equal-length invariant 'stop sequence & names must be with the same size' — the ordered stop pattern of a line.
+- name: 'TransitPattern'
+  package: 'com.moovit.transit'
+  signatures:
+      - signature: '"stop sequence & names must be with the same size"'
+        type: regex
+        count: 1
+# [high] Kept class; headway model with 'windows' + 'intervals' lists, toString 'TransitFrequency … frequency id=', equal-length invariant 'windows & intervals must be with the same size'.
+- name: 'TransitFrequency'
+  package: 'com.moovit.transit'
+  signatures:
+      - signature: '"windows & intervals must be with the same size"'
+        type: regex
+        count: 1
+# [high] Kept Parcelable; nested LocationType/SourceType enums; toString 'LocationDescriptor[type=…]'; guard 'Unable to set null coordinates when location type is …' — the geocoded location/place ref used acro
+- name: 'LocationDescriptor'
+  package: 'com.moovit.transit'
+  signatures:
+      - signature: '"Unable to set null coordinates when location type is "'
+        type: regex
+        count: 1
+# [high] Kept class; serverId-based trip identity, toString 'TripId[…]'.
+- name: 'TripId'
+  package: 'com.moovit.transit'
+  signatures:
+      - signature: '"TripId\["'
+        type: regex
+        count: 1
+# [high] Kept final Parcelable; data-class toString 'StopArrival(line=…, arrival=…, tripIndex=…, serviceAlert=…, isVehicleSupported=…, isAgencyVomSupported=…)' — one real-time arrival row.
+- name: 'StopArrival'
+  package: 'com.moovit.app.stoparrivals'
+  signatures:
+      - signature: '"StopArrival\(line="'
+        type: regex
+        count: 1
+# [high] Kept final Parcelable; data-class toString 'StopArrivalServiceAlert(status=…, alertId=…)' — the alert badge attached to a StopArrival.
+- name: 'StopArrivalServiceAlert'
+  package: 'com.moovit.app.stoparrivals'
+  signatures:
+      - signature: '"StopArrivalServiceAlert\(status="'
+        type: regex
+        count: 1
+# [high] Kept final Parcelable; data-class toString 'TripsUpdateResult(stop=…, stopArrivals=…, vehicleIdToPosition=…, shapeIdToSegments=…)' — a realtime update tick (arrivals + live vehicle positions) for a st
+- name: 'TripsUpdateResult'
+  package: 'com.moovit.app.stoparrivals'
+  signatures:
+      - signature: '"TripsUpdateResult\(stop="'
+        type: regex
+        count: 1
+# [high] Kept final Parcelable; data-class toString 'TripsSelectionUpdate(adapterPosition=…, prevArrival=…, currArrival=…, analyticKey=…)' — UI trip-selection delta in the arrivals screen.
+- name: 'TripsSelectionUpdate'
+  package: 'com.moovit.app.stoparrivals'
+  signatures:
+      - signature: '"TripsSelectionUpdate\(adapterPosition="'
+        type: regex
+        count: 1
+# [high] Outer class renamed to 'd' (super Lh60; base ViewModel) but leaks via inner classes StopArrivalsViewModel$refresh$2, $fetchLineArrivals$1, $fetchPatternStops$1, $refreshArrivals$1 (which reference Lco
+- name: 'StopArrivalsViewModel'
+  package: 'com.moovit.app.stoparrivals'
+  signatures:
+      - signature: '"selectedArrivals"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'refreshArrivals'
+        signatures:
+            - signature: '"requestContext"'
+              type: regex
+              count: 1
+# [high] Abstract outer class renamed to 'c'; leaks via inner classes MetroEntitiesRepository$submitSinglePageRequest$1 etc. (reference Lcom/moovit/metroentities/c;) and its own literal 'MetroEntitiesRepositor
+- name: 'MetroEntitiesRepository'
+  package: 'com.moovit.metroentities'
+  signatures:
+      - signature: '"initiator=%s, performing resolving pass:%s"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'fetchSinglePage'
+        signatures:
+            - signature: '"fetch: metroId="'
+              type: regex
+              count: 1
+      - name: 'resolveEntitiesPass'
+        signatures:
+            - signature: '"initiator=%s, remaining:%s"'
+              type: regex
+              count: 1
+# [high] Kept enum listing loadable entity kinds TRANSIT_STOP/TRANSIT_LINE/TRANSIT_LINE_GROUP/TRANSIT_PATTERN/TRANSIT_FREQUENCIES/SHAPE/SHAPE_SEGMENT/BICYCLE_STOP plus 'resolver'/'learner'. TRANSIT_FREQUENCIES
+- name: 'MetroEntityType'
+  package: 'com.moovit.metroentities'
+  signatures:
+      - signature: '"TRANSIT_FREQUENCIES"'
+        type: regex
+        count: 1
+# [high] Kept Parcelable; holds a kept ServiceAlertAffectedStop + ServiceStatus + alertIds ('alertIds may not be empty!'). Anchored on the declared field of type ServiceAlertAffectedStop (field name left as [a
+- name: 'StopServiceAlertDigest'
+  package: 'com.moovit.servicealerts'
+  signatures:
+      - signature: '\.field public final [a-z]:Lcom/moovit/servicealerts/ServiceAlertAffectedStop;'
+        type: regex
+        count: 1
+# [high] Kept Parcelable; holds a kept ServiceAlertAffectedLine + ServiceStatus + alertIds ('alertIds may not be empty!'). Anchored on the declared field of type ServiceAlertAffectedLine (field name [a-z], rot
+- name: 'LineServiceAlertDigest'
+  package: 'com.moovit.servicealerts'
+  signatures:
+      - signature: '\.field public final [a-z]:Lcom/moovit/servicealerts/ServiceAlertAffectedLine;'
+        type: regex
+        count: 1
+
+# ==========================================================================
+# push-notifications (11 classes)
+# ==========================================================================
+# [high] Kept class name + package; extends FirebaseMessagingService; delegates Braze pushes to com.braze.push.BrazeFirebaseMessagingService; parses RemoteMessage; command list (ping/metro_update/upload_logs/.
+- name: 'GcmListenerService'
+  package: 'com.moovit.gcm'
+  signatures:
+      - signature: '"moovit://payload"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'handleRemoteMessage'
+        signatures:
+            - signature: '"handleRemoteMessage: %s"'
+              type: regex
+              count: 1
+      - name: 'handleMessageBar'
+        signatures:
+            - signature: '"Receiving new GCM message-bar, screen=%s"'
+              type: regex
+              count: 1
+# [high] Kept name + package; IntentService constructed with name 'GcmDismissIntentService'; onHandleIntent reads extras com.moovit.gcm.notification.callback.extra.* and dispatches notification_dismiss / notif
+- name: 'GcmCallbackIntentService'
+  package: 'com.moovit.gcm'
+  signatures:
+      - signature: '"GcmDismissIntentService"'
+        type: regex
+        count: 1
+# [high] Kept name + package; final Parcelable holding title/body/ticker, GcmPayload, notification id and MoovitNotificationChannel; builds the android Notification (icon ic_notification_alert); error log 'Fai
+- name: 'GcmNotification'
+  package: 'com.moovit.gcm.notification'
+  signatures:
+      - signature: '"Failed to retrieve custom icon bitmap"'
+        type: regex
+        count: 1
+# [high] Kept name + package; transparent activity launched on notification tap; extras built via getName().concat('.extra').concat('.gcm_notification'/'.notification_id'); resolves click on background executo
+- name: 'GcmNotificationActivity'
+  package: 'com.moovit.gcm'
+  signatures:
+      - signature: '"\.gcm_notification"'
+        type: regex
+        count: 1
+# [high] Kept name + package; Worker that subscribes/unsubscribes the device to FCM metro topics '/topics/android-metro-<metroId>-...' via FirebaseMessaging, gated on Google Play Services; log tag 'GcmTopicMan
+- name: 'GcmTopicManager'
+  package: 'com.moovit.gcm.topic'
+  signatures:
+      - signature: '"/topics/android-metro-"'
+        type: regex
+        count: 2
+  methods:
+      - name: 'subscribeToTopic'
+        signatures:
+            - signature: '"Subscribe to topic: %s"'
+              type: regex
+              count: 1
+# [high] Renamed to 'a' but leaked via inner enum com.moovit.braze.BrazeInAppMessageHelper$NativeFlowResult; implements IInAppMessageManagerListener; log tag 'BrazeInAppMessageHelper'; before/after InAppMessag
+- name: 'BrazeInAppMessageHelper'
+  package: 'com.moovit.braze'
+  signatures:
+      - signature: '"beforeInAppMessageDisplayed: unsupported native flow, discarding, nativeFlow=%s"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'beforeInAppMessageDisplayed'
+        signatures:
+            - signature: '"beforeInAppMessageDisplayed: unsupported native flow, discarding, nativeFlow=%s"'
+              type: regex
+              count: 1
+      - name: 'onInAppMessageButtonClicked'
+        signatures:
+            - signature: '"onInAppMessageButtonClicked: msg=%s, btn=%s"'
+              type: regex
+              count: 1
+# [high] Renamed to 'b'; volatile singleton (static instance field + initialize()); log tag 'BrazeManager'; logs 'Initializing Braze SDK'; gated by resource is_braze_supported and prefs braze_user_recovery/is_
+- name: 'BrazeManager'
+  package: 'com.moovit.braze'
+  signatures:
+      - signature: '"Initializing Braze SDK"'
+        type: regex
+        count: 1
+  methods:
+      - name: 'setInAppMessageEnabled'
+        signatures:
+            - signature: '"setInAppMessageEnabled: %s"'
+              type: regex
+              count: 1
+# [high] Renamed to 'a' but leaked via inner com.moovit.app.braze.BrazeRecoveryManager$checkForRecovery$1; log tag 'BrazeRecoveryManager'; enableBraze() enables the BrazeManager singleton and content cards; dr
+- name: 'BrazeRecoveryManager'
+  package: 'com.moovit.app.braze'
+  signatures:
+      - signature: '"enableBraze\(\)"'
+        type: regex
+        count: 1
+# [high] Kept name + package; CoroutineWorker; log tag 'BrazeUpdateUserWorker'; updates the Braze profile and alias_braze_unique_id, pref com.moovit.braze.profile; helper methods updateNewBrazeUser()/resetBraz
+- name: 'BrazeUpdateUserWorker'
+  package: 'com.moovit.app.braze'
+  signatures:
+      - signature: '"Begin update user worker\."'
+        type: regex
+        count: 1
+  methods:
+      - name: 'updateNewBrazeUser'
+        signatures:
+            - signature: '"updateNewBrazeUser\(\)"'
+              type: regex
+              count: 1
+      - name: 'resetBrazeUserLocally'
+        signatures:
+            - signature: '"resetBrazeUserLocally\(\)"'
+              type: regex
+              count: 1
+# [high] Kept name + package; CoroutineWorker; log tag 'BrazeUpdateUserAttributesRequestWorker'; sends the Braze update-user-attributes request to the Moovit server, logs 'Recovery flow completed successfully.
+- name: 'BrazeUpdateUserAttributesRequestWorker'
+  package: 'com.moovit.app.braze'
+  signatures:
+      - signature: '"Begin update user attributes request\."'
+        type: regex
+        count: 1
+# [high] Kept name + package; CoroutineWorker; log tag 'BrazeDeleteUserRequestWorker'; sends the Braze delete-user request as part of the recovery flow ('Braze delete user request succeeded.', 'Request succeed
+- name: 'BrazeDeleteUserRequestWorker'
+  package: 'com.moovit.app.braze'
+  signatures:
+      - signature: '"Begin delete user worker"'
+        type: regex
+        count: 1
+
